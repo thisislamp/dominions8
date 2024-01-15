@@ -1,3 +1,2 @@
-# git_test
-hello odin test
+# personal_projects
 123
