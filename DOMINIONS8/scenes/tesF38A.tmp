@@ -1,0 +1,45 @@
+[gd_scene load_steps=9 format=3 uid="uid://ce70gcco76ibf"]
+
+[ext_resource type="Texture2D" uid="uid://cn48jaoiryrab" path="res://art/icon.svg" id="1_23v2e"]
+[ext_resource type="Script" path="res://scripts/testenemy.gd" id="1_f4cof"]
+[ext_resource type="Script" path="res://scripts/states/State Machine.gd" id="3_l6kob"]
+[ext_resource type="Script" path="res://scripts/states/EnemyIdle.gd" id="4_5bg8n"]
+[ext_resource type="Script" path="res://scripts/states/EnemyFollow.gd" id="5_s2d8v"]
+[ext_resource type="Script" path="res://scripts/states/EnemySearching.gd" id="6_57g8g"]
+[ext_resource type="Script" path="res://scripts/states/EnemyShoot.gd" id="7_7uqe3"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ohjiv"]
+radius = 16.0
+
+[node name="testenemy" type="CharacterBody2D"]
+motion_mode = 1
+wall_min_slide_angle = 0.0
+script = ExtResource("1_f4cof")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ohjiv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+self_modulate = Color(1, 0, 0, 1)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_23v2e")
+
+[node name="State Machine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("3_l6kob")
+initial_state = NodePath("EnemySearching")
+
+[node name="EnemyFollow" type="Node" parent="State Machine"]
+script = ExtResource("5_s2d8v")
+
+[node name="EnemyIdle" type="Node" parent="State Machine"]
+script = ExtResource("4_5bg8n")
+
+[node name="EnemySearching" type="Node" parent="State Machine"]
+script = ExtResource("6_57g8g")
+
+[node name="EnemyShoot" type="Node" parent="State Machine"]
+script = ExtResource("7_7uqe3")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="Marker2D" type="Marker2D" parent="."]

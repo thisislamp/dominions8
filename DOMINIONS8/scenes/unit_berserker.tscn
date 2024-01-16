@@ -1,0 +1,89 @@
+[gd_scene load_steps=9 format=3 uid="uid://cc6h3imufx6ob"]
+
+[ext_resource type="Script" path="res://scripts/unit_berserker.gd" id="1_a3xso"]
+[ext_resource type="Texture2D" uid="uid://d4m05dyhcrdxv" path="res://art/berserker1.png" id="2_f7a4p"]
+[ext_resource type="Texture2D" uid="uid://cp603cee4uij8" path="res://art/berserker2.png" id="3_pv411"]
+[ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="5_5u47s"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qljv0"]
+radius = 11.0
+height = 46.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rbwin"]
+radius = 13.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bx4rv"]
+radius = 11.0454
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_tesyk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_f7a4p")
+}],
+"loop": true,
+"name": &"sprite1",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_pv411")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_f7a4p")
+}],
+"loop": false,
+"name": &"sprite2",
+"speed": 6.0
+}]
+
+[node name="unit_berserker" type="CharacterBody2D"]
+motion_mode = 1
+wall_min_slide_angle = 0.0
+script = ExtResource("1_a3xso")
+max_health = 42
+protection = 3
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="teamcoloricon" type="Polygon2D" parent="."]
+modulate = Color(1, 1, 1, 0.443137)
+z_index = -1
+position = Vector2(0, 2)
+scale = Vector2(0.22, 0.209)
+polygon = PackedVector2Array(64, 0, 46.5455, -42.6665, 0, -60.9522, -46.5455, -42.6665, -64, 0, -46.5455, 48.7618, 0, 60.9522, 46.5455, 48.7618)
+
+[node name="Marker2D" type="Marker2D" parent="."]
+
+[node name="hitbox_area" type="Area2D" parent="."]
+collision_layer = 8388609
+collision_mask = 8388609
+
+[node name="hitbox_collision" type="CollisionShape2D" parent="hitbox_area"]
+position = Vector2(0, -11)
+shape = SubResource("CapsuleShape2D_qljv0")
+
+[node name="health_bar" parent="." instance=ExtResource("5_5u47s")]
+offset_left = -12.0
+offset_top = -34.0
+offset_right = 13.0
+offset_bottom = -30.0
+
+[node name="unit_collision" type="Area2D" parent="."]
+position = Vector2(16, -3)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="unit_collision"]
+position = Vector2(-16, 1)
+shape = SubResource("CircleShape2D_rbwin")
+
+[node name="pathfinding_collision" type="CollisionShape2D" parent="."]
+z_index = 1
+shape = SubResource("CircleShape2D_bx4rv")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -16)
+sprite_frames = SubResource("SpriteFrames_tesyk")
+animation = &"sprite1"
+
+[connection signal="area_entered" from="hitbox_area" to="." method="_on_hitbox_area_area_entered"]
+[connection signal="body_entered" from="unit_collision" to="." method="_on_collision_area_body_entered"]

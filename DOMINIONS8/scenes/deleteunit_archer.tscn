@@ -1,0 +1,83 @@
+[gd_scene load_steps=10 format=3 uid="uid://ujl68onaqg14"]
+
+[ext_resource type="Script" path="res://scripts/unit_slinger.gd" id="1_6agvg"]
+[ext_resource type="Texture2D" uid="uid://dfvspp4l50hpm" path="res://art/slinger1.png" id="2_pjhxl"]
+[ext_resource type="Texture2D" uid="uid://dlbnnrggocdxb" path="res://art/slinger2.png" id="3_3wr7u"]
+[ext_resource type="Texture2D" uid="uid://cn48jaoiryrab" path="res://art/icon.svg" id="4_3t1xw"]
+[ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="5_445g4"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jc557"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_pjhxl")
+}],
+"loop": true,
+"name": &"sprite1",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_3wr7u")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_pjhxl")
+}],
+"loop": false,
+"name": &"sprite2",
+"speed": 6.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qljv0"]
+height = 46.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rbwin"]
+radius = 13.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bx4rv"]
+
+[node name="unit_archer" type="CharacterBody2D"]
+motion_mode = 1
+wall_min_slide_angle = 0.0
+script = ExtResource("1_6agvg")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(1, -12)
+sprite_frames = SubResource("SpriteFrames_jc557")
+animation = &"sprite2"
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="teamcoloricon" type="Sprite2D" parent="."]
+z_index = -1
+scale = Vector2(0.171875, 0.164063)
+texture = ExtResource("4_3t1xw")
+
+[node name="Marker2D" type="Marker2D" parent="."]
+
+[node name="hitbox_area" type="Area2D" parent="."]
+collision_layer = 8388609
+collision_mask = 8388609
+
+[node name="hitbox_collision" type="CollisionShape2D" parent="hitbox_area"]
+position = Vector2(0, -11)
+shape = SubResource("CapsuleShape2D_qljv0")
+
+[node name="health_bar" parent="." instance=ExtResource("5_445g4")]
+offset_left = -12.5
+offset_top = -38.0
+offset_right = 12.5
+offset_bottom = -34.0
+
+[node name="collision_area" type="Area2D" parent="."]
+position = Vector2(16, -3)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="collision_area"]
+position = Vector2(-16, 3)
+shape = SubResource("CircleShape2D_rbwin")
+
+[node name="pathfinding_collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_bx4rv")
+
+[connection signal="area_entered" from="hitbox_area" to="." method="_on_hitbox_area_area_entered"]
+[connection signal="body_entered" from="collision_area" to="." method="_on_collision_area_body_entered"]

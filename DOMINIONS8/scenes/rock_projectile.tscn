@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://co67qkso2g6r4"]
+
+[ext_resource type="Script" path="res://scripts/rock.gd" id="1_yvscd"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_62qge"]
+height = 76.9231
+
+[node name="rock_projectile" type="Area2D"]
+z_index = 2
+scale = Vector2(0.2, 0.2)
+collision_layer = 8388609
+collision_mask = 8388609
+script = ExtResource("1_yvscd")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+scale = Vector2(1, 0.26)
+shape = SubResource("CapsuleShape2D_62qge")
+
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+position = Vector2(2.38419e-07, -4.76837e-07)
+scale = Vector2(1, 1)
+
+[node name="teamcoloricon" type="Polygon2D" parent="."]
+modulate = Color(1, 1, 1, 0.443137)
+z_index = -1
+scale = Vector2(0.171875, 0.164063)
+polygon = PackedVector2Array(64, 0, 46.5455, -42.6665, 0, -60.9522, -46.5455, -42.6665, -64, 0, -46.5455, 48.7618, 0, 60.9522, 46.5455, 48.7618)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_shape_entered" from="." to="." method="_on_body_shape_entered"]
+[connection signal="screen_exited" from="VisibleOnScreenEnabler2D" to="." method="_on_visible_on_screen_enabler_2d_screen_exited"]
