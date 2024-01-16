@@ -1,26 +1,25 @@
 extends CharacterBody2D
-class_name unit_hurler
+class_name unit_heavycav
 var destination: Vector2
 var direction: Vector2
-var move_speed = 90
 var enemy_color: String
 var closest_enemy: Node = null
-var attack_range: int = 200
-var shoot_timer: float = 0
+var attack_range: int = 45
+var attack_timer: float = 0
 var current_health: int 
 var hurt_timer: int
 
+
 @export var team_color: String
-@export var max_health = 30
-@export var protection: int = 2
-@export var shoot_cooldown: float = .6
-@export var projectile_damage = 12
-#@export var mana_cost: int = 200
+@export var max_health = 15
+@export var protection: int = 18
+@export var attack_cooldown: float = .5
+@export var move_speed = 200
+@export var attack_damage: int = 22
+#@export var mana_cost: int = 100
 
 @onready var healthbar = $health_bar
 @onready var nav: NavigationAgent2D = $NavigationAgent2D
-
-var projectile_scene = preload("res://scenes/rock_projectile.tscn")
 
 func get_enemy_color():
 	if team_color == 'red':
@@ -41,38 +40,26 @@ func find_closest_enemy():
 		elif !closest_distance:
 			closest_distance = distance
 			closest_enemy = node
-	if closest_enemy and closest_distance > (attack_range * attack_range):
+	if closest_enemy in get_tree().get_nodes_in_group("building"):
+		attack_range = 115
+	else: attack_range = 45
+	if closest_distance > (attack_range * attack_range):
 		nav.target_position = closest_enemy.global_position
 		direction = nav.get_next_path_position() - global_position
 		direction = direction.normalized()
 		velocity = direction * move_speed
 	else:
-		#velocity = Vector2.ZERO
 		velocity = direction * .01
-		shoot_at_enemy()
+		$AnimatedSprite2D.play("sprite2")
+		closest_enemy.take_damage(attack_damage)
+		attack_damage = 16
+		attack_timer = attack_cooldown
+		#shoot_at_enemy()
 	if direction.x > 0:
 		$AnimatedSprite2D.scale.x = -1
 	elif direction.x < 0:
 		$AnimatedSprite2D.scale.x = 1
 	return closest_enemy
-
-func shoot_at_enemy():
-	if closest_enemy and shoot_timer <= 0:
-		$Marker2D.look_at(closest_enemy.global_position)
-		var projectile_instance = projectile_scene.instantiate()
-		projectile_instance.global_position = $Marker2D.global_position
-		projectile_instance.rotation = $Marker2D.rotation * randf_range(.80, 1.20)
-		projectile_instance.team_color = team_color
-		projectile_instance.scale.x = .9
-		projectile_instance.scale.y = .9
-		projectile_instance.projectile_damage = projectile_damage
-		projectile_instance.speed = 375
-		projectile_instance.persistence_health = 3
-		add_child(projectile_instance)
-		shoot_timer = shoot_cooldown
-		$AnimatedSprite2D.play("sprite2")
-		#$AnimatedSprite2D.play("sprite1")
-		
 
 func take_damage(damage_dealt):
 	var damage_taken: int
@@ -80,30 +67,18 @@ func take_damage(damage_dealt):
 	damage_taken = (damage_dealt + DRN())- (protection + DRN())
 	if damage_taken > 0: current_health -= damage_taken
 	healthbar.value = current_health
-	#$AnimatedSprite2D.set_self_modulate(Color(1,0,0))
-	$AnimatedSprite2D.modulate = Color(1,0,0)
 	hurt_timer = 15
 	if current_health <= 0:
 		healthbar.visible = false
 		$teamcoloricon.visible = false
 		$AnimatedSprite2D.visible = false
 		remove_from_group(team_color)
-		$hitbox_area/hitbox_collision.disabled = true
+		$unit_collision/unit_collisionshape.disabled = true
 		$pathfinding_collision.disabled = true
 		$unit_collision/unit_collisionshape.disabled = true
 
-func has_projectile_children() -> bool:
-	for i in range(get_child_count()):
-		var child_node = get_child(i)
-		if child_node.name == "rock_projectile":
-			return true
-	for i in range(get_child_count()):
-		var child_node = get_child(i)
-		if "Area2D" in child_node.name:
-			return true
-	return false
-
 func knockback(knockback_direction, knockback_power):
+	#knockback_direction = knockback_direction.normalized()
 	velocity = knockback_direction.normalized() * knockback_power
 	move_and_slide()
 
@@ -131,17 +106,15 @@ func _ready():
 	$AnimatedSprite2D.play("sprite1")
 
 func _physics_process(delta):
-	if current_health > 0:
+	if current_health > 0 and attack_timer <= 0:
 		find_closest_enemy()
 		move_and_slide()
 		check_overlapping_bodies()
 		if hurt_timer > 0: hurt_timer -= 1
 		else: $AnimatedSprite2D.modulate = Color(1,1,1)
-	else:
-		has_projectile_children()
-	if shoot_timer > 0:
-		shoot_timer -= delta
-	if current_health <= 0 and has_projectile_children() == false:
+	if attack_timer > 0:
+		attack_timer -= delta
+	if current_health <= 0:
 		queue_free()
 
 func _on_hitbox_area_area_entered(area):

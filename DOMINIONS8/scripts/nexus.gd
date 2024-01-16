@@ -5,18 +5,21 @@ var hurt_timer = 10
 var spawn_timer: int = 1
 var selected_unit: Object
 var selected_unit_mana_cost: int
-var slinger_mana_cost: int = 120
-var hurler_mana_cost: int = 180
-var berserker_mana_cost: int = 180
+var slinger_mana_cost: int = 80
+var hurler_mana_cost: int = 200
+var berserker_mana_cost: int = 170
+var heavycav_mana_cost: int = 200
+var game_active: bool = true
 
 @onready var unit_slinger = preload("res://scenes/unit_slinger.tscn")
 @onready var unit_hurler = preload("res://scenes/unit_hurler.tscn")
 @onready var unit_berserker = preload("res://scenes/unit_berserker.tscn")
+@onready var unit_heavycav = preload("res://scenes/unit_heavycav.tscn")
 @onready var healthbar = $health_bar
 @onready var manabar = $mana_bar
 
 @export var max_health = 100
-@export var max_mana = 500
+@export var max_mana = 1000
 @export var current_health: int
 @export var team_color: String
 @export var protection: int = 15
@@ -75,8 +78,8 @@ func take_damage(damage_dealt):
 		healthbar.visible = true
 	if current_health <= 0:
 		$backgroundcoloricon.modulate = Color(1,0,0)
+		remove_from_group(team_color)
 		#queue_free()
-		pass
 
 func _on_hitbox_area_area_entered(area):
 	if "projectile" in area.get_groups() and enemy_color in area.get_groups() and current_health > 0:
@@ -86,6 +89,11 @@ func _on_hitbox_area_area_entered(area):
 func spawn_unit(unit_scene, direction):
 	var unit_instance = unit_scene.instantiate()
 	if direction == null:
+		var random_choice = randi() % 4
+		if random_choice == 0: direction == "left"
+		if random_choice == 1: direction == "right"
+		if random_choice == 2: direction == "up"
+		if random_choice == 3: direction == "down"
 		unit_instance.position += Vector2(0, randf_range(-10, 10)*20)
 	if direction == "left":
 		unit_instance.position += Vector2(-100, randf_range(-10, 10))
@@ -112,6 +120,9 @@ func _process(delta):
 	if Input.is_action_just_pressed("b"): 
 		selected_unit = unit_berserker
 		selected_unit_mana_cost = berserker_mana_cost
+	if Input.is_action_just_pressed("c"): 
+		selected_unit = unit_heavycav
+		selected_unit_mana_cost = heavycav_mana_cost
 	if controlled_by == "human" and Input.is_action_just_pressed("left_mouse") and current_mana >= selected_unit_mana_cost:
 		spawn_unit(selected_unit, null)
 		current_mana -= selected_unit_mana_cost
@@ -127,15 +138,16 @@ func _process(delta):
 	if controlled_by == "human" and Input.is_action_just_pressed("leftarrow") and current_mana >= selected_unit_mana_cost:
 		spawn_unit(selected_unit, "left")
 		current_mana -= selected_unit_mana_cost
-	if current_mana < max_mana: current_mana += 1
+	if current_mana < max_mana and game_active == true: current_mana += 1
 	manabar.value = current_mana
-	if controlled_by == "ai" and current_mana >= berserker_mana_cost:
+	if controlled_by == "ai" and current_mana >= 250:
 		spawn_unit(selected_unit, null)
 		current_mana -= selected_unit_mana_cost
-		var random_choice = randi() % 3
+		var random_choice = randi() % 4
 		if random_choice == 0: selected_unit = unit_slinger
 		if random_choice == 1: selected_unit = unit_hurler
 		if random_choice == 2: selected_unit = unit_berserker
+		if random_choice == 3: selected_unit = unit_heavycav
 		
 
 func DRN():

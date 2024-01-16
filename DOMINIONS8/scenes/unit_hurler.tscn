@@ -27,15 +27,15 @@ animations = [{
 "speed": 6.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qljv0"]
-radius = 19.0
-height = 60.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_il60i"]
+radius = 21.0
+height = 64.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rbwin"]
-radius = 21.0
+radius = 19.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_bx4rv"]
-radius = 17.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_8d6lu"]
+radius = 18.0
 
 [node name="unit_hurler" type="CharacterBody2D"]
 z_index = 1
@@ -44,7 +44,7 @@ wall_min_slide_angle = 0.0
 script = ExtResource("1_0yxg8")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(1, -12)
+position = Vector2(1, -16)
 sprite_frames = SubResource("SpriteFrames_jc557")
 animation = &"sprite1"
 
@@ -64,24 +64,24 @@ collision_layer = 8388609
 collision_mask = 8388609
 
 [node name="hitbox_collision" type="CollisionShape2D" parent="hitbox_area"]
-position = Vector2(0, -12)
-shape = SubResource("CapsuleShape2D_qljv0")
+position = Vector2(0, -14)
+shape = SubResource("CapsuleShape2D_il60i")
 
 [node name="health_bar" parent="." instance=ExtResource("5_8655x")]
 offset_left = -12.0
-offset_top = -48.0
+offset_top = -51.0
 offset_right = 13.0
-offset_bottom = -44.0
+offset_bottom = -47.0
 
 [node name="unit_collision" type="Area2D" parent="."]
 position = Vector2(16, -3)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="unit_collision"]
-position = Vector2(-16, 4)
+[node name="unit_collisionshape" type="CollisionShape2D" parent="unit_collision"]
+position = Vector2(-16, 3)
 shape = SubResource("CircleShape2D_rbwin")
 
 [node name="pathfinding_collision" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_bx4rv")
+shape = SubResource("CircleShape2D_8d6lu")
 
 [connection signal="area_entered" from="hitbox_area" to="." method="_on_hitbox_area_area_entered"]
 [connection signal="body_entered" from="unit_collision" to="." method="_on_collision_area_body_entered"]

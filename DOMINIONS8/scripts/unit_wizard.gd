@@ -1,21 +1,22 @@
 extends CharacterBody2D
-class_name unit_hurler
+class_name unit_wizard
 var destination: Vector2
 var direction: Vector2
-var move_speed = 90
+var move_speed = 120
 var enemy_color: String
 var closest_enemy: Node = null
-var attack_range: int = 200
+var attack_range: int = 300
 var shoot_timer: float = 0
 var current_health: int 
 var hurt_timer: int
 
+
 @export var team_color: String
-@export var max_health = 30
-@export var protection: int = 2
-@export var shoot_cooldown: float = .6
-@export var projectile_damage = 12
-#@export var mana_cost: int = 200
+@export var max_health = 10
+@export var protection: int = 5
+@export var shoot_cooldown: float = .5
+@export var projectile_damage = 8
+#@export var mana_cost: int = 100
 
 @onready var healthbar = $health_bar
 @onready var nav: NavigationAgent2D = $NavigationAgent2D
@@ -61,13 +62,9 @@ func shoot_at_enemy():
 		$Marker2D.look_at(closest_enemy.global_position)
 		var projectile_instance = projectile_scene.instantiate()
 		projectile_instance.global_position = $Marker2D.global_position
-		projectile_instance.rotation = $Marker2D.rotation * randf_range(.80, 1.20)
+		projectile_instance.rotation = $Marker2D.rotation * randf_range(.95, 1.05)
 		projectile_instance.team_color = team_color
-		projectile_instance.scale.x = .9
-		projectile_instance.scale.y = .9
 		projectile_instance.projectile_damage = projectile_damage
-		projectile_instance.speed = 375
-		projectile_instance.persistence_health = 3
 		add_child(projectile_instance)
 		shoot_timer = shoot_cooldown
 		$AnimatedSprite2D.play("sprite2")
@@ -80,7 +77,7 @@ func take_damage(damage_dealt):
 	damage_taken = (damage_dealt + DRN())- (protection + DRN())
 	if damage_taken > 0: current_health -= damage_taken
 	healthbar.value = current_health
-	#$AnimatedSprite2D.set_self_modulate(Color(1,0,0))
+	
 	$AnimatedSprite2D.modulate = Color(1,0,0)
 	hurt_timer = 15
 	if current_health <= 0:
@@ -88,7 +85,7 @@ func take_damage(damage_dealt):
 		$teamcoloricon.visible = false
 		$AnimatedSprite2D.visible = false
 		remove_from_group(team_color)
-		$hitbox_area/hitbox_collision.disabled = true
+		$unit_collision/unit_collisionshape.disabled = true
 		$pathfinding_collision.disabled = true
 		$unit_collision/unit_collisionshape.disabled = true
 
@@ -104,6 +101,7 @@ func has_projectile_children() -> bool:
 	return false
 
 func knockback(knockback_direction, knockback_power):
+	#knockback_direction = knockback_direction.normalized()
 	velocity = knockback_direction.normalized() * knockback_power
 	move_and_slide()
 

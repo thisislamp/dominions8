@@ -8,6 +8,8 @@ var enemy_color: String
 
 func hit(persistance_hit):
 	persistence_health -= persistance_hit
+	projectile_damage -= 4
+	print(projectile_damage)
 	if persistence_health <= 0: queue_free()
 
 func _ready():

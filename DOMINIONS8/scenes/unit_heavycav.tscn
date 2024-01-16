@@ -1,22 +1,22 @@
-[gd_scene load_steps=9 format=3 uid="uid://cc6h3imufx6ob"]
+[gd_scene load_steps=9 format=3 uid="uid://cn88pxeuplyi3"]
 
-[ext_resource type="Script" path="res://scripts/unit_berserker.gd" id="1_a3xso"]
-[ext_resource type="Texture2D" uid="uid://d4m05dyhcrdxv" path="res://art/berserker1.png" id="2_f7a4p"]
-[ext_resource type="Texture2D" uid="uid://cp603cee4uij8" path="res://art/berserker2.png" id="3_pv411"]
-[ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="5_5u47s"]
+[ext_resource type="Script" path="res://scripts/unit_heavycav.gd" id="1_ma0jk"]
+[ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="2_p52ui"]
+[ext_resource type="Texture2D" uid="uid://d3kefbey3a8fj" path="res://art/heavycav1.png" id="3_18q87"]
+[ext_resource type="Texture2D" uid="uid://cq5hknhm8tcfj" path="res://art/heavycav2.png" id="4_i2mrg"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_vqbn5"]
-radius = 13.0
-height = 44.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_a7gmq"]
+radius = 21.1111
+height = 53.3333
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_8pkh5"]
-radius = 13.0384
+[sub_resource type="CircleShape2D" id="CircleShape2D_3r18x"]
+radius = 21.1403
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_tesyk"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_4n8vj"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_f7a4p")
+"texture": ExtResource("3_18q87")
 }],
 "loop": true,
 "name": &"sprite1",
@@ -24,30 +24,32 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_pv411")
+"texture": ExtResource("4_i2mrg")
 }, {
 "duration": 1.0,
-"texture": ExtResource("2_f7a4p")
+"texture": ExtResource("3_18q87")
 }],
 "loop": false,
 "name": &"sprite2",
 "speed": 6.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_e3l78"]
-radius = 12.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_86rot"]
+radius = 18.8889
 
-[node name="unit_berserker" type="CharacterBody2D"]
+[node name="unit_heavycav" type="CharacterBody2D"]
+scale = Vector2(0.9, 0.9)
 motion_mode = 1
 wall_min_slide_angle = 0.0
-script = ExtResource("1_a3xso")
+script = ExtResource("1_ma0jk")
 max_health = 42
 protection = 3
-move_speed = 200
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+unique_name_in_owner = true
 
 [node name="teamcoloricon" type="Polygon2D" parent="."]
+unique_name_in_owner = true
 modulate = Color(1, 1, 1, 0.443137)
 z_index = -1
 position = Vector2(0, 2)
@@ -55,6 +57,7 @@ scale = Vector2(0.22, 0.209)
 polygon = PackedVector2Array(64, 0, 46.5455, -42.6665, 0, -60.9522, -46.5455, -42.6665, -64, 0, -46.5455, 48.7618, 0, 60.9522, 46.5455, 48.7618)
 
 [node name="Marker2D" type="Marker2D" parent="."]
+unique_name_in_owner = true
 
 [node name="hitbox_area" type="Area2D" parent="."]
 unique_name_in_owner = true
@@ -62,27 +65,27 @@ collision_layer = 8388609
 collision_mask = 8388609
 
 [node name="hitbox_collision" type="CollisionShape2D" parent="hitbox_area"]
-position = Vector2(0, -8)
-shape = SubResource("CapsuleShape2D_vqbn5")
+position = Vector2(0, -6.66667)
+shape = SubResource("CapsuleShape2D_a7gmq")
 
-[node name="health_bar" parent="." instance=ExtResource("5_5u47s")]
+[node name="health_bar" parent="." instance=ExtResource("2_p52ui")]
 offset_left = -12.0
-offset_top = -34.0
+offset_top = -46.0
 offset_right = 13.0
-offset_bottom = -30.0
+offset_bottom = -42.0
 
 [node name="unit_collision" type="Area2D" parent="."]
 
 [node name="unit_collisionshape" type="CollisionShape2D" parent="unit_collision"]
-shape = SubResource("CircleShape2D_8pkh5")
+shape = SubResource("CircleShape2D_3r18x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -13)
-sprite_frames = SubResource("SpriteFrames_tesyk")
+position = Vector2(0, -11.1111)
+sprite_frames = SubResource("SpriteFrames_4n8vj")
 animation = &"sprite1"
 
 [node name="pathfinding_collision" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_e3l78")
+shape = SubResource("CircleShape2D_86rot")
 
 [connection signal="area_entered" from="hitbox_area" to="." method="_on_hitbox_area_area_entered"]
 [connection signal="body_entered" from="unit_collision" to="." method="_on_collision_area_body_entered"]

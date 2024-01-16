@@ -1,15 +1,15 @@
-[gd_scene load_steps=9 format=3 uid="uid://nnpxe0stwwmn"]
+[gd_scene load_steps=9 format=3 uid="uid://bjtrlt5867t8c"]
 
-[ext_resource type="Script" path="res://scripts/unit_slinger.gd" id="1_r5sbi"]
-[ext_resource type="Texture2D" uid="uid://dfvspp4l50hpm" path="res://art/slinger1.png" id="2_51pg5"]
-[ext_resource type="Texture2D" uid="uid://dlbnnrggocdxb" path="res://art/slinger2.png" id="3_tphof"]
+[ext_resource type="Script" path="res://scripts/unit_wizard.gd" id="1_hahmq"]
+[ext_resource type="Texture2D" uid="uid://ccncd6swkqo42" path="res://art/firewizard1.png" id="2_k4o7c"]
+[ext_resource type="Texture2D" uid="uid://dym6byipsivcl" path="res://art/firewizard2.png" id="3_adpc1"]
 [ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="5_ajsmr"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_jc557"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_51pg5")
+"texture": ExtResource("2_k4o7c")
 }],
 "loop": true,
 "name": &"sprite1",
@@ -17,33 +17,32 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_tphof")
+"texture": ExtResource("3_adpc1")
 }, {
 "duration": 1.0,
-"texture": ExtResource("2_51pg5")
+"texture": ExtResource("2_k4o7c")
 }],
 "loop": false,
 "name": &"sprite2",
 "speed": 6.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_n2d5l"]
-height = 36.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_dskcd"]
+height = 42.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_tx2w6"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_8s85e"]
 radius = 11.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_oh8uj"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_ngleb"]
 
-[node name="unit_slinger" type="CharacterBody2D"]
+[node name="unit_wizard" type="CharacterBody2D"]
 z_index = 1
 motion_mode = 1
 wall_min_slide_angle = 0.0
-script = ExtResource("1_r5sbi")
+script = ExtResource("1_hahmq")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-unique_name_in_owner = true
-position = Vector2(0, -8)
+position = Vector2(1, -12)
 sprite_frames = SubResource("SpriteFrames_jc557")
 animation = &"sprite1"
 
@@ -59,28 +58,26 @@ polygon = PackedVector2Array(64, 0, 46.5455, -42.6665, 0, -60.9522, -46.5455, -4
 [node name="Marker2D" type="Marker2D" parent="."]
 
 [node name="hitbox_area" type="Area2D" parent="."]
-unique_name_in_owner = true
 collision_layer = 8388609
 collision_mask = 8388609
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox_area"]
-position = Vector2(0, -7)
-shape = SubResource("CapsuleShape2D_n2d5l")
+[node name="hitbox_collision" type="CollisionShape2D" parent="hitbox_area"]
+position = Vector2(0, -10)
+shape = SubResource("CapsuleShape2D_dskcd")
 
 [node name="health_bar" parent="." instance=ExtResource("5_ajsmr")]
 offset_left = -12.0
-offset_top = -34.0
+offset_top = -38.0
 offset_right = 13.0
-offset_bottom = -30.0
+offset_bottom = -34.0
 
 [node name="unit_collision" type="Area2D" parent="."]
-unique_name_in_owner = true
 
 [node name="unit_collisionshape" type="CollisionShape2D" parent="unit_collision"]
-shape = SubResource("CircleShape2D_tx2w6")
+shape = SubResource("CircleShape2D_8s85e")
 
 [node name="pathfinding_collision" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_oh8uj")
+shape = SubResource("CircleShape2D_ngleb")
 
 [connection signal="area_entered" from="hitbox_area" to="." method="_on_hitbox_area_area_entered"]
 [connection signal="body_entered" from="unit_collision" to="." method="_on_collision_area_body_entered"]

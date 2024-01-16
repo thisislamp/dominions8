@@ -4,15 +4,15 @@ var destination: Vector2
 var direction: Vector2
 var enemy_color: String
 var closest_enemy: Node = null
-var attack_range: int = 25
+var attack_range: int = 35
 var attack_timer: float = 0
 var current_health: int 
 var hurt_timer: int
 
 
 @export var team_color: String
-@export var max_health = 17
-@export var protection: int = 12
+@export var max_health = 20
+@export var protection: int = 10
 @export var attack_cooldown: float = .5
 @export var move_speed = 130
 #@export var mana_cost: int = 100
@@ -40,8 +40,8 @@ func find_closest_enemy():
 			closest_distance = distance
 			closest_enemy = node
 	if closest_enemy in get_tree().get_nodes_in_group("building"):
-		attack_range = 80
-	else: attack_range = 25
+		attack_range = 110
+	else: attack_range = 35
 	if closest_distance > (attack_range * attack_range):
 		nav.target_position = closest_enemy.global_position
 		direction = nav.get_next_path_position() - global_position
@@ -67,17 +67,19 @@ func take_damage(damage_dealt):
 	damage_taken = (damage_dealt + DRN())- (protection + DRN())
 	if damage_taken > 0: current_health -= damage_taken
 	healthbar.value = current_health
-	
-	$AnimatedSprite2D.modulate = Color(1,0,0)
+	move_speed = 170
+	protection = 12
+	attack_cooldown = .35
+	$AnimatedSprite2D.modulate = Color(.9,.2,.2)
 	hurt_timer = 15
 	if current_health <= 0:
 		healthbar.visible = false
 		$teamcoloricon.visible = false
 		$AnimatedSprite2D.visible = false
 		remove_from_group(team_color)
-		$hitbox_area/hitbox_collision.disabled = true
+		$unit_collision/unit_collisionshape.disabled = true
 		$pathfinding_collision.disabled = true
-		$unit_collision/CollisionShape2D.disabled = true
+		$unit_collision/unit_collisionshape.disabled = true
 
 func knockback(knockback_direction, knockback_power):
 	#knockback_direction = knockback_direction.normalized()
@@ -112,8 +114,6 @@ func _physics_process(delta):
 		find_closest_enemy()
 		move_and_slide()
 		check_overlapping_bodies()
-		if hurt_timer > 0: hurt_timer -= 1
-		else: $AnimatedSprite2D.modulate = Color(1,1,1)
 	if attack_timer > 0:
 		attack_timer -= delta
 	if current_health <= 0:

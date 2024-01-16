@@ -1,5 +1,5 @@
 extends CharacterBody2D
-class_name unit_slinger
+class_name unit_
 var destination: Vector2
 var direction: Vector2
 var move_speed = 120
@@ -15,6 +15,7 @@ var hurt_timer: int
 @export var max_health = 10
 @export var protection: int = 5
 @export var shoot_cooldown: float = .5
+@export var projectile_damage = 8
 #@export var mana_cost: int = 100
 
 @onready var healthbar = $health_bar
@@ -63,6 +64,7 @@ func shoot_at_enemy():
 		projectile_instance.global_position = $Marker2D.global_position
 		projectile_instance.rotation = $Marker2D.rotation * randf_range(.95, 1.05)
 		projectile_instance.team_color = team_color
+		projectile_instance.projectile_damage = projectile_damage
 		add_child(projectile_instance)
 		shoot_timer = shoot_cooldown
 		$AnimatedSprite2D.play("sprite2")
@@ -83,9 +85,9 @@ func take_damage(damage_dealt):
 		$teamcoloricon.visible = false
 		$AnimatedSprite2D.visible = false
 		remove_from_group(team_color)
-		$hitbox_area/hitbox_collision.disabled = true
+		$unit_collision/unit_collisionshape.disabled = true
 		$pathfinding_collision.disabled = true
-		$unit_collision/CollisionShape2D.disabled = true
+		$unit_collision/unit_collisionshape.disabled = true
 
 func has_projectile_children() -> bool:
 	for i in range(get_child_count()):
