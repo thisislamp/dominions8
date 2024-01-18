@@ -2,10 +2,10 @@ extends CharacterBody2D
 class_name unit_hurler
 var destination: Vector2
 var direction: Vector2
-var move_speed = 90
+var move_speed = 50
 var enemy_color: String
 var closest_enemy: Node = null
-var attack_range: int = 200
+var attack_range: int = 170
 var shoot_timer: float = 0
 var current_health: int 
 var hurt_timer: int
@@ -15,7 +15,7 @@ var hurt_timer: int
 @export var protection: int = 2
 @export var shoot_cooldown: float = .6
 @export var projectile_damage = 12
-#@export var mana_cost: int = 200
+@export var mana_cost: int = 200
 
 @onready var healthbar = $health_bar
 @onready var nav: NavigationAgent2D = $NavigationAgent2D
@@ -71,7 +71,6 @@ func shoot_at_enemy():
 		add_child(projectile_instance)
 		shoot_timer = shoot_cooldown
 		$AnimatedSprite2D.play("sprite2")
-		#$AnimatedSprite2D.play("sprite1")
 		
 
 func take_damage(damage_dealt):
@@ -80,7 +79,6 @@ func take_damage(damage_dealt):
 	damage_taken = (damage_dealt + DRN())- (protection + DRN())
 	if damage_taken > 0: current_health -= damage_taken
 	healthbar.value = current_health
-	#$AnimatedSprite2D.set_self_modulate(Color(1,0,0))
 	$AnimatedSprite2D.modulate = Color(1,0,0)
 	hurt_timer = 15
 	if current_health <= 0:
@@ -95,15 +93,18 @@ func take_damage(damage_dealt):
 func has_projectile_children() -> bool:
 	for i in range(get_child_count()):
 		var child_node = get_child(i)
-		if child_node.name == "rock_projectile":
+		#if child_node.name == "projectile":
+		if "projectile" in child_node.get_groups():
 			return true
-	for i in range(get_child_count()):
-		var child_node = get_child(i)
-		if "Area2D" in child_node.name:
-			return true
+	#for i in range(get_child_count()):
+	#	var child_node = get_child(i)
+	#	if "Area2D" in child_node.name:
+	#		return true
 	return false
 
-func knockback(knockback_direction, knockback_power):
+func knockback(knockback_source_global_position, knockback_power):
+	var knockback_direction: Vector2
+	knockback_direction = global_position - knockback_source_global_position
 	velocity = knockback_direction.normalized() * knockback_power
 	move_and_slide()
 
@@ -111,7 +112,7 @@ func check_overlapping_bodies():
 	var overlapping_bodies = $unit_collision.get_overlapping_bodies()
 	for overlapping_body in overlapping_bodies:
 		if "unit" in overlapping_body.get_groups() and current_health > 0:
-			knockback(global_position - overlapping_body.global_position, 30)
+			knockback(overlapping_body.global_position, 30)
 	pass
 
 func _ready():
@@ -143,17 +144,6 @@ func _physics_process(delta):
 		shoot_timer -= delta
 	if current_health <= 0 and has_projectile_children() == false:
 		queue_free()
-
-func _on_hitbox_area_area_entered(area):
-	if "projectile" in area.get_groups() and enemy_color in area.get_groups() and current_health > 0:
-		healthbar.visible = true
-		take_damage(area.projectile_damage)
-		area.hit(1)
-		knockback(global_position - area.global_position, area.projectile_damage * 50)
-
-func _on_collision_area_body_entered(body):
-	if "unit" in body.get_groups() and team_color in body.get_groups() and current_health > 0:
-		knockback(global_position - body.global_position, 30)
 
 func DRN():
 	var total_result = 0

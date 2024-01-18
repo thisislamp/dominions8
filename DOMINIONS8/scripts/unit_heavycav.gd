@@ -14,7 +14,7 @@ var hurt_timer: int
 @export var max_health = 15
 @export var protection: int = 18
 @export var attack_cooldown: float = .5
-@export var move_speed = 200
+@export var move_speed = 160
 @export var attack_damage: int = 22
 #@export var mana_cost: int = 100
 
@@ -77,8 +77,9 @@ func take_damage(damage_dealt):
 		$pathfinding_collision.disabled = true
 		$unit_collision/unit_collisionshape.disabled = true
 
-func knockback(knockback_direction, knockback_power):
-	#knockback_direction = knockback_direction.normalized()
+func knockback(knockback_source_global_position, knockback_power):
+	var knockback_direction: Vector2
+	knockback_direction = global_position - knockback_source_global_position
 	velocity = knockback_direction.normalized() * knockback_power
 	move_and_slide()
 
@@ -86,7 +87,7 @@ func check_overlapping_bodies():
 	var overlapping_bodies = $unit_collision.get_overlapping_bodies()
 	for overlapping_body in overlapping_bodies:
 		if "unit" in overlapping_body.get_groups() and current_health > 0:
-			knockback(global_position - overlapping_body.global_position, 30)
+			knockback(overlapping_body.global_position, 30)
 	pass
 
 func _ready():
@@ -116,17 +117,6 @@ func _physics_process(delta):
 		attack_timer -= delta
 	if current_health <= 0:
 		queue_free()
-
-func _on_hitbox_area_area_entered(area):
-	if "projectile" in area.get_groups() and enemy_color in area.get_groups() and current_health > 0:
-		healthbar.visible = true
-		take_damage(area.projectile_damage)
-		area.hit(1)
-		knockback(global_position - area.global_position, area.projectile_damage * 50)
-
-func _on_collision_area_body_entered(body):
-	if "unit" in body.get_groups() and team_color in body.get_groups() and current_health > 0:
-		knockback(global_position - body.global_position, 30)
 
 func DRN():
 	var total_result = 0

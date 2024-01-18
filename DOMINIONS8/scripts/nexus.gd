@@ -5,16 +5,19 @@ var hurt_timer = 10
 var spawn_timer: int = 1
 var selected_unit: Object
 var selected_unit_mana_cost: int
+var spawn_direction
 var slinger_mana_cost: int = 80
-var hurler_mana_cost: int = 200
+var hurler_mana_cost: int = 150
 var berserker_mana_cost: int = 170
 var heavycav_mana_cost: int = 200
+var wizard_mana_cost: int = 160
 var game_active: bool = true
 
 @onready var unit_slinger = preload("res://scenes/unit_slinger.tscn")
 @onready var unit_hurler = preload("res://scenes/unit_hurler.tscn")
 @onready var unit_berserker = preload("res://scenes/unit_berserker.tscn")
 @onready var unit_heavycav = preload("res://scenes/unit_heavycav.tscn")
+@onready var unit_wizard = preload("res://scenes/unit_wizard.tscn")
 @onready var healthbar = $health_bar
 @onready var manabar = $mana_bar
 
@@ -86,26 +89,40 @@ func _on_hitbox_area_area_entered(area):
 		take_damage(area.projectile_damage)
 		area.hit(10)
 
-func spawn_unit(unit_scene, direction):
-	var unit_instance = unit_scene.instantiate()
-	if direction == null:
-		var random_choice = randi() % 4
-		if random_choice == 0: direction == "left"
-		if random_choice == 1: direction == "right"
-		if random_choice == 2: direction == "up"
-		if random_choice == 3: direction == "down"
-		unit_instance.position += Vector2(0, randf_range(-10, 10)*20)
-	if direction == "left":
-		unit_instance.position += Vector2(-100, randf_range(-10, 10))
-	if direction == "right":
-		unit_instance.position += Vector2(100, randf_range(-10, 10))
-	if direction == "up":
-		unit_instance.position += Vector2(randf_range(-10, 10), -150)
-	if direction == "down":
-		unit_instance.position += Vector2(randf_range(-10, 10), 150)
-	unit_instance.team_color = team_color
-	add_child(unit_instance)
-	
+func spawn_unit(unit_instance, spawn_direction):
+	var instance = unit_instance.instantiate()
+	instance.team_color = team_color
+	if spawn_direction == "top" and team_color == "blue":
+		instance.position += Vector2(-100, -100)
+	if spawn_direction == "mid" and team_color == "blue":
+		instance.position += Vector2(100, -100)
+	if spawn_direction == "bot" and team_color == "blue":
+		instance.position += Vector2(100, 100)
+	if spawn_direction == "top" and team_color == "red":
+		instance.position += Vector2(-100, -100)
+	if spawn_direction == "mid" and team_color == "red":
+		instance.position += Vector2(-100, 100)
+	if spawn_direction == "bot" and team_color == "red":
+		instance.position += Vector2(100, 100)
+	add_child(instance)
+	print(instance.global_position)
+
+func get_random_unit():
+	var random_unit = randi() % 5
+	if random_unit == 0: selected_unit = unit_slinger
+	if random_unit == 1: selected_unit = unit_hurler
+	if random_unit == 2: selected_unit = unit_berserker
+	if random_unit == 3: selected_unit = unit_heavycav
+	if random_unit == 4: selected_unit = unit_wizard
+	return selected_unit
+
+func get_random_spawn_direction():
+	var random_choice = randi() % 3
+	var spawn_direction: String
+	if random_choice == 0: spawn_direction = "top"
+	if random_choice == 1: spawn_direction = "mid"
+	if random_choice == 2: spawn_direction = "bot"
+	return spawn_direction
 
 func _process(delta):
 	#spawn_timer -= 1
@@ -123,31 +140,31 @@ func _process(delta):
 	if Input.is_action_just_pressed("c"): 
 		selected_unit = unit_heavycav
 		selected_unit_mana_cost = heavycav_mana_cost
+	if Input.is_action_just_pressed("w"): 
+		selected_unit = unit_wizard
+		selected_unit_mana_cost = wizard_mana_cost
 	if controlled_by == "human" and Input.is_action_just_pressed("left_mouse") and current_mana >= selected_unit_mana_cost:
-		spawn_unit(selected_unit, null)
+		spawn_unit(selected_unit, get_random_spawn_direction())
 		current_mana -= selected_unit_mana_cost
 	if controlled_by == "human" and Input.is_action_just_pressed("downarrow") and current_mana >= selected_unit_mana_cost:
-		spawn_unit(selected_unit, "down")
+		spawn_unit(selected_unit, "bot")
 		current_mana -= selected_unit_mana_cost
 	if controlled_by == "human" and Input.is_action_just_pressed("uparrow") and current_mana >= selected_unit_mana_cost:
-		spawn_unit(selected_unit, "up")
+		spawn_unit(selected_unit, "top")
 		current_mana -= selected_unit_mana_cost
 	if controlled_by == "human" and Input.is_action_just_pressed("rightarrow") and current_mana >= selected_unit_mana_cost:
-		spawn_unit(selected_unit, "right")
+		spawn_unit(selected_unit, "mid")
 		current_mana -= selected_unit_mana_cost
 	if controlled_by == "human" and Input.is_action_just_pressed("leftarrow") and current_mana >= selected_unit_mana_cost:
-		spawn_unit(selected_unit, "left")
+		spawn_unit(selected_unit, "mid")
 		current_mana -= selected_unit_mana_cost
 	if current_mana < max_mana and game_active == true: current_mana += 1
 	manabar.value = current_mana
 	if controlled_by == "ai" and current_mana >= 250:
-		spawn_unit(selected_unit, null)
+		#selected_unit = get_random_unit()
+		#spawn_direction = get_random_spawn_direction()
+		spawn_unit(get_random_unit(), get_random_spawn_direction())
 		current_mana -= selected_unit_mana_cost
-		var random_choice = randi() % 4
-		if random_choice == 0: selected_unit = unit_slinger
-		if random_choice == 1: selected_unit = unit_hurler
-		if random_choice == 2: selected_unit = unit_berserker
-		if random_choice == 3: selected_unit = unit_heavycav
 		
 
 func DRN():

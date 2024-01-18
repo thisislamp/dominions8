@@ -1,22 +1,21 @@
 extends CharacterBody2D
-class_name unit_
+class_name unit_slinger
 var destination: Vector2
 var direction: Vector2
-var move_speed = 120
+var move_speed = 90
 var enemy_color: String
-var closest_enemy: Node = null
+var closest_enemy_body: Node = null
 var attack_range: int = 300
 var shoot_timer: float = 0
 var current_health: int 
 var hurt_timer: int
-
+var state: String
 
 @export var team_color: String
 @export var max_health = 10
 @export var protection: int = 5
 @export var shoot_cooldown: float = .5
 @export var projectile_damage = 8
-#@export var mana_cost: int = 100
 
 @onready var healthbar = $health_bar
 @onready var nav: NavigationAgent2D = $NavigationAgent2D
@@ -30,36 +29,36 @@ func get_enemy_color():
 		enemy_color = 'red'
 
 func find_closest_enemy():
-	var closest_distance = float('inf')
-	closest_enemy = null
+	var closest_enemy_distance = float('inf')
+	closest_enemy_body = null
 	for node in get_tree().get_nodes_in_group(enemy_color):
 		if "projectile" in node.get_groups():
 			continue
 		var distance = global_position.distance_squared_to(node.global_position)
-		if distance and distance < closest_distance:
-			closest_distance = distance
-			closest_enemy = node
-		elif !closest_distance:
-			closest_distance = distance
-			closest_enemy = node
-	if closest_enemy and closest_distance > (attack_range * attack_range):
-		nav.target_position = closest_enemy.global_position
+		if distance and distance < closest_enemy_distance:
+			closest_enemy_distance = distance
+			closest_enemy_body = node
+		elif !closest_enemy_distance:
+			closest_enemy_distance = distance
+			closest_enemy_body = node
+	if closest_enemy_body and closest_enemy_distance > (attack_range * attack_range):
+		nav.target_position = closest_enemy_body.global_position
 		direction = nav.get_next_path_position() - global_position
 		direction = direction.normalized()
 		velocity = direction * move_speed
 	else:
-		#velocity = Vector2.ZERO
-		velocity = direction * .01
-		shoot_at_enemy()
+		velocity = Vector2.ZERO
+		#velocity = direction * .01
+		shoot()
 	if direction.x > 0:
 		$AnimatedSprite2D.scale.x = -1
 	elif direction.x < 0:
 		$AnimatedSprite2D.scale.x = 1
-	return closest_enemy
+	return closest_enemy_body
 
-func shoot_at_enemy():
-	if closest_enemy and shoot_timer <= 0:
-		$Marker2D.look_at(closest_enemy.global_position)
+func shoot():
+	if closest_enemy_body and shoot_timer <= 0:
+		$Marker2D.look_at(closest_enemy_body.global_position)
 		var projectile_instance = projectile_scene.instantiate()
 		projectile_instance.global_position = $Marker2D.global_position
 		projectile_instance.rotation = $Marker2D.rotation * randf_range(.95, 1.05)
@@ -68,7 +67,6 @@ func shoot_at_enemy():
 		add_child(projectile_instance)
 		shoot_timer = shoot_cooldown
 		$AnimatedSprite2D.play("sprite2")
-		#$AnimatedSprite2D.play("sprite1")
 		
 
 func take_damage(damage_dealt):
@@ -92,16 +90,13 @@ func take_damage(damage_dealt):
 func has_projectile_children() -> bool:
 	for i in range(get_child_count()):
 		var child_node = get_child(i)
-		if child_node.name == "rock_projectile":
-			return true
-	for i in range(get_child_count()):
-		var child_node = get_child(i)
-		if "Area2D" in child_node.name:
+		if "projectile" in child_node.get_groups():
 			return true
 	return false
 
-func knockback(knockback_direction, knockback_power):
-	#knockback_direction = knockback_direction.normalized()
+func knockback(knockback_source_global_position, knockback_power):
+	var knockback_direction: Vector2
+	knockback_direction = global_position - knockback_source_global_position
 	velocity = knockback_direction.normalized() * knockback_power
 	move_and_slide()
 
@@ -141,17 +136,6 @@ func _physics_process(delta):
 		shoot_timer -= delta
 	if current_health <= 0 and has_projectile_children() == false:
 		queue_free()
-
-func _on_hitbox_area_area_entered(area):
-	if "projectile" in area.get_groups() and enemy_color in area.get_groups() and current_health > 0:
-		healthbar.visible = true
-		take_damage(area.projectile_damage)
-		area.hit(1)
-		knockback(global_position - area.global_position, area.projectile_damage * 50)
-
-func _on_collision_area_body_entered(body):
-	if "unit" in body.get_groups() and team_color in body.get_groups() and current_health > 0:
-		knockback(global_position - body.global_position, 30)
 
 func DRN():
 	var total_result = 0

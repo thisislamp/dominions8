@@ -1,15 +1,15 @@
 extends Area2D
 
-@export var team_color: String
+var team_color: String
 var enemy_color: String
-@export var projectile_damage = 8
-@export var speed = 500
-@export var persistence_health: int = 1
+var projectile_damage = 8
+var speed = 500
+var persistence_health: int = 1
+var spin: float = 0
 
 func hit(persistance_hit):
 	persistence_health -= persistance_hit
 	projectile_damage -= 4
-	print(projectile_damage)
 	if persistence_health <= 0: queue_free()
 
 func _ready():
@@ -24,11 +24,19 @@ func _ready():
 		$teamcoloricon.set_self_modulate(Color(0,0,1))
 	add_to_group(team_color)
 	add_to_group("projectile")
+	add_to_group("rock")
 	#print("arrow groups:", get_groups())
 
 func _process(delta):
 	position += (Vector2.RIGHT*speed).rotated(rotation) * delta
-	#if persistence_counter <= 0: queue_free()
+	spin += 25
+	$teamcoloricon.rotation_degrees = spin
+	for body in get_overlapping_bodies():
+		if "unit" in body.get_groups() and body.is_in_group(enemy_color) and body.current_health > 0:
+			body.take_damage(projectile_damage)
+			body.knockback(global_position, projectile_damage)
+		if "building" in body.get_groups() and body.current_health > 0:
+			body.take_damage(projectile_damage)
 
 func _on_visible_on_screen_enabler_2d_screen_exited():
 	queue_free()

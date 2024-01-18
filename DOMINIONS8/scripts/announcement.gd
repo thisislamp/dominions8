@@ -12,7 +12,7 @@ func _process(delta):
 	if red_nexus.current_health <= 0:
 		text = ("BLUE TEAM WINS!")
 		visible = true
-		get_tree().paused = true
+		#get_tree().paused = true
 	elif blue_nexus.current_health <= 0:
 		text = ("RED TEAM WINS!")
 		visible = true

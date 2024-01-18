@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3 uid="uid://b2g4scc5okcc3"]
+
+[ext_resource type="Texture2D" uid="uid://cn48jaoiryrab" path="res://art/icon.svg" id="1_om1tl"]
+[ext_resource type="Script" path="res://scripts/deletearrow.gd" id="1_u3fv2"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_62qge"]
+radius = 17.0
+height = 130.0
+
+[node name="arrow" type="Area2D"]
+scale = Vector2(0.2, 0.2)
+collision_layer = 8388609
+collision_mask = 8388609
+script = ExtResource("1_u3fv2")
+
+[node name="teamcoloricon" type="Sprite2D" parent="."]
+modulate = Color(1, 0, 0, 1)
+rotation = 1.5708
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_om1tl")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+scale = Vector2(1, 0.26)
+shape = SubResource("CapsuleShape2D_62qge")
+
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+position = Vector2(3.5, 4.76837e-07)
+scale = Vector2(1.95, 1.7)
+
+[connection signal="screen_exited" from="VisibleOnScreenEnabler2D" to="." method="_on_visible_on_screen_enabler_2d_screen_exited"]

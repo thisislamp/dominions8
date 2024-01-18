@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://nnpxe0stwwmn"]
+[gd_scene load_steps=10 format=3 uid="uid://nnpxe0stwwmn"]
 
 [ext_resource type="Script" path="res://scripts/unit_slinger.gd" id="1_r5sbi"]
 [ext_resource type="Texture2D" uid="uid://dfvspp4l50hpm" path="res://art/slinger1.png" id="2_51pg5"]
@@ -34,6 +34,9 @@ height = 36.0
 radius = 11.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_oh8uj"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_h1mi7"]
+radius = 250.0
 
 [node name="unit_slinger" type="CharacterBody2D"]
 z_index = 1
@@ -81,6 +84,11 @@ shape = SubResource("CircleShape2D_tx2w6")
 
 [node name="pathfinding_collision" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_oh8uj")
+
+[node name="aggro_area" type="Area2D" parent="."]
+
+[node name="aggro_shape" type="CollisionShape2D" parent="aggro_area"]
+shape = SubResource("CircleShape2D_h1mi7")
 
 [connection signal="area_entered" from="hitbox_area" to="." method="_on_hitbox_area_area_entered"]
 [connection signal="body_entered" from="unit_collision" to="." method="_on_collision_area_body_entered"]
