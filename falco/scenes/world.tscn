@@ -1,0 +1,153 @@
+[gd_scene load_steps=9 format=3 uid="uid://cdppbigqtitka"]
+
+[ext_resource type="Texture2D" uid="uid://bj1rsoess7akh" path="res://art/parallax-space-backgound.png" id="3_t531k"]
+[ext_resource type="Texture2D" uid="uid://dnfwjval1k2ex" path="res://art/parallax-space-big-planet.png" id="4_ktaxf"]
+[ext_resource type="Texture2D" uid="uid://cdm0em7f4b2sf" path="res://art/parallax-space-ring-planet.png" id="5_8j4d6"]
+[ext_resource type="PackedScene" uid="uid://dl4vl7yhwdy3q" path="res://scenes/player.tscn" id="5_gebvk"]
+[ext_resource type="Texture2D" uid="uid://csjm3gpgg68h0" path="res://art/parallax-space-stars.png" id="6_mpldg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yepqe"]
+size = Vector2(4907, 710)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_f8l6a"]
+load_path = "res://.godot/imported/parallax-space-backgound.png-bad48ff22877f6d43f369a31d0f1f3ad.ctex"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rsu85"]
+size = Vector2(484, 2878)
+
+[node name="main" type="Node2D"]
+
+[node name="CharacterBody2D" parent="." instance=ExtResource("5_gebvk")]
+position = Vector2(-1, 107)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="CanvasLayer"]
+visible = false
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="CanvasLayer/ParallaxBackground"]
+visible = false
+position = Vector2(-126, 13)
+motion_mirroring = Vector2(272, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasLayer/ParallaxBackground/ParallaxLayer"]
+visible = false
+position = Vector2(-3, 68)
+texture = ExtResource("3_t531k")
+
+[node name="Sprite2D2" type="Sprite2D" parent="CanvasLayer/ParallaxBackground/ParallaxLayer"]
+visible = false
+position = Vector2(255, -153)
+scale = Vector2(3.43103, 3.43103)
+texture = ExtResource("4_ktaxf")
+
+[node name="Sprite2D3" type="Sprite2D" parent="CanvasLayer/ParallaxBackground/ParallaxLayer"]
+visible = false
+position = Vector2(-443, 59)
+scale = Vector2(4.38235, 4.38235)
+texture = ExtResource("5_8j4d6")
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="CanvasLayer/ParallaxBackground"]
+visible = false
+motion_mirroring = Vector2(272, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasLayer/ParallaxBackground/ParallaxLayer2"]
+position = Vector2(5, 3)
+scale = Vector2(4.63437, 4.63437)
+texture = ExtResource("6_mpldg")
+
+[node name="map" type="Node2D" parent="."]
+z_index = 1
+position = Vector2(1, -33)
+
+[node name="floor" type="StaticBody2D" parent="map"]
+position = Vector2(-15, -102)
+
+[node name="TextureRect" type="TextureRect" parent="map/floor"]
+self_modulate = Color(0, 1, 0, 1)
+texture_repeat = 2
+offset_left = -2072.0
+offset_top = 280.0
+offset_right = 2838.0
+offset_bottom = 986.0
+texture = ExtResource("3_t531k")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="map/floor"]
+position = Vector2(382.5, 635)
+shape = SubResource("RectangleShape2D_yepqe")
+
+[node name="ceiling" type="StaticBody2D" parent="map"]
+position = Vector2(-25, -1726)
+
+[node name="TextureRect" type="TextureRect" parent="map/ceiling"]
+self_modulate = Color(0, 1, 0, 1)
+texture_repeat = 2
+offset_left = -2072.0
+offset_top = -284.0
+offset_right = 2838.0
+offset_bottom = 440.0
+texture = ExtResource("3_t531k")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="map/ceiling"]
+position = Vector2(398, 75)
+shape = SubResource("RectangleShape2D_yepqe")
+
+[node name="leftwall" type="StaticBody2D" parent="map"]
+position = Vector2(-182, -976)
+
+[node name="TextureRect" type="TextureRect" parent="map/leftwall"]
+self_modulate = Color(0, 1, 0, 1)
+texture_repeat = 2
+offset_left = -2234.0
+offset_top = -1021.0
+offset_right = -1753.0
+offset_bottom = 1864.0
+texture = SubResource("CompressedTexture2D_f8l6a")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="map/leftwall"]
+position = Vector2(-1995.5, 430.25)
+shape = SubResource("RectangleShape2D_rsu85")
+
+[node name="rightwall" type="StaticBody2D" parent="map"]
+position = Vector2(4885, -980)
+
+[node name="TextureRect" type="TextureRect" parent="map/rightwall"]
+self_modulate = Color(0, 1, 0, 1)
+texture_repeat = 2
+offset_left = -2132.0
+offset_top = -1020.0
+offset_right = -1644.0
+offset_bottom = 1865.0
+texture = SubResource("CompressedTexture2D_f8l6a")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="map/rightwall"]
+position = Vector2(-1888, 421)
+shape = SubResource("RectangleShape2D_rsu85")
+
+[node name="Platforms" type="Node" parent="map"]
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="background" type="TextureRect" parent="Area2D"]
+z_index = -2
+z_as_relative = false
+offset_left = -2168.0
+offset_top = -1439.0
+offset_right = 2911.0
+offset_bottom = 250.0
+texture = ExtResource("3_t531k")
+
+[node name="TextureRect" type="TextureRect" parent="Area2D"]
+offset_left = 528.0
+offset_top = -1322.0
+offset_right = 2755.0
+offset_bottom = 144.0
+texture = ExtResource("6_mpldg")
+
+[node name="TextureRect" type="TextureRect" parent="Area2D/TextureRect"]
+layout_mode = 0
+offset_left = -2451.0
+offset_top = -19.0
+offset_right = -224.0
+offset_bottom = 1447.0
+texture = ExtResource("6_mpldg")

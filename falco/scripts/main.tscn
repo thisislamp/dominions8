@@ -1,0 +1,96 @@
+[gd_scene load_steps=10 format=3 uid="uid://iugmb82ykmbp"]
+
+[ext_resource type="Script" path="res://scripts/CharacterBody2D.gd" id="1_b2o05"]
+[ext_resource type="Texture2D" uid="uid://bhxpfd0xll2cx" path="res://art/icon.svg" id="1_evadh"]
+[ext_resource type="Texture2D" uid="uid://bj1rsoess7akh" path="res://art/parallax-space-backgound.png" id="2_50krw"]
+[ext_resource type="Texture2D" uid="uid://dnfwjval1k2ex" path="res://art/parallax-space-big-planet.png" id="3_w4hwo"]
+[ext_resource type="Texture2D" uid="uid://cdm0em7f4b2sf" path="res://art/parallax-space-ring-planet.png" id="4_1b4bq"]
+[ext_resource type="Texture2D" uid="uid://csjm3gpgg68h0" path="res://art/parallax-space-stars.png" id="5_pg8iu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_86atk"]
+size = Vector2(21, 21)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mifd7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_evadh")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yepqe"]
+size = Vector2(4907, 155)
+
+[node name="main" type="Node2D"]
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+position = Vector2(28, 29)
+script = ExtResource("1_b2o05")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+position = Vector2(134.5, 36.5)
+shape = SubResource("RectangleShape2D_86atk")
+
+[node name="Camera2D" type="Camera2D" parent="CharacterBody2D"]
+position = Vector2(-31, -32)
+anchor_mode = 0
+zoom = Vector2(3.555, 3.555)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterBody2D"]
+position = Vector2(134.5, 36.5)
+scale = Vector2(0.164063, 0.164063)
+sprite_frames = SubResource("SpriteFrames_mifd7")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="CanvasLayer"]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="CanvasLayer/ParallaxBackground"]
+motion_mirroring = Vector2(272, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasLayer/ParallaxBackground/ParallaxLayer"]
+position = Vector2(120, 68)
+texture = ExtResource("2_50krw")
+
+[node name="Sprite2D2" type="Sprite2D" parent="CanvasLayer/ParallaxBackground/ParallaxLayer"]
+visible = false
+position = Vector2(255, -153)
+scale = Vector2(3.43103, 3.43103)
+texture = ExtResource("3_w4hwo")
+
+[node name="Sprite2D3" type="Sprite2D" parent="CanvasLayer/ParallaxBackground/ParallaxLayer"]
+visible = false
+position = Vector2(-443, 59)
+scale = Vector2(4.38235, 4.38235)
+texture = ExtResource("4_1b4bq")
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="CanvasLayer/ParallaxBackground"]
+visible = false
+motion_mirroring = Vector2(272, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasLayer/ParallaxBackground/ParallaxLayer2"]
+position = Vector2(5, 3)
+scale = Vector2(4.63437, 4.63437)
+texture = ExtResource("5_pg8iu")
+
+[node name="Node2D" type="Node2D" parent="."]
+position = Vector2(1, -33)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Node2D"]
+position = Vector2(-15, -102)
+
+[node name="TextureRect" type="TextureRect" parent="Node2D/StaticBody2D"]
+self_modulate = Color(0, 1, 0, 1)
+texture_repeat = 2
+offset_left = -2072.0
+offset_top = 280.0
+offset_right = 2838.0
+offset_bottom = 440.0
+texture = ExtResource("2_50krw")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node2D/StaticBody2D"]
+position = Vector2(382.5, 357.5)
+shape = SubResource("RectangleShape2D_yepqe")
