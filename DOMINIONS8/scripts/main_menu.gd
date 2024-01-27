@@ -6,12 +6,14 @@ func _ready():
 	pass # Replace with function body.
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	if Input.is_action_just_pressed("enter"):
-		get_tree().change_scene_to_file("res://scenes/battlefield1.tscn")
-
+func _input(event):
+	if event is InputEventKey:
+		if event.pressed and event.keycode == KEY_ENTER:
+			enter_battle()
 
 func _on_button_pressed():
-	get_tree().change_scene_to_file("res://scenes/battlefield1.tscn")
+	enter_battle()
 
+func enter_battle():
+	get_tree().change_scene_to_file("res://scenes/battlefield1.tscn")
+	
