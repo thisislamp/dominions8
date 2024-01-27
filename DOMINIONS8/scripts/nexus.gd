@@ -69,7 +69,7 @@ func apply_team_color():
 func take_damage(damage_dealt):
 	var damage_taken: int
 	healthbar.visible = true
-	damage_taken = (damage_dealt + DRN())- (protection + DRN())
+	damage_taken = DRN.roll_vs(damage_dealt, protection)
 	if damage_taken > 0: current_health -= damage_taken
 	healthbar.value = current_health
 	hurt_timer = 10
@@ -185,18 +185,3 @@ func _physics_process(delta):
 		#spawn_direction = get_random_spawn_direction()
 		spawn_unit(get_random_unit(), get_random_lane())
 		current_mana -= selected_unit_mana_cost
-
-func DRN():
-	var total_result = 0
-	while true:
-		var die1 = randi() % 6 + 1
-		var die2 = randi() % 6 + 1
-		total_result += die1 + die2
-		if die1 == 6:
-			total_result -= 1
-			continue  # Re-roll the die
-		if die2 == 6:
-			total_result -= 1
-			continue  # Re-roll the die
-		break  # Exit the loop if no more re-rolls are needed
-	return total_result

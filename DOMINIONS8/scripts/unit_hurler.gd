@@ -79,7 +79,7 @@ func shoot_at_enemy():
 func take_damage(damage_dealt):
 	var damage_taken: int
 	healthbar.visible = true
-	damage_taken = (damage_dealt + DRN())- (protection + DRN())
+	damage_taken = DRN.roll_vs(damage_dealt, protection)
 	if damage_taken > 0: current_health -= damage_taken
 	healthbar.value = current_health
 	$AnimatedSprite2D.modulate = Color(1,0,0)
@@ -148,21 +148,6 @@ func _physics_process(delta):
 	if current_health <= 0 and has_projectile_children() == false:
 		queue_free()
 
-func DRN():
-	var total_result = 0
-	while true:
-		var die1 = randi() % 6 + 1
-		var die2 = randi() % 6 + 1
-		total_result += die1 + die2
-		if die1 == 6:
-			total_result -= 1
-			continue  # Re-roll the die
-		if die2 == 6:
-			total_result -= 1
-			continue  # Re-roll the die
-		break  # Exit the loop if no more re-rolls are needed
-	return total_result
-
 
 ###DEBUGGING ONLY
 func print_group_nodes(group_name: String):
@@ -177,6 +162,3 @@ func print_all_children():
 		var child_node = get_child(i)
 		print("Child node name:", child_node.name)
 	print("-----")
-
-
-

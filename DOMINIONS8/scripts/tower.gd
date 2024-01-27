@@ -57,7 +57,7 @@ func set_team_color(new_color: String):
 func take_damage(damage_dealt):
 	var damage_taken: int
 	healthbar.visible = true
-	damage_taken = (damage_dealt + DRN()) - (protection + DRN())
+	damage_taken = DRN.roll_vs(damage_dealt, protection)
 	if damage_taken > 0: 
 		current_health -= damage_taken
 	healthbar.value = current_health
@@ -121,19 +121,3 @@ func _physics_process(delta):
 		hurt_timer -= 1
 	else: 
 		$towericon.modulate = Color(1,1,1)
-	
-
-func DRN():
-	var total_result = 0
-	while true:
-		var die1 = randi() % 6 + 1
-		var die2 = randi() % 6 + 1
-		total_result += die1 + die2
-		if die1 == 6:
-			total_result -= 1
-			continue  # Re-roll the die
-		if die2 == 6:
-			total_result -= 1
-			continue  # Re-roll the die
-		break  # Exit the loop if no more re-rolls are needed
-	return total_result
