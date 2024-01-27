@@ -31,6 +31,9 @@ var enemy_bot_buildings
 @export var protection: int = 15
 @export var controlled_by: String
 
+const color_red = Color(1,.5,.5)
+const color_blue = Color(.5,.5,1)
+
 func get_enemy_color():
 	if team_color == 'red':
 		enemy_color = 'blue'
@@ -49,7 +52,7 @@ func _ready():
 	apply_team_color()
 	get_enemy_color()
 	get_enemy_lane_buildings()
-	$castleicon.modulate = Color(1,1,1)
+	$castleicon.modulate = Color.WHITE
 	current_health = max_health
 	healthbar.value = current_health
 	healthbar.max_value = max_health
@@ -62,9 +65,9 @@ func _ready():
 
 func apply_team_color():
 	if team_color == 'red':
-		$teamcoloricon.color = (Color(1,.5,.5))
+		$teamcoloricon.color = color_red
 	elif team_color == 'blue':
-		$teamcoloricon.color = (Color(.5,.5,1))
+		$teamcoloricon.color = color_blue
 
 func take_damage(damage_dealt):
 	var damage_taken: int
@@ -73,7 +76,8 @@ func take_damage(damage_dealt):
 	if damage_taken > 0: current_health -= damage_taken
 	healthbar.value = current_health
 	hurt_timer = 10
-	$castleicon.modulate = Color(1,0,0)
+	$castleicon.modulate = Color.RED
+	
 	if healthbar.visible == false:
 		healthbar.visible = true
 	if current_health <= 0:
@@ -146,7 +150,7 @@ func _physics_process(delta):
 	if hurt_timer > 0: 
 		hurt_timer -= 1
 	else: 
-		$castleicon.modulate = Color(1,1,1)
+		$castleicon.modulate = Color.WHITE
 	if Input.is_action_just_pressed("s"): 
 		selected_unit = unit_slinger
 		selected_unit_mana_cost = slinger_mana_cost
