@@ -104,14 +104,13 @@ func spawn_unit(unit_instance, lane):
 	add_child(instance)
 
 func get_random_unit():
-	#var random_unit = randi() % 5
-	var random_unit = randi() % 1
-	if random_unit == 0: selected_unit = unit_slinger
-	#if random_unit == 1: selected_unit = unit_hurler
-	#if random_unit == 2: selected_unit = unit_berserker
-	#if random_unit == 3: selected_unit = unit_heavycav
-	#if random_unit == 4: selected_unit = unit_wizard
-	return selected_unit
+	match randi_range(0, 4):
+		0: return unit_slinger
+		#1: return unit_hurler
+		#2: return unit_berserker
+		#3: return unit_heavycav
+		#4: return unit_wizard
+		_: return unit_slinger
 
 func get_random_lane():
 	var random_choice = randi() % 3
