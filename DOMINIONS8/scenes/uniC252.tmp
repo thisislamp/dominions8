@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://nnpxe0stwwmn"]
+[gd_scene load_steps=11 format=3 uid="uid://nnpxe0stwwmn"]
 
-[ext_resource type="Script" path="res://scripts/unit_slinger.gd" id="1_oc4fx"]
+[ext_resource type="Script" path="res://scripts/unit_slinger.gd" id="1_r5sbi"]
 [ext_resource type="Texture2D" uid="uid://dfvspp4l50hpm" path="res://art/slinger1.png" id="2_51pg5"]
 [ext_resource type="Texture2D" uid="uid://dlbnnrggocdxb" path="res://art/slinger2.png" id="3_tphof"]
+[ext_resource type="PackedScene" uid="uid://d0xdciph4bv65" path="res://scenes/unit_controller.tscn" id="5_8dlpn"]
 [ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="5_ajsmr"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_jc557"]
@@ -42,7 +43,7 @@ radius = 250.0
 z_index = 1
 motion_mode = 1
 wall_min_slide_angle = 0.0
-script = ExtResource("1_oc4fx")
+script = ExtResource("1_r5sbi")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -8)
@@ -64,7 +65,7 @@ polygon = PackedVector2Array(64, 0, 46.5455, -42.6665, 0, -60.9522, -46.5455, -4
 collision_layer = 8388609
 collision_mask = 8388609
 
-[node name="hitbox_collision" type="CollisionShape2D" parent="hitbox_area"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox_area"]
 position = Vector2(0, -7)
 shape = SubResource("CapsuleShape2D_n2d5l")
 
@@ -85,7 +86,10 @@ shape = SubResource("CircleShape2D_oh8uj")
 [node name="aggro_area" type="Area2D" parent="."]
 
 [node name="aggro_shape" type="CollisionShape2D" parent="aggro_area"]
+visible = false
 shape = SubResource("CircleShape2D_h1mi7")
+
+[node name="unit_controller" parent="." instance=ExtResource("5_8dlpn")]
 
 [connection signal="area_entered" from="hitbox_area" to="." method="_on_hitbox_area_area_entered"]
 [connection signal="body_entered" from="unit_collision" to="." method="_on_collision_area_body_entered"]

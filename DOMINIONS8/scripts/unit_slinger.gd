@@ -1,26 +1,30 @@
 extends CharacterBody2D
 class_name unit_slinger
+
 var destination: Vector2
 var direction: Vector2
-var move_speed = 90
 var enemy_color: String
-var closest_enemy_body: Node = null
-var attack_range: int = 300
+#var closest_enemy: Node = null
 var shoot_timer: float = 0
 var current_health: int 
 var hurt_timer: int
-var state: String
+var lane: String
+var waypoints = []
+var current_waypoint_index = 0
 
 @export var team_color: String
 @export var max_health = 10
 @export var protection: int = 5
 @export var shoot_cooldown: float = .5
 @export var projectile_damage = 8
+@export var attack_range: int = 200
+@export var move_speed = 150
+
+@export var projectile_scene = preload("res://scenes/rock_projectile.tscn")
 
 @onready var healthbar = $health_bar
 @onready var nav: NavigationAgent2D = $NavigationAgent2D
 
-var projectile_scene = preload("res://scenes/rock_projectile.tscn")
 
 func get_enemy_color():
 	if team_color == 'red':
@@ -28,46 +32,66 @@ func get_enemy_color():
 	elif team_color == 'blue':
 		enemy_color = 'red'
 
-func find_closest_enemy():
-	var closest_enemy_distance = float('inf')
-	closest_enemy_body = null
-	for node in get_tree().get_nodes_in_group(enemy_color):
-		if "projectile" in node.get_groups():
-			continue
-		var distance = global_position.distance_squared_to(node.global_position)
-		if distance and distance < closest_enemy_distance:
-			closest_enemy_distance = distance
-			closest_enemy_body = node
-		elif !closest_enemy_distance:
-			closest_enemy_distance = distance
-			closest_enemy_body = node
-	if closest_enemy_body and closest_enemy_distance > (attack_range * attack_range):
-		nav.target_position = closest_enemy_body.global_position
+func navigate_to_waypoints():
+	if current_waypoint_index < waypoints.size() and waypoints.size() > 0:
+		nav.target_position = waypoints[current_waypoint_index]
 		direction = nav.get_next_path_position() - global_position
 		direction = direction.normalized()
 		velocity = direction * move_speed
-	else:
-		velocity = Vector2.ZERO
-		#velocity = direction * .01
-		shoot()
-	if direction.x > 0:
-		$AnimatedSprite2D.scale.x = -1
-	elif direction.x < 0:
-		$AnimatedSprite2D.scale.x = 1
-	return closest_enemy_body
+		if global_position.distance_to(nav.target_position) < 50:
+			current_waypoint_index += 1
+	if waypoints.size() == 0:
+		print("no waypoints")
+	elif current_waypoint_index == waypoints.size():
+		print("touchdown")
+	
+func check_aggro_area():
+	var overlapping_bodies = $aggro_area.get_overlapping_bodies()
+	if overlapping_bodies.size() == 0:
+		navigate_to_waypoints()
+		return
+	var closest_enemy = null
+	var closest_distance = float('inf')
 
-func shoot():
-	if closest_enemy_body and shoot_timer <= 0:
-		$Marker2D.look_at(closest_enemy_body.global_position)
+	for overlapping_body in overlapping_bodies:
+		if "unit" in overlapping_body.get_groups() or "building" in overlapping_body.get_groups():
+			if overlapping_body.current_health > 0 and overlapping_body.team_color == enemy_color: 
+				var distance = global_position.distance_squared_to(overlapping_body.global_position)
+				print(distance)
+				if distance < closest_distance or !closest_distance:
+					closest_distance = distance
+					closest_enemy = overlapping_body
+	if closest_enemy and closest_distance > (attack_range * attack_range):
+		nav.target_position = closest_enemy.global_position
+		direction = nav.get_next_path_position() - global_position
+		velocity = direction.normalized() * move_speed
+	elif closest_enemy and closest_distance <= (attack_range * attack_range):
+		velocity = direction * 0.01
+		#print("shoot")
+		shoot_at_enemy(closest_enemy)
+		return closest_enemy
+	elif !closest_enemy:
+		navigate_to_waypoints()
+		return
+
+func shoot_at_enemy(closest_enemy):
+	if closest_enemy and shoot_timer <= 0:
+		$Marker2D.look_at(closest_enemy.global_position)
 		var projectile_instance = projectile_scene.instantiate()
 		projectile_instance.global_position = $Marker2D.global_position
 		projectile_instance.rotation = $Marker2D.rotation * randf_range(.95, 1.05)
 		projectile_instance.team_color = team_color
+		projectile_instance.scale.x = .3
+		projectile_instance.scale.y = .3
 		projectile_instance.projectile_damage = projectile_damage
+		projectile_instance.speed = 500
+		projectile_instance.persistence_health = 1
+		projectile_instance.attack_range = attack_range
 		add_child(projectile_instance)
 		shoot_timer = shoot_cooldown
 		$AnimatedSprite2D.play("sprite2")
-		
+	#if !closest_enemy:
+		#print("no enemy")
 
 func take_damage(damage_dealt):
 	var damage_taken: int
@@ -75,7 +99,6 @@ func take_damage(damage_dealt):
 	damage_taken = (damage_dealt + DRN())- (protection + DRN())
 	if damage_taken > 0: current_health -= damage_taken
 	healthbar.value = current_health
-	
 	$AnimatedSprite2D.modulate = Color(1,0,0)
 	hurt_timer = 15
 	if current_health <= 0:
@@ -83,7 +106,7 @@ func take_damage(damage_dealt):
 		$teamcoloricon.visible = false
 		$AnimatedSprite2D.visible = false
 		remove_from_group(team_color)
-		$unit_collision/unit_collisionshape.disabled = true
+		$hitbox_area/hitbox_collision.disabled = true
 		$pathfinding_collision.disabled = true
 		$unit_collision/unit_collisionshape.disabled = true
 
@@ -104,15 +127,19 @@ func check_overlapping_bodies():
 	var overlapping_bodies = $unit_collision.get_overlapping_bodies()
 	for overlapping_body in overlapping_bodies:
 		if "unit" in overlapping_body.get_groups() and current_health > 0:
-			knockback(global_position - overlapping_body.global_position, 30)
+			knockback(overlapping_body.global_position, 30)
 	pass
 
 func _ready():
 	add_to_group(team_color)
 	add_to_group("unit")
 	get_enemy_color()
-	find_closest_enemy()
+	#find_closest_enemy()
 	$AnimatedSprite2D.modulate = Color(1,1,1)
+	if attack_range >= 250:
+		$aggro_area/aggro_shape.shape.radius = attack_range + 25
+	else: $aggro_area/aggro_shape.shape.radius = 275
+		
 	current_health = max_health
 	healthbar.value = current_health
 	healthbar.max_value = max_health
@@ -125,7 +152,10 @@ func _ready():
 
 func _physics_process(delta):
 	if current_health > 0:
-		find_closest_enemy()
+		#find_closest_enemy()
+		check_aggro_area()
+		#if waypoints.size() > 0:
+		#	navigate_to_waypoints()
 		move_and_slide()
 		check_overlapping_bodies()
 		if hurt_timer > 0: hurt_timer -= 1
@@ -136,6 +166,10 @@ func _physics_process(delta):
 		shoot_timer -= delta
 	if current_health <= 0 and has_projectile_children() == false:
 		queue_free()
+	if direction.x > 0:
+		$AnimatedSprite2D.scale.x = -1
+	elif direction.x < 0:
+		$AnimatedSprite2D.scale.x = 1
 
 func DRN():
 	var total_result = 0

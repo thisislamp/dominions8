@@ -8,6 +8,7 @@ var attack_range: int = 35
 var attack_timer: float = 0
 var current_health: int 
 var hurt_timer: int
+var lane: String
 
 
 @export var team_color: String

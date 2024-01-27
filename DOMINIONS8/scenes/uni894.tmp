@@ -50,6 +50,7 @@ sprite_frames = SubResource("SpriteFrames_jc557")
 animation = &"sprite1"
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+debug_enabled = true
 
 [node name="teamcoloricon" type="Polygon2D" parent="."]
 modulate = Color(1, 1, 1, 0.443137)
@@ -85,6 +86,7 @@ shape = SubResource("CircleShape2D_oh8uj")
 [node name="aggro_area" type="Area2D" parent="."]
 
 [node name="aggro_shape" type="CollisionShape2D" parent="aggro_area"]
+visible = false
 shape = SubResource("CircleShape2D_h1mi7")
 
 [connection signal="area_entered" from="hitbox_area" to="." method="_on_hitbox_area_area_entered"]

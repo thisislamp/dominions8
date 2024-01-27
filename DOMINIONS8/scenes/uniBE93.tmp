@@ -50,6 +50,7 @@ sprite_frames = SubResource("SpriteFrames_jc557")
 animation = &"sprite1"
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+debug_enabled = true
 
 [node name="teamcoloricon" type="Polygon2D" parent="."]
 modulate = Color(1, 1, 1, 0.443137)

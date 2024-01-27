@@ -2,16 +2,19 @@ extends Node2D
 var current_mana
 var enemy_color
 var hurt_timer = 10
-var spawn_timer: int = 1
 var selected_unit: Object
 var selected_unit_mana_cost: int
-var spawn_direction
-var slinger_mana_cost: int = 80
+var lane
+var slinger_mana_cost: int = 25
 var hurler_mana_cost: int = 150
 var berserker_mana_cost: int = 170
-var heavycav_mana_cost: int = 200
+var heavycav_mana_cost: int = 170
 var wizard_mana_cost: int = 160
 var game_active: bool = true
+var enemy_top_buildings
+var enemy_mid_buildings
+var enemy_bot_buildings
+
 
 @onready var unit_slinger = preload("res://scenes/unit_slinger.tscn")
 @onready var unit_hurler = preload("res://scenes/unit_hurler.tscn")
@@ -38,11 +41,15 @@ func get_enemy_color():
 
 func _ready():
 	add_to_group(team_color)
-	add_to_group("building")
+	add_to_group('building')
+	add_to_group('top')
+	add_to_group('mid')
+	add_to_group('bot')
 	set_as_top_level(true)
 	apply_team_color()
 	get_enemy_color()
-	$backgroundcoloricon.modulate = Color(1,1,1)
+	get_enemy_lane_buildings()
+	$castleicon.modulate = Color(1,1,1)
 	current_health = max_health
 	healthbar.value = current_health
 	healthbar.max_value = max_health
@@ -55,19 +62,9 @@ func _ready():
 
 func apply_team_color():
 	if team_color == 'red':
-		$teamcoloricon.set_self_modulate(Color(1,0,0))
+		$teamcoloricon.color = (Color(1,.5,.5))
 	elif team_color == 'blue':
-		$teamcoloricon.set_self_modulate(Color(0,0,1))
-
-func set_team_color(new_color: String):
-	if new_color == "red" or new_color == "blue":
-		team_color = new_color
-	else:
-		print("Invalid color option. Allowed options are 'red' or 'blue'")
-	if team_color == 'red':
-		$teamcoloricon.set_self_modulate(Color(1,0,0))
-	elif team_color == 'blue':
-		$teamcoloricon.set_self_modulate(Color(0,0,1))
+		$teamcoloricon.color = (Color(.5,.5,1))
 
 func take_damage(damage_dealt):
 	var damage_taken: int
@@ -75,59 +72,82 @@ func take_damage(damage_dealt):
 	damage_taken = (damage_dealt + DRN())- (protection + DRN())
 	if damage_taken > 0: current_health -= damage_taken
 	healthbar.value = current_health
-	hurt_timer = 15
-	$backgroundcoloricon.modulate = Color(1,0,0)
+	hurt_timer = 10
+	$castleicon.modulate = Color(1,0,0)
 	if healthbar.visible == false:
 		healthbar.visible = true
 	if current_health <= 0:
-		$backgroundcoloricon.modulate = Color(1,0,0)
 		remove_from_group(team_color)
-		#queue_free()
 
-func _on_hitbox_area_area_entered(area):
-	if "projectile" in area.get_groups() and enemy_color in area.get_groups() and current_health > 0:
-		take_damage(area.projectile_damage)
-		area.hit(10)
-
-func spawn_unit(unit_instance, spawn_direction):
+func spawn_unit(unit_instance, lane):
 	var instance = unit_instance.instantiate()
 	instance.team_color = team_color
-	if spawn_direction == "top" and team_color == "blue":
+	instance.lane = lane
+	if lane == "top" and team_color == "blue":
 		instance.position += Vector2(-100, -100)
-	if spawn_direction == "mid" and team_color == "blue":
+		instance.waypoints = [get_node("/root/main/redtopt1").global_position, get_node("/root/main/redtopt2").global_position, get_node("/root/main/red_nexus").global_position]
+	if lane == "mid" and team_color == "blue":
 		instance.position += Vector2(100, -100)
-	if spawn_direction == "bot" and team_color == "blue":
+		instance.waypoints = [get_node("/root/main/redmidt1").global_position, get_node("/root/main/redmidt2").global_position, get_node("/root/main/red_nexus").global_position]
+	if lane == "bot" and team_color == "blue":
 		instance.position += Vector2(100, 100)
-	if spawn_direction == "top" and team_color == "red":
+		instance.waypoints = [get_node("/root/main/redbott1").global_position, get_node("/root/main/redbott2").global_position, get_node("/root/main/red_nexus").global_position]
+	if lane == "top" and team_color == "red":
 		instance.position += Vector2(-100, -100)
-	if spawn_direction == "mid" and team_color == "red":
+		instance.waypoints = [get_node("/root/main/bluetopt1").global_position, get_node("/root/main/bluetopt2").global_position, get_node("/root/main/blue_nexus").global_position]
+	if lane == "mid" and team_color == "red":
 		instance.position += Vector2(-100, 100)
-	if spawn_direction == "bot" and team_color == "red":
+		instance.waypoints = [get_node("/root/main/bluemidt1").global_position, get_node("/root/main/bluemidt2").global_position, get_node("/root/main/blue_nexus").global_position]
+	if lane == "bot" and team_color == "red":
 		instance.position += Vector2(100, 100)
+		instance.waypoints = [get_node("/root/main/bluemidt1").global_position, get_node("/root/main/bluemidt2").global_position, get_node("/root/main/blue_nexus").global_position]
 	add_child(instance)
-	print(instance.global_position)
 
 func get_random_unit():
-	var random_unit = randi() % 5
+	#var random_unit = randi() % 5
+	var random_unit = randi() % 1
 	if random_unit == 0: selected_unit = unit_slinger
-	if random_unit == 1: selected_unit = unit_hurler
-	if random_unit == 2: selected_unit = unit_berserker
-	if random_unit == 3: selected_unit = unit_heavycav
-	if random_unit == 4: selected_unit = unit_wizard
+	#if random_unit == 1: selected_unit = unit_hurler
+	#if random_unit == 2: selected_unit = unit_berserker
+	#if random_unit == 3: selected_unit = unit_heavycav
+	#if random_unit == 4: selected_unit = unit_wizard
 	return selected_unit
 
-func get_random_spawn_direction():
+func get_random_lane():
 	var random_choice = randi() % 3
-	var spawn_direction: String
-	if random_choice == 0: spawn_direction = "top"
-	if random_choice == 1: spawn_direction = "mid"
-	if random_choice == 2: spawn_direction = "bot"
-	return spawn_direction
+	var lane: String
+	if random_choice == 0: lane = "top"
+	if random_choice == 1: lane = "mid"
+	if random_choice == 2: lane = "bot"
+	return lane
 
-func _process(delta):
-	#spawn_timer -= 1
-	if hurt_timer > 0: hurt_timer -= 1
-	else: $backgroundcoloricon.modulate = Color(1,1,1)
+func get_enemy_lane_buildings():
+	var enemy_top_buildings = []
+	var enemy_mid_buildings = []
+	var enemy_bot_buildings = []
+	var buildings = get_tree().get_nodes_in_group("building")
+	for building in buildings:
+		if building.is_in_group(enemy_color):
+			if building.is_in_group("top"):
+				enemy_top_buildings.append(building)
+			if building.is_in_group("mid"):
+				enemy_mid_buildings.append(building)
+			if building.is_in_group("bot"):
+				enemy_bot_buildings.append(building)
+	#return enemy_top_buildings
+	#return enemy_mid_buildings
+	#return enemy_bot_buildings
+	return enemy_top_buildings and enemy_mid_buildings and enemy_bot_buildings
+
+func _physics_process(delta):
+	var delay_timer = 10
+	delay_timer -= 1
+	if delay_timer <= 0:
+		get_enemy_lane_buildings()
+	if hurt_timer > 0: 
+		hurt_timer -= 1
+	else: 
+		$castleicon.modulate = Color(1,1,1)
 	if Input.is_action_just_pressed("s"): 
 		selected_unit = unit_slinger
 		selected_unit_mana_cost = slinger_mana_cost
@@ -144,7 +164,7 @@ func _process(delta):
 		selected_unit = unit_wizard
 		selected_unit_mana_cost = wizard_mana_cost
 	if controlled_by == "human" and Input.is_action_just_pressed("left_mouse") and current_mana >= selected_unit_mana_cost:
-		spawn_unit(selected_unit, get_random_spawn_direction())
+		spawn_unit(selected_unit, get_random_lane())
 		current_mana -= selected_unit_mana_cost
 	if controlled_by == "human" and Input.is_action_just_pressed("downarrow") and current_mana >= selected_unit_mana_cost:
 		spawn_unit(selected_unit, "bot")
@@ -160,12 +180,11 @@ func _process(delta):
 		current_mana -= selected_unit_mana_cost
 	if current_mana < max_mana and game_active == true: current_mana += 1
 	manabar.value = current_mana
-	if controlled_by == "ai" and current_mana >= 250:
+	if controlled_by == "ai" and current_mana >= 50:
 		#selected_unit = get_random_unit()
 		#spawn_direction = get_random_spawn_direction()
-		spawn_unit(get_random_unit(), get_random_spawn_direction())
+		spawn_unit(get_random_unit(), get_random_lane())
 		current_mana -= selected_unit_mana_cost
-		
 
 func DRN():
 	var total_result = 0

@@ -9,6 +9,7 @@ var attack_range: int = 170
 var shoot_timer: float = 0
 var current_health: int 
 var hurt_timer: int
+var lane: String
 
 @export var team_color: String
 @export var max_health = 30
@@ -49,6 +50,7 @@ func find_closest_enemy():
 	else:
 		#velocity = Vector2.ZERO
 		velocity = direction * .01
+		print(velocity)
 		shoot_at_enemy()
 	if direction.x > 0:
 		$AnimatedSprite2D.scale.x = -1
@@ -68,6 +70,7 @@ func shoot_at_enemy():
 		projectile_instance.projectile_damage = projectile_damage
 		projectile_instance.speed = 375
 		projectile_instance.persistence_health = 3
+		projectile_instance.attack_range = attack_range
 		add_child(projectile_instance)
 		shoot_timer = shoot_cooldown
 		$AnimatedSprite2D.play("sprite2")

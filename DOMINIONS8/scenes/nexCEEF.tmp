@@ -10,11 +10,18 @@ size = Vector2(126, 126)
 
 [node name="nexus" type="StaticBody2D"]
 script = ExtResource("1_pw3gp")
+max_health = null
+max_mana = null
+current_health = null
+team_color = null
+protection = null
+controlled_by = null
 
 [node name="teamcoloricon" type="Polygon2D" parent="."]
 position = Vector2(0, -1)
 scale = Vector2(100, 100)
-polygon = PackedVector2Array(0.63, 0.28, 0.63, -0.36, 0.36, -0.62, -0.32, -0.62, -0.62, -0.34, -0.62, 0.34, -0.33, 0.62, 0.32, 0.62)
+color = Color(0.384314, 0.384314, 0.180392, 1)
+polygon = PackedVector2Array(0.62, 0.62, 0.62, -0.62, -0.62, -0.62, -0.62, 0.62)
 
 [node name="castleicon" type="Sprite2D" parent="."]
 scale = Vector2(1.06378, 1.06378)
@@ -30,12 +37,14 @@ shape = SubResource("RectangleShape2D_1yimb")
 
 [node name="health_bar" parent="." instance=ExtResource("3_quns7")]
 offset_left = -50.0
-offset_top = -70.0
+offset_top = -73.0
 offset_right = 50.0
-offset_bottom = -62.0
+offset_bottom = -65.0
 
 [node name="mana_bar" parent="." instance=ExtResource("4_5dqeo")]
 offset_left = -50.0
-offset_top = -62.0
+offset_top = -65.0
 offset_right = 50.0
-offset_bottom = -54.0
+offset_bottom = -57.0
+
+[connection signal="area_entered" from="hitbox_area" to="." method="_on_hitbox_area_area_entered"]

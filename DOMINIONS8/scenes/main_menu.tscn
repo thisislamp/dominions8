@@ -14,16 +14,18 @@ script = ExtResource("1_8sb11")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
-offset_right = 1159.0
-offset_bottom = 649.0
+offset_right = 1925.0
+offset_bottom = 1055.0
 texture = ExtResource("1_tdjbi")
+expand_mode = 3
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 0
-offset_left = 90.0
-offset_top = 108.0
-offset_right = 348.0
-offset_bottom = 226.0
+offset_left = 168.0
+offset_top = 151.0
+offset_right = 638.0
+offset_bottom = 413.0
+theme_override_font_sizes/font_size = 70
 text = "GO BATTLE!"
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

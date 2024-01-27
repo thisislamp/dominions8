@@ -84,7 +84,6 @@ libraries = {
 [node name="explosion_area" type="Area2D" parent="."]
 
 [node name="explosion_shape" type="CollisionShape2D" parent="explosion_area"]
-scale = Vector2(1, 1)
 shape = SubResource("CircleShape2D_syw3k")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -6,6 +6,8 @@ var projectile_damage = 0
 var persistence_health: int = 100
 var fireballspin: float = 0
 var speed = 375
+var attack_range: int
+var origin
 
 func _ready():
 	if team_color == 'red':
@@ -15,6 +17,7 @@ func _ready():
 	set_as_top_level(true)
 	add_to_group(team_color)
 	add_to_group("projectile")
+	origin = get_parent().global_position
 	$explosion.visible = false
 	var projectile_damage = 0
 	
@@ -45,6 +48,8 @@ func _process(delta):
 	for body in get_overlapping_bodies():
 		if body.is_in_group(enemy_color):
 			detonate()
+	if global_position.distance_to(origin) > attack_range * 2:
+		queue_free()
 
 
 func _on_visible_on_screen_enabler_2d_screen_exited():

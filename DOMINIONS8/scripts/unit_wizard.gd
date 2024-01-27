@@ -9,7 +9,7 @@ var attack_range: int = 320
 var shoot_timer: float = 0
 var current_health: int 
 var hurt_timer: int
-
+var lane: String
 
 @export var team_color: String
 @export var max_health = 10
@@ -64,6 +64,7 @@ func shoot_at_enemy():
 		projectile_instance.global_position = $Marker2D.global_position
 		projectile_instance.rotation = $Marker2D.rotation * randf_range(.95, 1.05)
 		projectile_instance.team_color = team_color
+		projectile_instance.attack_range = attack_range
 		#projectile_instance.scale = .1
 		#projectile_instance.projectile_damage = projectile_damage
 		add_child(projectile_instance)

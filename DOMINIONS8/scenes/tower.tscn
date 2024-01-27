@@ -1,0 +1,50 @@
+[gd_scene load_steps=7 format=3 uid="uid://cd2qcst8nk5cr"]
+
+[ext_resource type="Script" path="res://scripts/tower.gd" id="1_u2ovc"]
+[ext_resource type="Texture2D" uid="uid://bskx1uf567283" path="res://art/tower.png" id="2_l0a11"]
+[ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="3_82omy"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1teiy"]
+size = Vector2(44, 43.75)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hcwnd"]
+size = Vector2(47, 79.5)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2r68c"]
+radius = 200.0
+
+[node name="tower" type="StaticBody2D"]
+script = ExtResource("1_u2ovc")
+
+[node name="towericon" type="Sprite2D" parent="."]
+position = Vector2(0, -25)
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("2_l0a11")
+
+[node name="teamcoloricon" type="Polygon2D" parent="."]
+position = Vector2(-2.86102e-06, -18.5)
+scale = Vector2(38.7097, 65.3226)
+color = Color(0.384314, 0.384314, 0.180392, 1)
+texture = ExtResource("2_l0a11")
+polygon = PackedVector2Array(0.62, 0.62, 0.62, -0.62, -0.62, -0.62, -0.62, 0.62)
+
+[node name="pathfinding_collision" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_1teiy")
+
+[node name="hitbox_area" type="Area2D" parent="."]
+
+[node name="hitbox_shape" type="CollisionShape2D" parent="hitbox_area"]
+position = Vector2(-0.5, -18.25)
+shape = SubResource("RectangleShape2D_hcwnd")
+
+[node name="health_bar" parent="." instance=ExtResource("3_82omy")]
+offset_left = -25.0
+offset_top = -63.0
+offset_bottom = -59.0
+
+[node name="shoot_range_area" type="Area2D" parent="."]
+
+[node name="shoot_range_shape" type="CollisionShape2D" parent="shoot_range_area"]
+shape = SubResource("CircleShape2D_2r68c")
+
+[node name="Marker2D" type="Marker2D" parent="."]

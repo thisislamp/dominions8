@@ -19,10 +19,8 @@ shape = SubResource("CapsuleShape2D_62qge")
 
 [node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
 position = Vector2(2.38419e-07, -4.76837e-07)
-scale = Vector2(1, 1)
 
 [node name="teamcoloricon" type="Polygon2D" parent="."]
-modulate = Color(1, 1, 1, 0.443137)
 z_index = -1
 scale = Vector2(0.171875, 0.164063)
 polygon = PackedVector2Array(64, 0, 46.5455, -42.6665, 0, -60.9522, -46.5455, -42.6665, -64, 0, -46.5455, 48.7618, 0, 60.9522, 46.5455, 48.7618)
