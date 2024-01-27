@@ -87,24 +87,30 @@ func spawn_unit(unit_instance, lane):
 	var instance = unit_instance.instantiate()
 	instance.team_color = team_color
 	instance.lane = lane
-	if lane == "top" and team_color == "blue":
-		instance.position += Vector2(-100, -100)
-		instance.waypoints = [get_node("/root/main/redtopt1").global_position, get_node("/root/main/redtopt2").global_position, get_node("/root/main/red_nexus").global_position]
-	if lane == "mid" and team_color == "blue":
-		instance.position += Vector2(100, -100)
-		instance.waypoints = [get_node("/root/main/redmidt1").global_position, get_node("/root/main/redmidt2").global_position, get_node("/root/main/red_nexus").global_position]
-	if lane == "bot" and team_color == "blue":
-		instance.position += Vector2(100, 100)
-		instance.waypoints = [get_node("/root/main/redbott1").global_position, get_node("/root/main/redbott2").global_position, get_node("/root/main/red_nexus").global_position]
-	if lane == "top" and team_color == "red":
-		instance.position += Vector2(-100, -100)
-		instance.waypoints = [get_node("/root/main/bluetopt1").global_position, get_node("/root/main/bluetopt2").global_position, get_node("/root/main/blue_nexus").global_position]
-	if lane == "mid" and team_color == "red":
-		instance.position += Vector2(-100, 100)
-		instance.waypoints = [get_node("/root/main/bluemidt1").global_position, get_node("/root/main/bluemidt2").global_position, get_node("/root/main/blue_nexus").global_position]
-	if lane == "bot" and team_color == "red":
-		instance.position += Vector2(100, 100)
-		instance.waypoints = [get_node("/root/main/bluemidt1").global_position, get_node("/root/main/bluemidt2").global_position, get_node("/root/main/blue_nexus").global_position]
+	
+	if team_color == "blue":
+		# These could be converted to match, but there's probably a better way
+		# to handle whatever is going on here anyway.
+		if lane == Lane.Top:
+			instance.position += Vector2(-100, -100)
+			instance.waypoints = [get_node("/root/main/redtopt1").global_position, get_node("/root/main/redtopt2").global_position, get_node("/root/main/red_nexus").global_position]
+		elif lane == Lane.Mid:
+			instance.position += Vector2(100, -100)
+			instance.waypoints = [get_node("/root/main/redmidt1").global_position, get_node("/root/main/redmidt2").global_position, get_node("/root/main/red_nexus").global_position]
+		elif lane == Lane.Bot:
+			instance.position += Vector2(100, 100)
+			instance.waypoints = [get_node("/root/main/redbott1").global_position, get_node("/root/main/redbott2").global_position, get_node("/root/main/red_nexus").global_position]
+	elif team_color == "red":
+		if lane == Lane.Top:
+			instance.position += Vector2(-100, -100)
+			instance.waypoints = [get_node("/root/main/bluetopt1").global_position, get_node("/root/main/bluetopt2").global_position, get_node("/root/main/blue_nexus").global_position]
+		elif lane == Lane.Mid:
+			instance.position += Vector2(-100, 100)
+			instance.waypoints = [get_node("/root/main/bluemidt1").global_position, get_node("/root/main/bluemidt2").global_position, get_node("/root/main/blue_nexus").global_position]
+		elif lane == Lane.Bot:
+			instance.position += Vector2(100, 100)
+			instance.waypoints = [get_node("/root/main/bluemidt1").global_position, get_node("/root/main/bluemidt2").global_position, get_node("/root/main/blue_nexus").global_position]
+	
 	add_child(instance)
 
 func get_random_unit():
