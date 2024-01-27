@@ -1,5 +1,5 @@
-extends CharacterBody2D
-class_name unit_wizard
+class_name unit_wizard extends CharacterBody2D
+
 var destination: Vector2
 var direction: Vector2
 var move_speed = 60
@@ -9,7 +9,7 @@ var attack_range: int = 320
 var shoot_timer: float = 0
 var current_health: int 
 var hurt_timer: int
-var lane: String
+var lane: UnitNexus.Lane
 
 @export var team_color: String
 @export var max_health = 10

@@ -1,5 +1,4 @@
-extends CharacterBody2D
-class_name unit_slinger
+class_name unit_slinger_old extends CharacterBody2D
 
 var destination: Vector2
 var direction: Vector2
@@ -8,12 +7,12 @@ var enemy_color: String
 var shoot_timer: float = 0
 var current_health: int 
 var hurt_timer: int
-var lane: String
+var lane: UnitNexus.Lane
 var waypoints = []
 var current_waypoint_index = 0
 
 @export var team_color: String
-@export var max_health = 10
+@export var max_health: int = 10
 @export var protection: int = 5
 @export var shoot_cooldown: float = .5
 @export var projectile_damage = 8
@@ -57,7 +56,7 @@ func check_aggro_area():
 		if "unit" in overlapping_body.get_groups() or "building" in overlapping_body.get_groups():
 			if overlapping_body.current_health > 0 and overlapping_body.team_color == enemy_color: 
 				var distance = global_position.distance_squared_to(overlapping_body.global_position)
-				print(distance)
+				#print("distance: ", distance)
 				if distance < closest_distance or !closest_distance:
 					closest_distance = distance
 					closest_enemy = overlapping_body

@@ -1,5 +1,5 @@
-extends CharacterBody2D
-class_name unit_berserker
+class_name unit_berserker extends CharacterBody2D
+
 var destination: Vector2
 var direction: Vector2
 var enemy_color: String
@@ -8,7 +8,7 @@ var attack_range: int = 35
 var attack_timer: float = 0
 var current_health: int 
 var hurt_timer: int
-var lane: String
+var lane: UnitNexus.Lane
 
 
 @export var team_color: String
