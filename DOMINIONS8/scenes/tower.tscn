@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://bskx1uf567283" path="res://art/tower.png" id="2_l0a11"]
 [ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="3_82omy"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_1teiy"]
-size = Vector2(44, 43.75)
+[sub_resource type="CircleShape2D" id="CircleShape2D_chtxc"]
+radius = 22.0004
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hcwnd"]
 size = Vector2(47, 79.5)
@@ -29,7 +29,8 @@ texture = ExtResource("2_l0a11")
 polygon = PackedVector2Array(0.62, 0.62, 0.62, -0.62, -0.62, -0.62, -0.62, 0.62)
 
 [node name="pathfinding_collision" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_1teiy")
+position = Vector2(0, -0.86)
+shape = SubResource("CircleShape2D_chtxc")
 
 [node name="hitbox_area" type="Area2D" parent="."]
 
@@ -43,8 +44,10 @@ offset_top = -63.0
 offset_bottom = -59.0
 
 [node name="shoot_range_area" type="Area2D" parent="."]
+visible = false
 
 [node name="shoot_range_shape" type="CollisionShape2D" parent="shoot_range_area"]
 shape = SubResource("CircleShape2D_2r68c")
 
-[node name="Marker2D" type="Marker2D" parent="."]
+[node name="projectile_spawn_point" type="Marker2D" parent="."]
+position = Vector2(0, -54)

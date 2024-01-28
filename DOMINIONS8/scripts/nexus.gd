@@ -24,6 +24,9 @@ var enemy_bot_buildings
 @onready var unit_wizard = preload("res://scenes/unit_wizard.tscn")
 @onready var healthbar = $health_bar
 @onready var manabar = $mana_bar
+@onready var spawn_top: Marker2D = $spawn_top
+@onready var spawn_mid: Marker2D = $spawn_mid
+@onready var spawn_bot: Marker2D = $spawn_bot
 
 @export var max_health: int = 100
 @export var current_health: int
@@ -103,30 +106,60 @@ func spawn_unit(unit_instance, lane: Lane):
 	var instance = unit_instance.instantiate()
 	instance.team_color = team_color
 	instance.lane = lane
-	
+
+	# Instead of using hard coded offsets in the code, we added marker nodes in
+	# the editor.  Now we can just spawn the unit on that position.  Note that
+	# this will error if the node doesn't exist.  A fallback marker could be
+	# added during assignment to just spawn the unit inside the nexus.
+	match lane:
+		Lane.Top:
+			instance.position = spawn_top.position
+		Lane.Mid:
+			instance.position = spawn_mid.position
+		Lane.Bot:
+			instance.position = spawn_bot.position
+
 	if team_color == "blue":
 		# These could be converted to match, but there's probably a better way
 		# to handle whatever is going on here anyway.
 		if lane == Lane.Top:
-			instance.position += Vector2(-100, -100)
-			instance.waypoints = [get_node("/root/main/redtopt1").global_position, get_node("/root/main/redtopt2").global_position, get_node("/root/main/red_nexus").global_position]
+			instance.waypoints = [
+				get_node("/root/main/towers/redtopt1").global_position,
+				get_node("/root/main/towers/redtopt2").global_position,
+				get_node("/root/main/red_nexus").global_position
+			]
 		elif lane == Lane.Mid:
-			instance.position += Vector2(100, -100)
-			instance.waypoints = [get_node("/root/main/redmidt1").global_position, get_node("/root/main/redmidt2").global_position, get_node("/root/main/red_nexus").global_position]
+			instance.waypoints = [
+				get_node("/root/main/towers/redmidt1").global_position,
+				get_node("/root/main/towers/redmidt2").global_position,
+				get_node("/root/main/red_nexus").global_position
+			]
 		elif lane == Lane.Bot:
-			instance.position += Vector2(100, 100)
-			instance.waypoints = [get_node("/root/main/redbott1").global_position, get_node("/root/main/redbott2").global_position, get_node("/root/main/red_nexus").global_position]
+			instance.waypoints = [
+				get_node("/root/main/towers/redbott1").global_position,
+				get_node("/root/main/towers/redbott2").global_position,
+				get_node("/root/main/red_nexus").global_position
+			]
 	elif team_color == "red":
 		if lane == Lane.Top:
-			instance.position += Vector2(-100, -100)
-			instance.waypoints = [get_node("/root/main/bluetopt1").global_position, get_node("/root/main/bluetopt2").global_position, get_node("/root/main/blue_nexus").global_position]
+			instance.waypoints = [
+				get_node("/root/main/towers/bluetopt1").global_position,
+				get_node("/root/main/towers/bluetopt2").global_position,
+				get_node("/root/main/blue_nexus").global_position
+			]
 		elif lane == Lane.Mid:
-			instance.position += Vector2(-100, 100)
-			instance.waypoints = [get_node("/root/main/bluemidt1").global_position, get_node("/root/main/bluemidt2").global_position, get_node("/root/main/blue_nexus").global_position]
+			instance.waypoints = [
+				get_node("/root/main/towers/bluemidt1").global_position,
+				get_node("/root/main/towers/bluemidt2").global_position,
+				get_node("/root/main/blue_nexus").global_position
+			]
 		elif lane == Lane.Bot:
-			instance.position += Vector2(100, 100)
-			instance.waypoints = [get_node("/root/main/bluemidt1").global_position, get_node("/root/main/bluemidt2").global_position, get_node("/root/main/blue_nexus").global_position]
-	
+			instance.waypoints = [
+				get_node("/root/main/towers/bluemidt1").global_position,
+				get_node("/root/main/towers/bluemidt2").global_position,
+				get_node("/root/main/blue_nexus").global_position
+			]
+
 	add_child(instance)
 
 func get_random_unit():
