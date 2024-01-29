@@ -12,9 +12,6 @@ var berserker_mana_cost: int = 170
 var heavycav_mana_cost: int = 170
 var wizard_mana_cost: int = 160
 static var game_active: bool = true
-#var enemy_top_buildings
-#var enemy_mid_buildings
-#var enemy_bot_buildings
 var top_buildings = []
 var mid_buildings = []
 var bot_buildings = []
@@ -76,12 +73,12 @@ func _ready():
 	manabar.value = current_mana
 	manabar.max_value = max_mana
 	selected_unit = unit_slinger
-	selected_unit_mana_cost = 100
+	selected_unit_mana_cost = slinger_mana_cost
 	await get_tree().create_timer(.2).timeout
 	get_lane_waypoints()
-	print(team_color," nexus: top buildings: ",top_buildings)
-	print(team_color," nexus: mid buildings: ",mid_buildings)
-	print(team_color," nexus: bot buildings: ",bot_buildings)
+	#print(team_color," nexus: top buildings: ",top_buildings)
+	#print(team_color," nexus: mid buildings: ",mid_buildings)
+	#print(team_color," nexus: bot buildings: ",bot_buildings)
 
 func apply_team_color():
 	if team_color == 'red':
@@ -219,7 +216,7 @@ func _physics_process(delta: float):
 # We also don't need to worry about the ai logic this way.
 # The mana cost handling has been moved to a new function, try_spawn_unit().
 func _unhandled_key_input(event: InputEvent):
-	if event is InputEventKey:
+	if event is InputEventKey && controlled_by == "human":
 		if not event.pressed or not game_active:
 			return
 		match event.keycode:

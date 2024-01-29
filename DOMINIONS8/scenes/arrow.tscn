@@ -1,7 +1,37 @@
-[gd_scene load_steps=4 format=3 uid="uid://b2g4scc5okcc3"]
+[gd_scene load_steps=4 format=3 uid="uid://cqh5f7ao76k6w"]
 
 [ext_resource type="Texture2D" uid="uid://cn48jaoiryrab" path="res://art/icon.svg" id="1_om1tl"]
-[ext_resource type="Script" path="res://scripts/deletearrow.gd" id="1_u3fv2"]
+
+[sub_resource type="GDScript" id="GDScript_hq868"]
+script/source = "extends Area2D
+
+@export var team_color: String
+var projectile_damage = 3
+var speed = 500
+
+func _ready():
+	set_as_top_level(true)
+	if team_color == 'red':
+		$teamcoloricon.set_self_modulate(Color(1,0,0))
+	elif team_color == 'blue':
+		$teamcoloricon.set_self_modulate(Color(0,0,1))
+	add_to_group(team_color)
+	add_to_group(\"projectile\")
+	#print(\"arrow groups:\", get_groups())
+
+func _process(delta):
+	position += (Vector2.RIGHT*speed).rotated(rotation) * delta
+
+
+
+func _on_visible_on_screen_enabler_2d_screen_exited():
+	queue_free()
+	#print(team_color, \"arrow deleted\")
+
+
+func _on_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
+	pass # Replace with function body.
+"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_62qge"]
 radius = 17.0
@@ -11,7 +41,7 @@ height = 130.0
 scale = Vector2(0.2, 0.2)
 collision_layer = 8388609
 collision_mask = 8388609
-script = ExtResource("1_u3fv2")
+script = SubResource("GDScript_hq868")
 
 [node name="teamcoloricon" type="Sprite2D" parent="."]
 modulate = Color(1, 0, 0, 1)

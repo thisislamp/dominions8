@@ -10,6 +10,7 @@ var hurt_timer: int
 var lane: UnitNexus.Lane
 var waypoints = []
 var current_waypoint_index = 0
+var state: String
 
 @export var team_color: String
 @export var max_health: int = 10
@@ -33,17 +34,18 @@ func get_enemy_color():
 
 func navigate_to_waypoints():
 	if current_waypoint_index < waypoints.size() and waypoints.size() > 0:
-		nav.target_position = waypoints[current_waypoint_index]
+		nav.target_position = waypoints[current_waypoint_index].global_position
 		direction = nav.get_next_path_position() - global_position
 		direction = direction.normalized()
 		velocity = direction * move_speed
-		if global_position.distance_to(nav.target_position) < 50:
+		if global_position.distance_to(nav.target_position) < 150:
 			current_waypoint_index += 1
 	if waypoints.size() == 0:
 		print("no waypoints")
 	elif current_waypoint_index == waypoints.size():
 		print("touchdown")
-	
+		#queue_free()
+
 func check_aggro_area():
 	var overlapping_bodies = $aggro_area.get_overlapping_bodies()
 	if overlapping_bodies.size() == 0:
@@ -148,6 +150,9 @@ func _ready():
 	elif team_color == 'blue':
 		$teamcoloricon.set_self_modulate(Color(0,0,1))
 	$AnimatedSprite2D.play("sprite1")
+
+	nav.debug_enabled = get_tree().get_first_node_in_group("map").get("nav_debug") or false
+
 
 func _physics_process(delta):
 	if current_health > 0:

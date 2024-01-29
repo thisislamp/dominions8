@@ -39,3 +39,5 @@ offset_left = -50.0
 offset_top = -62.0
 offset_right = 50.0
 offset_bottom = -54.0
+
+[connection signal="value_changed" from="health_bar" to="." method="_on_health_bar_value_changed"]

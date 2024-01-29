@@ -42,7 +42,7 @@ func _process(delta):
 			persistence_health -= 100
 	if persistence_health <= 0:
 		queue_free()
-	if global_position.distance_to(origin) > attack_range * 2:
+	if global_position.distance_to(origin) > attack_range * 1.1:
 		queue_free()
 
 func _on_visible_on_screen_enabler_2d_screen_exited():

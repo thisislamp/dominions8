@@ -1,0 +1,9 @@
+res://scenes/main_menu.tscn
+res://scenes/battlefield1.tscn
+res://scenes/unit_slinger.tscn
+res://scenes/nexus.tscn
+res://scripts/nexus.gd
+res://scenes/rock_projectile.tscn
+res://scripts/rock.gd
+res://scenes/tower.tscn
+res://scenes/arrow.tscn
