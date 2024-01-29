@@ -11,10 +11,13 @@ var hurler_mana_cost: int = 150
 var berserker_mana_cost: int = 170
 var heavycav_mana_cost: int = 170
 var wizard_mana_cost: int = 160
-var game_active: bool = true
-var enemy_top_buildings
-var enemy_mid_buildings
-var enemy_bot_buildings
+static var game_active: bool = true
+#var enemy_top_buildings
+#var enemy_mid_buildings
+#var enemy_bot_buildings
+var top_buildings = []
+var mid_buildings = []
+var bot_buildings = []
 
 
 @onready var unit_slinger = preload("res://scenes/unit_slinger.tscn")
@@ -31,10 +34,12 @@ var enemy_bot_buildings
 @export var max_health: int = 100
 @export var current_health: int
 @export var max_mana: int = 1000
-@export var mana_per_second: int = 1
+@export var mana_per_second: int = 50
 @export var team_color: String
 @export var protection: int = 15
 @export var controlled_by: String
+
+signal nexus_death(color: String)
 
 # Using named constants like an enum is better than using arbitrary strings.
 # So called "stringly typed code" and is prone to various issues,
@@ -50,7 +55,7 @@ func get_enemy_color():
 	elif team_color == 'blue':
 		enemy_color = 'red'
 	else:
-		print("BUG: SPAWNER COLOR NOT SET")
+		print("BUG: NEXUS COLOR NOT SET")
 
 func _ready():
 	add_to_group(team_color)
@@ -61,7 +66,7 @@ func _ready():
 	set_as_top_level(true)
 	apply_team_color()
 	get_enemy_color()
-	get_enemy_lane_buildings()
+	#get_enemy_lane_buildings()
 	$castleicon.modulate = Color.WHITE
 	current_health = max_health
 	healthbar.value = current_health
@@ -72,6 +77,11 @@ func _ready():
 	manabar.max_value = max_mana
 	selected_unit = unit_slinger
 	selected_unit_mana_cost = 100
+	await get_tree().create_timer(.2).timeout
+	get_lane_waypoints()
+	print(team_color," nexus: top buildings: ",top_buildings)
+	print(team_color," nexus: mid buildings: ",mid_buildings)
+	print(team_color," nexus: bot buildings: ",bot_buildings)
 
 func apply_team_color():
 	if team_color == 'red':
@@ -105,7 +115,8 @@ func try_spawn_unit(unit, lane: Lane):
 func spawn_unit(unit_instance, lane: Lane):
 	var instance = unit_instance.instantiate()
 	instance.team_color = team_color
-	instance.lane = lane
+	get_lane_waypoints()
+	
 
 	# Instead of using hard coded offsets in the code, we added marker nodes in
 	# the editor.  Now we can just spawn the unit on that position.  Note that
@@ -114,53 +125,37 @@ func spawn_unit(unit_instance, lane: Lane):
 	match lane:
 		Lane.Top:
 			instance.position = spawn_top.position
+			instance.waypoints = top_buildings
 		Lane.Mid:
 			instance.position = spawn_mid.position
+			instance.waypoints = mid_buildings
 		Lane.Bot:
 			instance.position = spawn_bot.position
-
-	if team_color == "blue":
-		# These could be converted to match, but there's probably a better way
-		# to handle whatever is going on here anyway.
-		if lane == Lane.Top:
-			instance.waypoints = [
-				get_node("/root/main/towers/redtopt1").global_position,
-				get_node("/root/main/towers/redtopt2").global_position,
-				get_node("/root/main/red_nexus").global_position
-			]
-		elif lane == Lane.Mid:
-			instance.waypoints = [
-				get_node("/root/main/towers/redmidt1").global_position,
-				get_node("/root/main/towers/redmidt2").global_position,
-				get_node("/root/main/red_nexus").global_position
-			]
-		elif lane == Lane.Bot:
-			instance.waypoints = [
-				get_node("/root/main/towers/redbott1").global_position,
-				get_node("/root/main/towers/redbott2").global_position,
-				get_node("/root/main/red_nexus").global_position
-			]
-	elif team_color == "red":
-		if lane == Lane.Top:
-			instance.waypoints = [
-				get_node("/root/main/towers/bluetopt1").global_position,
-				get_node("/root/main/towers/bluetopt2").global_position,
-				get_node("/root/main/blue_nexus").global_position
-			]
-		elif lane == Lane.Mid:
-			instance.waypoints = [
-				get_node("/root/main/towers/bluemidt1").global_position,
-				get_node("/root/main/towers/bluemidt2").global_position,
-				get_node("/root/main/blue_nexus").global_position
-			]
-		elif lane == Lane.Bot:
-			instance.waypoints = [
-				get_node("/root/main/towers/bluemidt1").global_position,
-				get_node("/root/main/towers/bluemidt2").global_position,
-				get_node("/root/main/blue_nexus").global_position
-			]
-
+			instance.waypoints = bot_buildings
 	add_child(instance)
+
+func get_lane_waypoints():
+	var buildings = get_tree().get_nodes_in_group("building")
+	var building_positions = []
+	var temp
+	for i in range(buildings.size()): ###Sorts by distance from nexus in ascending order
+		for j in range(i + 1, buildings.size()):
+			if buildings[i].global_position.distance_to(global_position) > buildings[j].global_position.distance_to(global_position):
+				#This swaps the arrays to sort them
+				temp = buildings[i]
+				buildings[i] = buildings[j]
+				buildings[j] = temp
+	for building in buildings:
+		if "top" in building.get_groups():
+			top_buildings.append(building)
+		if "mid" in building.get_groups():
+			mid_buildings.append(building)
+		if "bot" in building.get_groups():
+			bot_buildings.append(building)
+	#print(buildings)
+	#print("top buildings: ",top_buildings)
+	#print("mid buildings: ",mid_buildings)
+	#print("bot buildings: ",bot_buildings)
 
 func get_random_unit():
 	match randi_range(0, 4):
@@ -189,9 +184,6 @@ func get_enemy_lane_buildings():
 				enemy_mid_buildings.append(building)
 			if building.is_in_group("bot"):
 				enemy_bot_buildings.append(building)
-	#return enemy_top_buildings
-	#return enemy_mid_buildings
-	#return enemy_bot_buildings
 	return enemy_top_buildings and enemy_mid_buildings and enemy_bot_buildings
 
 func set_selected_unit(unit, cost: int):
@@ -213,18 +205,9 @@ func _physics_process(delta: float):
 	else: 
 		$castleicon.modulate = Color.WHITE
 
-	if current_mana < max_mana and game_active: 
-		# You know all about the issues with tying framerate to physics right?  Plenty of games
-		# do that and cause all sorts of problems when running at fps higher or lower than intended.
-		# Thats why the right way to do it is to handle physics with the physics delta, or a value
-		# not dependant on the fps, but on a constant time ratio.  A higher delta value means
-		# whatever you do your physics stuff for more time.  Here, a delta of 1 means one second.
-		# If you add 1 mana regardless of the delta, you end up with the same problem in reverse.
-		# This also means we need to change the type of current_mana from int to float.
-		# We multiply by Engine.physics_tics_per_second because otherwise at 60pfps, it would take
-		# 60 seconds to add 1 mana.  60 calls per seconds means delta = 1/60 = 0.01666...
-		current_mana += mana_per_second * Engine.physics_ticks_per_second * delta
-	
+	if current_mana < max_mana and game_active:
+		current_mana += mana_per_second *  delta
+
 	manabar.value = current_mana
 	
 	if controlled_by == "ai":
@@ -237,6 +220,8 @@ func _physics_process(delta: float):
 # The mana cost handling has been moved to a new function, try_spawn_unit().
 func _unhandled_key_input(event: InputEvent):
 	if event is InputEventKey:
+		if not event.pressed or not game_active:
+			return
 		match event.keycode:
 			# Unit selection keys
 			KEY_S: set_selected_unit(unit_slinger, slinger_mana_cost)
@@ -256,4 +241,10 @@ func _unhandled_input(event: InputEvent):
 			match event.button_index:
 				MOUSE_BUTTON_LEFT when event.is_pressed(): 
 					try_spawn_unit(selected_unit, get_random_lane())
-			
+
+
+func _on_health_bar_value_changed(value: float) -> void:
+	if value <= 0:
+		game_active = false
+		nexus_death.emit(team_color)
+		queue_free()
