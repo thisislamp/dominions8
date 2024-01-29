@@ -57,8 +57,8 @@ func set_team_color(new_color: String):
 func take_damage(damage_dealt):
 	var damage_taken: int
 	healthbar.visible = true
-	damage_taken = (damage_dealt + DRN()) - (protection + DRN())
-	if damage_taken > 0: 
+	damage_taken = DRN.roll_vs(damage_dealt, protection)
+	if damage_taken > 0:
 		current_health -= damage_taken
 	healthbar.value = current_health
 	hurt_timer = 15
@@ -97,10 +97,10 @@ func find_closest_enemy():
 
 func shoot_at_enemy():
 	if closest_enemy and shoot_timer <= 0:
-		$Marker2D.look_at(closest_enemy.global_position)
+		$projectile_spawn_point.look_at(closest_enemy.global_position)
 		var projectile_instance = projectile_scene.instantiate()
-		projectile_instance.global_position = $Marker2D.global_position
-		projectile_instance.rotation = $Marker2D.rotation * randf_range(.95, 1.05)
+		projectile_instance.global_position = $projectile_spawn_point.global_position
+		projectile_instance.rotation = $projectile_spawn_point.rotation * randf_range(.95, 1.05)
 		projectile_instance.team_color = team_color
 		projectile_instance.projectile_damage = projectile_damage
 		projectile_instance.speed = 500
@@ -117,23 +117,7 @@ func _physics_process(delta):
 	find_closest_enemy()
 	if shoot_timer > 0:
 		shoot_timer -= delta
-	if hurt_timer > 0: 
+	if hurt_timer > 0:
 		hurt_timer -= 1
-	else: 
+	else:
 		$towericon.modulate = Color(1,1,1)
-	
-
-func DRN():
-	var total_result = 0
-	while true:
-		var die1 = randi() % 6 + 1
-		var die2 = randi() % 6 + 1
-		total_result += die1 + die2
-		if die1 == 6:
-			total_result -= 1
-			continue  # Re-roll the die
-		if die2 == 6:
-			total_result -= 1
-			continue  # Re-roll the die
-		break  # Exit the loop if no more re-rolls are needed
-	return total_result

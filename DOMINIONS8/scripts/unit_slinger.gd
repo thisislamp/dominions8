@@ -1,5 +1,4 @@
-extends CharacterBody2D
-class_name unit_slinger
+class_name unit_slinger_old extends CharacterBody2D
 
 var destination: Vector2
 var direction: Vector2
@@ -8,12 +7,12 @@ var enemy_color: String
 var shoot_timer: float = 0
 var current_health: int 
 var hurt_timer: int
-var lane: String
+var lane: UnitNexus.Lane
 var waypoints = []
 var current_waypoint_index = 0
 
 @export var team_color: String
-@export var max_health = 10
+@export var max_health: int = 10
 @export var protection: int = 5
 @export var shoot_cooldown: float = .5
 @export var projectile_damage = 8
@@ -57,7 +56,7 @@ func check_aggro_area():
 		if "unit" in overlapping_body.get_groups() or "building" in overlapping_body.get_groups():
 			if overlapping_body.current_health > 0 and overlapping_body.team_color == enemy_color: 
 				var distance = global_position.distance_squared_to(overlapping_body.global_position)
-				print(distance)
+				#print("distance: ", distance)
 				if distance < closest_distance or !closest_distance:
 					closest_distance = distance
 					closest_enemy = overlapping_body
@@ -96,7 +95,7 @@ func shoot_at_enemy(closest_enemy):
 func take_damage(damage_dealt):
 	var damage_taken: int
 	healthbar.visible = true
-	damage_taken = (damage_dealt + DRN())- (protection + DRN())
+	damage_taken = DRN.roll_vs(damage_dealt, protection)
 	if damage_taken > 0: current_health -= damage_taken
 	healthbar.value = current_health
 	$AnimatedSprite2D.modulate = Color(1,0,0)
@@ -171,21 +170,6 @@ func _physics_process(delta):
 	elif direction.x < 0:
 		$AnimatedSprite2D.scale.x = 1
 
-func DRN():
-	var total_result = 0
-	while true:
-		var die1 = randi() % 6 + 1
-		var die2 = randi() % 6 + 1
-		total_result += die1 + die2
-		if die1 == 6:
-			total_result -= 1
-			continue  # Re-roll the die
-		if die2 == 6:
-			total_result -= 1
-			continue  # Re-roll the die
-		break  # Exit the loop if no more re-rolls are needed
-	return total_result
-
 
 ###DEBUGGING ONLY
 func print_group_nodes(group_name: String):
@@ -200,6 +184,3 @@ func print_all_children():
 		var child_node = get_child(i)
 		print("Child node name:", child_node.name)
 	print("-----")
-
-
-

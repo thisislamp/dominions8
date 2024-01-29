@@ -12,14 +12,19 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_8sb11")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="Panel" type="Panel" parent="."]
 layout_mode = 0
-offset_right = 1925.0
-offset_bottom = 1055.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="TextureRect" type="TextureRect" parent="Panel"]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
 texture = ExtResource("1_tdjbi")
 expand_mode = 3
 
-[node name="Button" type="Button" parent="."]
+[node name="Button" type="Button" parent="Panel"]
 layout_mode = 0
 offset_left = 168.0
 offset_top = 151.0
@@ -28,4 +33,4 @@ offset_bottom = 413.0
 theme_override_font_sizes/font_size = 70
 text = "GO BATTLE!"
 
-[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Panel/Button" to="." method="_on_button_pressed"]
