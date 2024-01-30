@@ -1375,7 +1375,7 @@ corner_radius_top_right = 1
 corner_radius_bottom_right = 1
 corner_radius_bottom_left = 1
 
-[node name="main" type="Node2D"]
+[node name="main" type="Node2D" groups=["map"]]
 script = ExtResource("1_d5iw0")
 
 [node name="TileMap" type="TileMap" parent="."]
@@ -1543,14 +1543,6 @@ position = Vector2(100, -44)
 
 [node name="spawn_bot" type="Marker2D" parent="blue_nexus"]
 position = Vector2(87, 82)
-
-[node name="waypoints" type="Node2D" parent="."]
-
-[node name="top_lane" type="Node2D" parent="waypoints"]
-
-[node name="mid_lane" type="Node2D" parent="waypoints"]
-
-[node name="bot_lane" type="Node2D" parent="waypoints"]
 
 [connection signal="pressed" from="announcement/Button" to="announcement" method="_on_button_pressed"]
 [connection signal="nexus_death" from="red_nexus" to="announcement" method="_on_nexus_death"]
