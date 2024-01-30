@@ -7,7 +7,7 @@ var enemy_color: String
 var closest_enemy: Node = null
 var attack_range: int = 320
 var shoot_timer: float = 0
-var current_health: int 
+var current_health: int
 var hurt_timer: int
 var lane: UnitNexus.Lane
 
@@ -71,7 +71,7 @@ func shoot_at_enemy():
 		shoot_timer = shoot_cooldown
 		$AnimatedSprite2D.play("sprite2")
 		#$AnimatedSprite2D.play("sprite1")
-		
+
 
 func take_damage(damage_dealt):
 	var damage_taken: int
@@ -79,7 +79,7 @@ func take_damage(damage_dealt):
 	damage_taken = DRN.roll_vs(damage_dealt, protection)
 	if damage_taken > 0: current_health -= damage_taken
 	healthbar.value = current_health
-	
+
 	$AnimatedSprite2D.modulate = Color(1,0,0)
 	hurt_timer = 15
 	if current_health <= 0:

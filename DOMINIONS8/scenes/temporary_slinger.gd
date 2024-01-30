@@ -1,4 +1,4 @@
-class_name unit_slinger extends CharacterBody2D
+class_name temp_unit_slinger extends CharacterBody2D
 
 var destination: Vector2
 var direction: Vector2
@@ -7,7 +7,7 @@ var enemy_color: String
 var closest_enemy: Node = null
 var attack_range: int = 200
 var shoot_timer: float = 0
-var current_health: int 
+var current_health: int
 var hurt_timer: int
 var lane: UnitNexus.Lane
 
@@ -70,7 +70,7 @@ func shoot_at_enemy():
 		add_child(projectile_instance)
 		shoot_timer = shoot_cooldown
 		$AnimatedSprite2D.play("sprite2")
-		
+
 
 func take_damage(damage_dealt):
 	var damage_taken: int

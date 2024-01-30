@@ -6,7 +6,7 @@ var enemy_color: String
 var closest_enemy: Node = null
 var attack_range: int = 45
 var attack_timer: float = 0
-var current_health: int 
+var current_health: int
 var hurt_timer: int
 var lane: UnitNexus.Lane
 

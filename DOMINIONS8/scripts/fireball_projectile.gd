@@ -20,7 +20,7 @@ func _ready():
 	origin = get_parent().global_position
 	$explosion.visible = false
 	var projectile_damage = 0
-	
+
 func hit(persistance_hit):
 	persistence_health -= persistance_hit
 
@@ -38,7 +38,7 @@ func detonate():
 					body.knockback(global_position, 16)
 				if "building" in body.get_groups() and body.current_health > 0:
 					body.take_damage(8)
-				
+
 
 func _process(delta):
 	position += (Vector2.RIGHT*speed).rotated(rotation) * delta

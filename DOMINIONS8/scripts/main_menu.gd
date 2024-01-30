@@ -16,4 +16,4 @@ func _on_button_pressed():
 
 func enter_battle():
 	get_tree().change_scene_to_file("res://scenes/battlefield1.tscn")
-	
+

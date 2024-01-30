@@ -88,18 +88,18 @@ func apply_team_color():
 
 func take_damage(damage_dealt):
 	healthbar.visible = true
-	
+
 	var damage_taken: int = DRN.roll_vs(damage_dealt, protection)
 	if damage_taken > 0:
 		current_health -= damage_taken
-	
+
 	healthbar.value = current_health
 	hurt_timer = 10
 	$castleicon.modulate = Color.RED
-	
+
 	if healthbar.visible == false:
 		healthbar.visible = true
-	
+
 	if current_health <= 0:
 		remove_from_group(team_color)
 
@@ -113,7 +113,7 @@ func spawn_unit(unit_instance, lane: Lane):
 	var instance = unit_instance.instantiate()
 	instance.team_color = team_color
 	get_lane_waypoints()
-	
+
 
 	# Instead of using hard coded offsets in the code, we added marker nodes in
 	# the editor.  Now we can just spawn the unit on that position.  Note that
@@ -167,7 +167,7 @@ func get_random_unit():
 # Converts the enum to a list of its int values and picks a random one.
 func get_random_lane() -> Lane:
 	return Lane.values()[randi() % Lane.size()] as Lane
-	
+
 func get_enemy_lane_buildings():
 	var enemy_top_buildings = []
 	var enemy_mid_buildings = []
@@ -197,16 +197,16 @@ func _physics_process(delta: float):
 	delay_timer -= 1
 	if delay_timer <= 0:
 		get_enemy_lane_buildings()
-	if hurt_timer > 0: 
+	if hurt_timer > 0:
 		hurt_timer -= 1
-	else: 
+	else:
 		$castleicon.modulate = Color.WHITE
 
 	if current_mana < max_mana and game_active:
 		current_mana += mana_per_second *  delta
 
 	manabar.value = current_mana
-	
+
 	if controlled_by == "ai":
 		process_ai(delta)
 
@@ -236,7 +236,7 @@ func _unhandled_input(event: InputEvent):
 	if event is InputEventMouseButton:
 		if event:
 			match event.button_index:
-				MOUSE_BUTTON_LEFT when event.is_pressed(): 
+				MOUSE_BUTTON_LEFT when event.is_pressed():
 					try_spawn_unit(selected_unit, get_random_lane())
 
 
