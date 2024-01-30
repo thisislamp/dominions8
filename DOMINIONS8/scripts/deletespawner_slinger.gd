@@ -35,7 +35,7 @@ func _ready():
 	current_mana = 8
 	manabar.value = current_mana
 	manabar.max_value = max_mana
-	
+
 
 
 func apply_team_color():
@@ -107,13 +107,13 @@ func _process(delta):
 	if controlled_by == "human" and Input.is_action_just_pressed("leftarrow")and current_mana >= 100:
 		spawn_slinger("left")
 		current_mana -= 100
-	
-	
+
+
 	if current_mana < max_mana: current_mana += 1
 	manabar.value = current_mana
 	if controlled_by == "ai" and current_mana >= 100:
 		spawn_slinger(null)
 		current_mana -= 100
-	
-	
+
+
 #func _on_Timer_timeout():

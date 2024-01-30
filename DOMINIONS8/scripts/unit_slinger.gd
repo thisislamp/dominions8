@@ -1,11 +1,11 @@
-class_name unit_slinger_old extends CharacterBody2D
+class_name unit_slinger extends CharacterBody2D
 
 var destination: Vector2
 var direction: Vector2
 var enemy_color: String
 #var closest_enemy: Node = null
 var shoot_timer: float = 0
-var current_health: int 
+var current_health: int
 var hurt_timer: int
 var lane: UnitNexus.Lane
 var waypoints = []
@@ -56,7 +56,7 @@ func check_aggro_area():
 
 	for overlapping_body in overlapping_bodies:
 		if "unit" in overlapping_body.get_groups() or "building" in overlapping_body.get_groups():
-			if overlapping_body.current_health > 0 and overlapping_body.team_color == enemy_color: 
+			if overlapping_body.current_health > 0 and overlapping_body.team_color == enemy_color:
 				var distance = global_position.distance_squared_to(overlapping_body.global_position)
 				#print("distance: ", distance)
 				if distance < closest_distance or !closest_distance:
@@ -139,12 +139,14 @@ func _ready():
 	$AnimatedSprite2D.modulate = Color(1,1,1)
 	if attack_range >= 250:
 		$aggro_area/aggro_shape.shape.radius = attack_range + 25
-	else: $aggro_area/aggro_shape.shape.radius = 275
-		
+	else:
+		$aggro_area/aggro_shape.shape.radius = 275
+
 	current_health = max_health
 	healthbar.value = current_health
 	healthbar.max_value = max_health
 	healthbar.visible = false
+
 	if team_color == 'red':
 		$teamcoloricon.set_self_modulate(Color(1,0,0))
 	elif team_color == 'blue':

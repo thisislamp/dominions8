@@ -6,7 +6,7 @@ var enemy_color: String
 var closest_enemy: Node = null
 var attack_range: int = 35
 var attack_timer: float = 0
-var current_health: int 
+var current_health: int
 var hurt_timer: int
 var lane: UnitNexus.Lane
 
@@ -53,7 +53,7 @@ func find_closest_enemy():
 		$AnimatedSprite2D.play("sprite2")
 		closest_enemy.take_damage(15)
 		attack_timer = attack_cooldown
-		
+
 		#shoot_at_enemy()
 	if direction.x > 0:
 		$AnimatedSprite2D.scale.x = -1
