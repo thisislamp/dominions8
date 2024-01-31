@@ -1,10 +1,11 @@
-[gd_scene load_steps=93 format=3 uid="uid://dqshtktnbiwws"]
+[gd_scene load_steps=94 format=3 uid="uid://dqshtktnbiwws"]
 
 [ext_resource type="Script" path="res://scripts/battlefield1.gd" id="1_d5iw0"]
 [ext_resource type="Texture2D" uid="uid://cpdduut2bofx0" path="res://art/terrainmegaset.png" id="1_stl4c"]
 [ext_resource type="Script" path="res://scripts/announcement.gd" id="2_2qpys"]
 [ext_resource type="PackedScene" uid="uid://od4wx8e63ien" path="res://scenes/nexus.tscn" id="3_yvc7s"]
 [ext_resource type="PackedScene" uid="uid://cd2qcst8nk5cr" path="res://scenes/tower.tscn" id="4_7tgpk"]
+[ext_resource type="Script" path="res://scripts/game_clock.gd" id="6_2l7ue"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_j1wb2"]
 vertices = PackedVector2Array(-20, -15, -20, -20, -15, -20)
@@ -1551,6 +1552,17 @@ position = Vector2(87, 82)
 [node name="mid_lane" type="Node2D" parent="waypoints"]
 
 [node name="bot_lane" type="Node2D" parent="waypoints"]
+
+[node name="game_clock" type="Label" parent="."]
+offset_left = 9.0
+offset_top = -3.0
+offset_right = 1920.0
+offset_bottom = 52.0
+theme_override_font_sizes/font_size = 32
+text = "0:00"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("6_2l7ue")
 
 [connection signal="pressed" from="announcement/Button" to="announcement" method="_on_button_pressed"]
 [connection signal="nexus_death" from="red_nexus" to="announcement" method="_on_nexus_death"]
