@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://ddpm1aptswij"]
+
+[ext_resource type="Script" path="res://scripts/equipment/weapon/base_weapon_ranged.gd" id="1_r00u0"]
+
+[node name="BaseWeaponRanged" type="Node"]
+script = ExtResource("1_r00u0")
+
+[node name="sprite" type="Sprite2D" parent="."]
+
+[node name="projectile_origin" type="Marker2D" parent="sprite"]

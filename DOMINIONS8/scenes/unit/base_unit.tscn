@@ -45,4 +45,6 @@ shape = SubResource("CapsuleShape2D_spyc1")
 shape = SubResource("CircleShape2D_if876")
 debug_color = Color(0.776471, 0.443137, 0, 0.419608)
 
-[node name="weapons" type="Node" parent="."]
+[node name="equipment" type="Node" parent="."]
+
+[node name="weapons" type="Node" parent="equipment"]

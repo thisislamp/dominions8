@@ -29,7 +29,7 @@ class_name BaseUnit extends CharacterBody2D
 var attack_cooldown: float = 0
 var hurt_timer: int = 0
 var lane: UnitNexus.Lane
-var waypoints: Array[Node] = []
+var waypoints: Array = []
 var destination: Vector2
 var direction: Vector2:
 	set(v):
@@ -48,7 +48,7 @@ var team_color: Color = Color.WHITE:
 @onready var health_bar: ProgressBar = $health_bar
 @onready var nav: NavigationAgent2D = $nav
 @onready var weapons: Array[BaseWeapon]:
-	get: return $weapons.get_children() as Array[BaseWeapon]
+	get: return $equipment/weapons.get_children() as Array[BaseWeapon]
 
 ## Emitted when a unit dies
 signal unit_died(unit: BaseUnit)
@@ -142,7 +142,9 @@ func _ready():
 
 	if OS.is_debug_build():
 		# sets spawning with pathfinding visible
-		nav.debug_enabled = get_tree().get_first_node_in_group("map").get("nav_debug") or false
+		var map = get_tree().get_first_node_in_group("map")
+		if map:
+			nav.debug_enabled = map.nav_debug
 
 
 func _physics_process(delta: float) -> void:

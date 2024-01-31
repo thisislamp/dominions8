@@ -1,0 +1,48 @@
+[gd_scene load_steps=6 format=3 uid="uid://c25vni0q3n6n8"]
+
+[ext_resource type="PackedScene" uid="uid://difx82dpli7o5" path="res://scenes/unit/base_unit.tscn" id="1_u20ol"]
+[ext_resource type="Script" path="res://scripts/unit/hurler.gd" id="2_6u02e"]
+[ext_resource type="Texture2D" uid="uid://tn16slkvgu36" path="res://art/hurler2.png" id="2_pbre6"]
+[ext_resource type="Texture2D" uid="uid://bcc5wpoykavo0" path="res://art/hurler1.png" id="3_21843"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rlr80"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_pbre6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_21843")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_21843")
+}],
+"loop": false,
+"name": &"default",
+"speed": 0.0
+}]
+
+[node name="Hurler" instance=ExtResource("1_u20ol")]
+script = ExtResource("2_6u02e")
+mana_cost = 100
+
+[node name="sprite" parent="." index="0"]
+position = Vector2(0, -23)
+sprite_frames = SubResource("SpriteFrames_rlr80")
+
+[node name="team_marker" parent="." index="1"]
+scale = Vector2(1.4, 1.4)
+
+[node name="health_bar" parent="." index="3"]
+offset_left = -20.0
+offset_top = -62.0
+offset_right = 20.0
+offset_bottom = -58.0
+
+[node name="hitbox_shape" parent="hitbox" index="0"]
+position = Vector2(0, -22)

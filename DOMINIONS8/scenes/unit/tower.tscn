@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://dkjbl6ef77j0i"]
 
-[ext_resource type="Script" path="res://scripts/unit/unit_tower.gd" id="2_1fnss"]
+[ext_resource type="Script" path="res://scripts/unit/tower.gd" id="2_1fnss"]
 [ext_resource type="Texture2D" uid="uid://b25ajqewkps6r" path="res://art/unit/tower.png" id="2_kdd86"]
 [ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="2_vl5ru"]
 
