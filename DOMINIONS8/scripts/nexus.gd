@@ -11,6 +11,7 @@ var hurler_mana_cost: int = 150
 var berserker_mana_cost: int = 170
 var heavycav_mana_cost: int = 170
 var wizard_mana_cost: int = 160
+var wave_cooldown: float = .5
 static var game_active: bool = true
 var top_buildings = []
 var mid_buildings = []
@@ -131,6 +132,19 @@ func spawn_unit(unit_instance, lane: Lane):
 			instance.waypoints = bot_buildings
 	add_child(instance)
 
+func spawn_wave(): #spawns 3 slingers in each lane
+	spawn_unit(unit_slinger, Lane.Bot)
+	spawn_unit(unit_slinger, Lane.Mid)
+	spawn_unit(unit_slinger, Lane.Top)
+	await get_tree().create_timer(.1).timeout
+	spawn_unit(unit_slinger, Lane.Bot)
+	spawn_unit(unit_slinger, Lane.Mid)
+	spawn_unit(unit_slinger, Lane.Top)
+	await get_tree().create_timer(.1).timeout
+	spawn_unit(unit_slinger, Lane.Bot)
+	spawn_unit(unit_slinger, Lane.Mid)
+	spawn_unit(unit_slinger, Lane.Top)
+
 func get_lane_waypoints():
 	var buildings = get_tree().get_nodes_in_group("building")
 	var building_positions = []
@@ -206,7 +220,11 @@ func _physics_process(delta: float):
 		current_mana += mana_per_second *  delta
 
 	manabar.value = current_mana
-
+	wave_cooldown -= delta
+	if wave_cooldown <= 0:
+		spawn_wave()
+		wave_cooldown = 6
+	
 	if controlled_by == "ai":
 		process_ai(delta)
 
