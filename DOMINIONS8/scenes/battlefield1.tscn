@@ -1438,8 +1438,8 @@ visible = false
 top_level = true
 offset_left = -39.0
 offset_top = 38.0
-offset_right = 1160.0
-offset_bottom = 290.0
+offset_right = 1923.0
+offset_bottom = 1079.0
 theme_override_font_sizes/font_size = 100
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -1447,11 +1447,19 @@ uppercase = true
 script = ExtResource("2_2qpys")
 
 [node name="Button" type="Button" parent="announcement"]
-layout_mode = 0
-offset_left = 453.0
-offset_top = 204.0
-offset_right = 780.0
-offset_bottom = 282.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -129.0
+offset_top = -385.0
+offset_right = 129.0
+offset_bottom = -319.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 42
 text = "MAIN MENU
 "
 
