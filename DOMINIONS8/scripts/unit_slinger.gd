@@ -7,7 +7,7 @@ var enemy_color: String
 var shoot_timer: float = 0
 var current_health: int
 var hurt_timer: int
-var lane: UnitNexus.Lane
+var lane: OldNexus.Lane
 var waypoints = []
 var current_waypoint_index = 0
 var state: String

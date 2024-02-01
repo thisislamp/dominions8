@@ -55,7 +55,7 @@ func _unhandled_key_input(event: InputEvent):
 
 			# F4 - Freespawn
 			KEY_F4 when event.pressed and not event.echo:
-				var nexus: UnitNexus = $blue_nexus
+				var nexus: OldNexus = $blue_nexus
 				if mps == 0 or nexus.mana_per_second == mps:
 					mps = nexus.mana_per_second
 					nexus.mana_per_second = 10000000
