@@ -8,7 +8,7 @@ var attack_range: int = 45
 var attack_timer: float = 0
 var current_health: int
 var hurt_timer: int
-var lane: UnitNexus.Lane
+var lane: OldNexus.Lane
 
 
 @export var team_color: String

@@ -1,4 +1,4 @@
-class_name UnitNexus extends Node2D
+class_name OldNexus extends Node2D
 
 var current_mana: float
 var enemy_color
