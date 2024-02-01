@@ -28,7 +28,7 @@ class_name BaseUnit extends CharacterBody2D
 @onready var current_health: int = max_health
 var attack_cooldown: float = 0
 var hurt_timer: int = 0
-var lane: UnitNexus.Lane
+var lane: int  # temporary
 var waypoints: Array = []
 var destination: Vector2
 var direction: Vector2:
@@ -117,7 +117,7 @@ func die() -> void:
 	unit_died.emit(self)
 	queue_free()
 
-func move():
+func move(_delta: float):
 	get_target()
 	if not current_target:
 		follow_waypoints()
@@ -148,4 +148,4 @@ func _ready():
 
 
 func _physics_process(delta: float) -> void:
-	move()
+	move(delta)

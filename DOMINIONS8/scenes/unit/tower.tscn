@@ -21,7 +21,8 @@ size = Vector2(48, 80)
 [sub_resource type="CircleShape2D" id="CircleShape2D_if876"]
 radius = 22.0
 
-[node name="Tower" type="StaticBody2D" groups=["building"]]
+[node name="Tower" type="CharacterBody2D" groups=["building"]]
+motion_mode = 1
 script = ExtResource("2_1fnss")
 max_health = 100
 protection = 5

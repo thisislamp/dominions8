@@ -11,6 +11,7 @@ height = 62.0
 radius = 22.0
 
 [node name="BaseUnit" type="CharacterBody2D" groups=["unit"]]
+y_sort_enabled = true
 motion_mode = 1
 wall_min_slide_angle = 0.0
 script = ExtResource("1_n1kpj")

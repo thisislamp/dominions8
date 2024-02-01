@@ -1,6 +1,6 @@
 class_name BaseWeaponRanged extends BaseWeapon
 
-## The projectile scene to use
+## The projectile scene to use.  MUST be a BaseProjectile type.
 @export var projectile_scene: PackedScene
 
 ## Bonus damage applied to the projectile.
