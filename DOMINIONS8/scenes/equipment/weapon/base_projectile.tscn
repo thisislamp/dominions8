@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://chb2rturd6ehr"]
+
+[ext_resource type="Script" path="res://scripts/equipment/weapon/base_projectile.gd" id="1_ny1hb"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_y4qws"]
+
+[node name="BaseProjectile" type="Node2D"]
+script = ExtResource("1_ny1hb")
+
+[node name="sprite" type="Sprite2D" parent="."]
+
+[node name="hitbox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 2
+input_pickable = false
+
+[node name="hitbox_shape" type="CollisionShape2D" parent="hitbox"]
+shape = SubResource("CircleShape2D_y4qws")
+
+[node name="visibility_notifier" type="VisibleOnScreenNotifier2D" parent="."]
+
+[connection signal="area_entered" from="hitbox" to="." method="_on_hitbox_area_entered"]
+[connection signal="screen_exited" from="visibility_notifier" to="." method="_on_screen_exited"]

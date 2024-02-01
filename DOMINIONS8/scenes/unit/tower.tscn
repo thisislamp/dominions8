@@ -1,0 +1,70 @@
+[gd_scene load_steps=7 format=3 uid="uid://dkjbl6ef77j0i"]
+
+[ext_resource type="Script" path="res://scripts/unit/tower.gd" id="2_1fnss"]
+[ext_resource type="Texture2D" uid="uid://b25ajqewkps6r" path="res://art/unit/tower.png" id="2_kdd86"]
+[ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="2_vl5ru"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_up4cj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_kdd86")
+}],
+"loop": false,
+"name": &"default",
+"speed": 0.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uepx4"]
+size = Vector2(48, 80)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_if876"]
+radius = 22.0
+
+[node name="Tower" type="CharacterBody2D" groups=["building"]]
+motion_mode = 1
+script = ExtResource("2_1fnss")
+max_health = 100
+protection = 5
+move_speed = 0
+attack_range = 250
+aquisition_range = 250
+bat = 2.0
+mana_cost = 1000
+
+[node name="sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -25)
+scale = Vector2(0.35, 0.35)
+sprite_frames = SubResource("SpriteFrames_up4cj")
+
+[node name="team_marker" type="Polygon2D" parent="."]
+visible = false
+modulate = Color(1, 1, 1, 0.498039)
+show_behind_parent = true
+z_index = -1
+polygon = PackedVector2Array(0, -12, 12, 0, 0, 12, -12, 0)
+
+[node name="attack_origin" type="Marker2D" parent="."]
+position = Vector2(0, -55)
+
+[node name="health_bar" parent="." instance=ExtResource("2_vl5ru")]
+offset_left = -24.0
+offset_top = -64.0
+offset_right = 24.0
+offset_bottom = -60.0
+
+[node name="nav" type="NavigationAgent2D" parent="."]
+
+[node name="hitbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 4
+
+[node name="hitbox_shape" type="CollisionShape2D" parent="hitbox"]
+position = Vector2(0, -18)
+shape = SubResource("RectangleShape2D_uepx4")
+
+[node name="unit_collision_shape" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_if876")
+debug_color = Color(0.776471, 0.443137, 0, 0.419608)
+
+[node name="weapons" type="Node" parent="."]

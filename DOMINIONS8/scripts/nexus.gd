@@ -64,7 +64,6 @@ func _ready():
 	set_as_top_level(true)
 	apply_team_color()
 	get_enemy_color()
-	#get_enemy_lane_buildings()
 	$castleicon.modulate = Color.WHITE
 	current_health = max_health
 	healthbar.value = current_health
@@ -76,10 +75,7 @@ func _ready():
 	selected_unit = unit_slinger
 	selected_unit_mana_cost = slinger_mana_cost
 	await get_tree().create_timer(.2).timeout
-	get_lane_waypoints()
-	#print(team_color," nexus: top buildings: ",top_buildings)
-	#print(team_color," nexus: mid buildings: ",mid_buildings)
-	#print(team_color," nexus: bot buildings: ",bot_buildings)
+
 
 func apply_team_color():
 	if team_color == 'red':
@@ -113,23 +109,27 @@ func try_spawn_unit(unit, lane: Lane):
 func spawn_unit(unit_instance, lane: Lane):
 	var instance = unit_instance.instantiate()
 	instance.team_color = team_color
-	get_lane_waypoints()
 
+	var battlefield = get_tree().get_first_node_in_group("map")
+	var waypoints: Array = []
 
-	# Instead of using hard coded offsets in the code, we added marker nodes in
-	# the editor.  Now we can just spawn the unit on that position.  Note that
-	# this will error if the node doesn't exist.  A fallback marker could be
-	# added during assignment to just spawn the unit inside the nexus.
 	match lane:
 		Lane.Top:
 			instance.position = spawn_top.position
-			instance.waypoints = top_buildings
+			waypoints = battlefield.waypoints["top"].duplicate()
 		Lane.Mid:
 			instance.position = spawn_mid.position
-			instance.waypoints = mid_buildings
+			waypoints = battlefield.waypoints["mid"].duplicate()
 		Lane.Bot:
 			instance.position = spawn_bot.position
-			instance.waypoints = bot_buildings
+			waypoints = battlefield.waypoints["bot"].duplicate()
+
+	# The waypoints are ordered blue to red
+	if team_color == "red":
+		waypoints.reverse()
+
+	# remove the friendly nexus from waypoints
+	instance.waypoints = waypoints.slice(1)
 	add_child(instance)
 
 func spawn_wave(): #spawns 3 slingers in each lane
@@ -145,29 +145,6 @@ func spawn_wave(): #spawns 3 slingers in each lane
 	spawn_unit(unit_slinger, Lane.Mid)
 	spawn_unit(unit_slinger, Lane.Top)
 
-func get_lane_waypoints():
-	var buildings = get_tree().get_nodes_in_group("building")
-	var building_positions = []
-	var temp
-	for i in range(buildings.size()): ###Sorts by distance from nexus in ascending order
-		for j in range(i + 1, buildings.size()):
-			if buildings[i].global_position.distance_to(global_position) > buildings[j].global_position.distance_to(global_position):
-				#This swaps the arrays to sort them
-				temp = buildings[i]
-				buildings[i] = buildings[j]
-				buildings[j] = temp
-	for building in buildings:
-		if "top" in building.get_groups():
-			top_buildings.append(building)
-		if "mid" in building.get_groups():
-			mid_buildings.append(building)
-		if "bot" in building.get_groups():
-			bot_buildings.append(building)
-	#print(buildings)
-	#print("top buildings: ",top_buildings)
-	#print("mid buildings: ",mid_buildings)
-	#print("bot buildings: ",bot_buildings)
-
 func get_random_unit():
 	match randi_range(0, 4):
 		0: return unit_slinger
@@ -182,21 +159,6 @@ func get_random_unit():
 func get_random_lane() -> Lane:
 	return Lane.values()[randi() % Lane.size()] as Lane
 
-func get_enemy_lane_buildings():
-	var enemy_top_buildings = []
-	var enemy_mid_buildings = []
-	var enemy_bot_buildings = []
-	var buildings = get_tree().get_nodes_in_group("building")
-	for building in buildings:
-		if building.is_in_group(enemy_color):
-			if building.is_in_group("top"):
-				enemy_top_buildings.append(building)
-			if building.is_in_group("mid"):
-				enemy_mid_buildings.append(building)
-			if building.is_in_group("bot"):
-				enemy_bot_buildings.append(building)
-	return enemy_top_buildings and enemy_mid_buildings and enemy_bot_buildings
-
 func set_selected_unit(unit, cost: int):
 	selected_unit = unit
 	selected_unit_mana_cost = cost
@@ -206,11 +168,6 @@ func process_ai(delta: float):
 		try_spawn_unit(get_random_unit(), get_random_lane())
 
 func _physics_process(delta: float):
-	# I havent changed this part, see the large comment below
-	var delay_timer = 10
-	delay_timer -= 1
-	if delay_timer <= 0:
-		get_enemy_lane_buildings()
 	if hurt_timer > 0:
 		hurt_timer -= 1
 	else:
@@ -224,7 +181,7 @@ func _physics_process(delta: float):
 	if wave_cooldown <= 0:
 		spawn_wave()
 		wave_cooldown = 6
-	
+
 	if controlled_by == "ai":
 		process_ai(delta)
 

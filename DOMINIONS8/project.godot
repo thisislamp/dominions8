@@ -126,6 +126,12 @@ enter={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="Unit collision"
+2d_physics/layer_2="Unit hitbox"
+2d_physics/layer_3="Unit attack"
+
 [navigation]
 
 2d/default_link_connection_radius=16.0
