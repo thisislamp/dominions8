@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=3 uid="uid://difx82dpli7o5"]
+
+[ext_resource type="Script" path="res://scripts/unit/base_unit.gd" id="1_n1kpj"]
+[ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="2_7msah"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_spyc1"]
+radius = 19.0
+height = 62.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_if876"]
+radius = 22.0
+
+[node name="BaseUnit" type="CharacterBody2D" groups=["unit"]]
+y_sort_enabled = true
+motion_mode = 1
+wall_min_slide_angle = 0.0
+script = ExtResource("1_n1kpj")
+mana_cost = 200
+
+[node name="sprite" type="AnimatedSprite2D" parent="."]
+
+[node name="team_marker" type="Polygon2D" parent="."]
+modulate = Color(1, 1, 1, 0.498039)
+show_behind_parent = true
+z_index = -1
+polygon = PackedVector2Array(0, -12, 12, 0, 0, 12, -12, 0)
+
+[node name="attack_origin" type="Marker2D" parent="."]
+
+[node name="health_bar" parent="." instance=ExtResource("2_7msah")]
+offset_left = -16.0
+offset_top = -36.0
+offset_right = 16.0
+offset_bottom = -32.0
+
+[node name="nav" type="NavigationAgent2D" parent="."]
+
+[node name="hitbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 4
+
+[node name="hitbox_shape" type="CollisionShape2D" parent="hitbox"]
+shape = SubResource("CapsuleShape2D_spyc1")
+
+[node name="unit_collision_shape" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_if876")
+debug_color = Color(0.776471, 0.443137, 0, 0.419608)
+
+[node name="equipment" type="Node" parent="."]
+
+[node name="weapons" type="Node" parent="equipment"]

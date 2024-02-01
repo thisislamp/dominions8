@@ -2,11 +2,27 @@ extends Node2D
 
 @onready var tilemap: TileMap = $TileMap
 
+@onready var waypoints := {
+	"top": [
+		$blue_nexus, $towers/bluetopt2, $towers/bluetopt1,
+		$towers/redtopt1, $towers/redtopt2, $red_nexus
+	],
+	"mid": [
+		$blue_nexus, $towers/bluemidt2, $towers/bluemidt1,
+		$towers/redmidt1, $towers/redmidt2, $red_nexus
+	],
+	"bot": [
+		$blue_nexus, $towers/bluebott2, $towers/bluebott1,
+		$towers/redbott1, $towers/redbott2, $red_nexus
+	]
+}
+
+# Debug options
 var mps: int = 0
 var nav_debug: bool = false
 
-func _ready() -> void:
-	add_to_group("map")
+#func _ready() -> void:
+	#pass
 
 func _unhandled_key_input(event: InputEvent):
 	#print_debug("Got input event ", event)
