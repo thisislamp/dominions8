@@ -1,4 +1,4 @@
-class_name DRN
+class_name DRN extends Object
 
 ## Rolls 2d6 DRN
 static func roll() -> int:
