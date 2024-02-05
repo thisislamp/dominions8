@@ -1,0 +1,63 @@
+[gd_scene load_steps=8 format=3 uid="uid://b6n7hgkkj1oe3"]
+
+[ext_resource type="PackedScene" uid="uid://difx82dpli7o5" path="res://scenes/unit/base_unit.tscn" id="1_cqyry"]
+[ext_resource type="Script" path="res://scripts/unit/nexus.gd" id="2_020se"]
+[ext_resource type="Texture2D" uid="uid://ce4ow253bn715" path="res://art/citadel.png" id="2_nichs"]
+[ext_resource type="PackedScene" uid="uid://c3l2lnb8nbuhb" path="res://scenes/mana_bar.tscn" id="3_jbigd"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xa7ae"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_nichs")
+}],
+"loop": false,
+"name": &"default",
+"speed": 0.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vu1qn"]
+radius = 59.0085
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3cpni"]
+radius = 59.0
+
+[node name="Nexus" node_paths=PackedStringArray("spawn_points") instance=ExtResource("1_cqyry")]
+top_level = true
+safe_margin = 0.001
+script = ExtResource("2_020se")
+max_mana = 1000
+initial_mana = 10
+mana_regen = 50
+ai_controlled = false
+spawn_points = []
+max_health = 1000
+protection = 15
+move_speed = 0
+mana_cost = 1000
+
+[node name="sprite" parent="." index="0"]
+position = Vector2(0, -2)
+sprite_frames = SubResource("SpriteFrames_xa7ae")
+
+[node name="team_marker" parent="." index="1"]
+scale = Vector2(1.15, 1.15)
+polygon = PackedVector2Array(-60, -32, -32, -60, 32, -60, 60, -32, 60, 32, 32, 60, -32, 60, -60, 32)
+
+[node name="health_bar" parent="." index="3"]
+offset_left = -48.0
+offset_top = -89.0
+offset_right = 48.0
+offset_bottom = -81.0
+
+[node name="mana_bar" parent="." index="4" instance=ExtResource("3_jbigd")]
+offset_left = -48.0
+offset_top = -81.0
+offset_right = 48.0
+offset_bottom = -73.0
+
+[node name="collision_shape" parent="." index="6"]
+shape = SubResource("CircleShape2D_vu1qn")
+
+[node name="hitbox_shape" parent="hitbox" index="0"]
+shape = SubResource("CircleShape2D_3cpni")

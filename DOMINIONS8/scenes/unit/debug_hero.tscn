@@ -1,0 +1,96 @@
+[gd_scene load_steps=12 format=3 uid="uid://dph2t38ncvq57"]
+
+[ext_resource type="PackedScene" uid="uid://difx82dpli7o5" path="res://scenes/unit/base_unit.tscn" id="1_xiyk4"]
+[ext_resource type="Script" path="res://scripts/unit/debug_hero.gd" id="2_fycje"]
+[ext_resource type="Texture2D" uid="uid://cjmp3msi6twgn" path="res://art/debug/debughero_d.png" id="2_smapg"]
+[ext_resource type="Texture2D" uid="uid://p4mk0he67e63" path="res://art/debug/debughero_l.png" id="3_2atuc"]
+[ext_resource type="Texture2D" uid="uid://ymwna6fgn748" path="res://art/debug/debughero_r.png" id="4_0ttf3"]
+[ext_resource type="Texture2D" uid="uid://dpqxj2q7u3l4s" path="res://art/debug/debughero_u.png" id="5_pveav"]
+[ext_resource type="SystemFont" uid="uid://c0bx553l47t1j" path="res://ui/console/console_font.tres" id="7_1380d"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_aaa0l"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_smapg")
+}],
+"loop": false,
+"name": &"down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_2atuc")
+}],
+"loop": false,
+"name": &"left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_0ttf3")
+}],
+"loop": false,
+"name": &"right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_pveav")
+}],
+"loop": false,
+"name": &"up",
+"speed": 5.0
+}]
+
+[sub_resource type="LabelSettings" id="LabelSettings_nmbje"]
+font = ExtResource("7_1380d")
+font_size = 23
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 2
+shadow_color = Color(0, 0, 0, 0.164706)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lc75s"]
+radius = 15.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hna7m"]
+radius = 22.0
+height = 66.0
+
+[node name="DebugHero" instance=ExtResource("1_xiyk4")]
+script = ExtResource("2_fycje")
+
+[node name="sprite" parent="." index="0"]
+position = Vector2(0, -36)
+scale = Vector2(0.24, 0.24)
+sprite_frames = SubResource("SpriteFrames_aaa0l")
+animation = &"down"
+
+[node name="team_marker" parent="." index="1"]
+scale = Vector2(1.25, 1.25)
+
+[node name="health_bar" parent="." index="3"]
+offset_top = -72.0
+offset_bottom = -68.0
+
+[node name="label" type="Label" parent="." index="4"]
+top_level = true
+offset_left = -74.0
+offset_top = -122.0
+offset_right = 28.0
+offset_bottom = -98.0
+text = "Velocity"
+label_settings = SubResource("LabelSettings_nmbje")
+
+[node name="nav" parent="." index="5"]
+avoidance_enabled = true
+avoidance_layers = 9
+avoidance_mask = 9
+
+[node name="collision_shape" parent="." index="6"]
+shape = SubResource("CircleShape2D_lc75s")
+
+[node name="hitbox_shape" parent="hitbox" index="0"]
+position = Vector2(0, -33)
+shape = SubResource("CapsuleShape2D_hna7m")

@@ -9,11 +9,14 @@ class_name BaseUnit extends CharacterBody2D
 ## The base movement speed of the unit (in px?).
 @export_range(0, 1000, 1, "or_greater") var move_speed: int = 100
 
-## The base attack range of the unit.  This value can be modified by weapons.
-@export_range(0, 1000, 1, "exp") var attack_range: int = 100
+## The bonus attack range of the unit.  This value can be added to a weapon's
+## base attack range, if the weapon will use it.
+@export_range(0, 1000, 1, "exp") var bonus_attack_range: int = 0
 
-## The range at which the unit will lock onto a target and begin to attack it.
-@export var aquisition_range: int = 100
+## The bonus acquisition range of a unit.  The range at which the unit will lock
+## onto a target and begin to attack it.  This value can be added to a weapon's
+## base acquisition range, if the weapon will use it.
+@export var bonus_acquisition_range: int = 0
 
 ## Base attack time, a coefficient to modify weapon attack speed.  Works the
 ## same way it does in Dota. [br]
@@ -22,47 +25,66 @@ class_name BaseUnit extends CharacterBody2D
 ## 0.6 = 166% (2/3rds faster)
 @export_range(0.01, 10, 0.01, "exp") var bat: float = 1.0
 
-## How much it costs to spawn this unit.
+## How much mana it costs to spawn this unit.
 @export_range(0, 1000, 1) var mana_cost: int = 100
 
 @onready var current_health: int = max_health
-var attack_cooldown: float = 0
-var hurt_timer: int = 0
-var lane: int  # temporary
-var waypoints: Array = []
-var destination: Vector2
-var direction: Vector2:
-	set(v):
-		direction = v
-		$sprite.scale.x = 1 if v.x < 0 else -1
-var current_target: BaseUnit
 
-# Team stuff
-var team_number: int
-var team_color: Color = Color.WHITE:
-	set(c): $team_marker.color = c
+var current_target: BaseUnit
+var spawn_point: SpawnPoint
+var team: GameMap.Team: set=set_team, get=get_team
+
+var oob_kill_range: int = 200
+
+# Debug vars
+static var _debug_show_pathing: bool = false
+static var _debug_show_hitbox: bool = false
+static var _debug_show_collision: bool = false
 
 # Node aliases
-@onready var sprite: AnimatedSprite2D = $sprite
-@onready var attack_origin: Marker2D = $attack_origin
-@onready var health_bar: ProgressBar = $health_bar
-@onready var nav: NavigationAgent2D = $nav
-@onready var weapons: Array[BaseWeapon]:
+@onready var sprite: AnimatedSprite2D = $sprite as AnimatedSprite2D
+@onready var attack_origin: Marker2D = $attack_origin as Marker2D
+@onready var health_bar: ProgressBar = $health_bar as ProgressBar
+@onready var nav: NavigationAgent2D = $nav as NavigationAgent2D
+@onready var weapons: Array:
 	get: return $equipment/weapons.get_children() as Array[BaseWeapon]
 
 ## Emitted when a unit dies
 signal unit_died(unit: BaseUnit)
 
-## Sets the team number and color
-func set_team(team: int, color: Color) -> void:
-	remove_from_group("team_%s" % team)
-	team_number = team
-	team_color = color
-	add_to_group("team_%s" % team)
 
-## Returns the unit's current target, or chooses a new target and returns it
+func _ready():
+	health_bar.value = current_health
+	health_bar.max_value = max_health
+	health_bar.visible = false
+
+	# TODO: switch to use signals
+	if OS.is_debug_build():
+		# sets spawning with pathfinding visible
+		var map = get_tree().get_first_node_in_group("map")
+		nav.debug_enabled = BaseUnit._debug_show_pathing or map._debug_pathing if map else false
+
+## Returns the GameMap node for this scene.
+func get_map() -> GameMap:
+	return get_tree().get_first_node_in_group("map")
+
+## Returns the GameMap.Team the unit is on, or Team.UNAFFILIATED if unassigned.
+func get_team() -> GameMap.Team:
+	return team if team else GameMap.Team.UNAFFILIATED
+
+## Sets the team for this unit.
+func set_team(value: GameMap.Team) -> void:
+	if team:
+		remove_from_group("team_%s" % team.id)
+	team = value
+	if $team_marker:
+		$team_marker.color = team.color
+	add_to_group("team_%s" % team.id)
+
+
+## Returns the unit's current target, or chooses and returns a new target.
 func get_target():
-	if current_target and is_instance_valid(current_target) and not current_target.is_queued_for_deletion():
+	if is_instance_valid(current_target) and not current_target.is_queued_for_deletion():
 		return current_target
 	return choose_target()
 
@@ -71,7 +93,7 @@ func choose_target():
 	pass
 
 ## Attacks a target with its first available weapon, if any.  Returns a bool
-## value for whether or not an attack was made.
+## value for if attack was made.
 func attack(target: BaseUnit) -> bool:
 	for weapon: BaseWeapon in weapons:
 		if weapon.ready_to_use:
@@ -117,35 +139,30 @@ func die() -> void:
 	unit_died.emit(self)
 	queue_free()
 
-func move(_delta: float):
-	get_target()
-	if not current_target:
-		follow_waypoints()
+## Checks to see if the unit has gone out of bounds and deletes it.  Does not
+## call die() on the unit.
+func check_oob() -> bool:
+	if not oob_kill_range:
+		return false
 
+	var limit := get_viewport_rect().size
+	if abs(global_position).x - oob_kill_range > limit.x or \
+		abs(global_position).y - oob_kill_range > limit.y:
+
+		print(self, ": OOB deleted at ", global_position)
+		queue_free()
+		return true
+	return false
+
+## Moves the unit.  Defaults to simply calling move_and_slide()
+func move(_delta: float):
 	move_and_slide()
 
-func follow_waypoints() -> void:
-	if len(waypoints) == 0:
-		return  # TODO: do something?
-
-	nav.target_position = waypoints[0].global_position
-	direction = (nav.get_next_path_position() - global_position).normalized()
-	velocity = direction * move_speed
-
-	if global_position.distance_to(nav.target_position) < 150:
-		waypoints.pop_front()
-
-func _ready():
-	health_bar.value = current_health
-	health_bar.max_value = max_health
-	health_bar.visible = false
-
-	if OS.is_debug_build():
-		# sets spawning with pathfinding visible
-		var map = get_tree().get_first_node_in_group("map")
-		if map:
-			nav.debug_enabled = map.nav_debug
-
+#func _process(delta: float) -> void:
+	#$sprite.flip_h = velocity.x < 0
 
 func _physics_process(delta: float) -> void:
-	move(delta)
+	if check_oob():
+		return
+
+	$sprite.flip_h = velocity.x < 0

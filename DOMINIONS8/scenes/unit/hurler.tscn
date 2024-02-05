@@ -1,10 +1,10 @@
 [gd_scene load_steps=10 format=3 uid="uid://c25vni0q3n6n8"]
 
 [ext_resource type="PackedScene" uid="uid://difx82dpli7o5" path="res://scenes/unit/base_unit.tscn" id="1_u20ol"]
-[ext_resource type="Script" path="res://scripts/unit/hurler.gd" id="2_6u02e"]
 [ext_resource type="Texture2D" uid="uid://tn16slkvgu36" path="res://art/hurler2.png" id="2_pbre6"]
 [ext_resource type="Texture2D" uid="uid://bcc5wpoykavo0" path="res://art/hurler1.png" id="3_21843"]
 [ext_resource type="PackedScene" uid="uid://b7d5uguhugc6" path="res://scenes/equipment/weapon/ranged/throw.tscn" id="5_n620t"]
+[ext_resource type="Script" path="res://scripts/components/lane_navigator.gd" id="6_7jl7u"]
 [ext_resource type="PackedScene" uid="uid://cumbjlxj36vcc" path="res://scenes/equipment/weapon/projectiles/rock.tscn" id="6_epr5y"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_rlr80"]
@@ -29,21 +29,20 @@ animations = [{
 "speed": 0.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_kcysi"]
+radius = 16.0
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ljtsb"]
 radius = 21.0
 height = 64.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_oe5at"]
-radius = 17.1172
-
 [node name="Hurler" instance=ExtResource("1_u20ol")]
-script = ExtResource("2_6u02e")
+safe_margin = 3.0
 max_health = 30
 protection = 2
 move_speed = 50
-attack_range = 170
-aquisition_range = 170
-bat = 2.0
+bat = 1.5
+mana_cost = 200
 
 [node name="sprite" parent="." index="0"]
 position = Vector2(0, -23)
@@ -58,12 +57,21 @@ offset_top = -62.0
 offset_right = 20.0
 offset_bottom = -58.0
 
+[node name="nav" parent="." index="4"]
+avoidance_enabled = true
+radius = 30.0
+max_speed = 200.0
+
+[node name="collision_shape" parent="." index="5"]
+shape = SubResource("CircleShape2D_kcysi")
+debug_color = Color(0.776471, 0.443137, 0, 0.419608)
+
 [node name="hitbox_shape" parent="hitbox" index="0"]
 position = Vector2(0, -22)
 shape = SubResource("CapsuleShape2D_ljtsb")
 
-[node name="unit_collision_shape" parent="." index="6"]
-shape = SubResource("CircleShape2D_oe5at")
-
 [node name="Throw" parent="equipment/weapons" index="0" instance=ExtResource("5_n620t")]
 projectile_scene = ExtResource("6_epr5y")
+
+[node name="LaneNavigatorComponent" type="Node" parent="." index="8"]
+script = ExtResource("6_7jl7u")

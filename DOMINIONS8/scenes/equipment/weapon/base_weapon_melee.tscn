@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bgqdptprwd88b"]
+
+[ext_resource type="Script" path="res://scripts/equipment/weapon/base_weapon.gd" id="1_oshmq"]
+
+[node name="BaseWeaponMelee" type="Node"]
+script = ExtResource("1_oshmq")
