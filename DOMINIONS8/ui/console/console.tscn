@@ -1,0 +1,52 @@
+[gd_scene load_steps=3 format=3 uid="uid://ctw18t66dxevh"]
+
+[ext_resource type="Theme" uid="uid://clohdun6bfyrb" path="res://ui/console/console_theme.tres" id="1_g4y5b"]
+[ext_resource type="Script" path="res://ui/console/console.gd" id="2_0fsch"]
+
+[node name="Console" type="PanelContainer"]
+process_mode = 3
+top_level = true
+z_index = 4000
+z_as_relative = false
+anchors_preset = -1
+anchor_right = 0.534375
+anchor_bottom = 0.618519
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 10.0
+offset_bottom = 10.0
+mouse_filter = 1
+theme = ExtResource("1_g4y5b")
+script = ExtResource("2_0fsch")
+metadata/_edit_use_anchors_ = true
+
+[node name="margin" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="vbox" type="VBoxContainer" parent="margin"]
+layout_mode = 2
+alignment = 2
+
+[node name="margin" type="MarginContainer" parent="margin/vbox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_bottom = 0
+
+[node name="output_area" type="RichTextLabel" parent="margin/vbox/margin"]
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 2
+text = "Behold the console, in all its glory
+------------------------------------"
+scroll_following = true
+context_menu_enabled = true
+selection_enabled = true
+drag_and_drop_selection_enabled = false
+
+[node name="input_bar" type="LineEdit" parent="margin/vbox"]
+layout_mode = 2
+placeholder_text = "Enter command"
+caret_blink = true
+
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
+[connection signal="text_submitted" from="margin/vbox/input_bar" to="." method="_on_input_bar_text_submitted"]
