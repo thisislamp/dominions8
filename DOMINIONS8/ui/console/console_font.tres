@@ -1,0 +1,5 @@
+[gd_resource type="SystemFont" format=3 uid="uid://c0bx553l47t1j"]
+
+[resource]
+font_names = PackedStringArray("Consolas")
+multichannel_signed_distance_field = true
