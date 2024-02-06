@@ -1,15 +1,38 @@
-[gd_scene load_steps=10 format=3 uid="uid://nnpxe0stwwmn"]
+[gd_scene load_steps=15 format=3 uid="uid://nnpxe0stwwmn"]
 
 [ext_resource type="Script" path="res://scripts/unit_slinger.gd" id="1_oc4fx"]
-[ext_resource type="Texture2D" uid="uid://dfvspp4l50hpm" path="res://art/slinger1.png" id="2_51pg5"]
-[ext_resource type="Texture2D" uid="uid://dlbnnrggocdxb" path="res://art/slinger2.png" id="3_tphof"]
+[ext_resource type="Shader" path="res://scripts/teamcolor.gdshader" id="2_7jhqf"]
+[ext_resource type="Texture2D" uid="uid://xe7vwd0ku25f" path="res://art/magespritesheet.png" id="2_dtgnf"]
 [ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="5_ajsmr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_47vel"]
+shader = ExtResource("2_7jhqf")
+shader_parameter/new_color = Color(0.862745, 0.486275, 0, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_61wxq"]
+atlas = ExtResource("2_dtgnf")
+region = Rect2(72, 0, 36, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_42sud"]
+atlas = ExtResource("2_dtgnf")
+region = Rect2(36, 0, 36, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rc8l6"]
+atlas = ExtResource("2_dtgnf")
+region = Rect2(0, 0, 36, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_38p64"]
+atlas = ExtResource("2_dtgnf")
+region = Rect2(72, 0, 36, 36)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_jc557"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_51pg5")
+"texture": SubResource("AtlasTexture_61wxq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_42sud")
 }],
 "loop": true,
 "name": &"sprite1",
@@ -17,10 +40,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_tphof")
+"texture": SubResource("AtlasTexture_rc8l6")
 }, {
 "duration": 1.0,
-"texture": ExtResource("2_51pg5")
+"texture": SubResource("AtlasTexture_38p64")
 }],
 "loop": false,
 "name": &"sprite2",
@@ -28,7 +51,7 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_n2d5l"]
-height = 36.0
+height = 32.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tx2w6"]
 radius = 11.0
@@ -45,9 +68,11 @@ wall_min_slide_angle = 0.0
 script = ExtResource("1_oc4fx")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_47vel")
 position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_jc557")
 animation = &"sprite1"
+offset = Vector2(-2, 0)
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 debug_enabled = true
@@ -66,14 +91,14 @@ collision_layer = 8388609
 collision_mask = 8388609
 
 [node name="hitbox_collision" type="CollisionShape2D" parent="hitbox_area"]
-position = Vector2(0, -7)
+position = Vector2(0, -5)
 shape = SubResource("CapsuleShape2D_n2d5l")
 
 [node name="health_bar" parent="." instance=ExtResource("5_ajsmr")]
 offset_left = -12.0
-offset_top = -34.0
+offset_top = -32.0
 offset_right = 13.0
-offset_bottom = -30.0
+offset_bottom = -28.0
 
 [node name="unit_collision" type="Area2D" parent="."]
 
