@@ -1,4 +1,4 @@
-class_name BaseProjectile extends Node2D
+class_name BaseProjectile extends Area2D
 
 ## The base damage this projectile does
 @export var damage: int = 1
@@ -9,7 +9,12 @@ class_name BaseProjectile extends Node2D
 @export var pierce: int = 0
 
 ## The weapon that shot this projectile
-var weapon: BaseWeapon
+var weapon: BaseWeaponRanged
+
+var team: GameMap.Team = GameMap.Team.UNAFFILIATED
+
+var velocity: Vector2 = Vector2.ZERO
+
 
 ## The color used to modulate the sprite of this projectile.
 var color: Color = Color.WHITE:
@@ -34,16 +39,31 @@ func hit_unit(target: BaseUnit) -> void:
 func after_hit(target: Node2D) -> void:
 	destroy()
 
+func is_valid_target(target: Node2D) -> bool:
+	if not target is BaseUnit:
+		return false
+
+	if not Utils.is_alive(target):
+		return false
+
+	if team == target.team:
+		return false
+
+	return true
+
 ## Destory the projectile.  Calls queue_free() by default.
 func destroy() -> void:
 	queue_free()
 
 
+func _physics_process(delta: float) -> void:
+	global_position += velocity * delta
+
 func _on_screen_exited() -> void:
 	queue_free()
 
-
-func _on_hitbox_area_entered(area: Area2D) -> void:
-	var area_parent = area.get_parent()
-	if area_parent is BaseUnit:
-		hit(area_parent)
+func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int, _local_shape_index: int) -> void:
+	#print(self, ": entered ", area, "\n  -> owned by ", area.get_parent())
+	var target = area.get_parent()
+	if is_valid_target(target):
+		hit(target)

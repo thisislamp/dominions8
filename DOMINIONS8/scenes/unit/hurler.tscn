@@ -5,20 +5,20 @@
 [ext_resource type="Texture2D" uid="uid://bcc5wpoykavo0" path="res://art/hurler1.png" id="3_21843"]
 [ext_resource type="PackedScene" uid="uid://b7d5uguhugc6" path="res://scenes/equipment/weapon/ranged/throw.tscn" id="5_n620t"]
 [ext_resource type="Script" path="res://scripts/components/lane_navigator.gd" id="6_7jl7u"]
-[ext_resource type="PackedScene" uid="uid://cumbjlxj36vcc" path="res://scenes/equipment/weapon/projectiles/rock.tscn" id="6_epr5y"]
+[ext_resource type="PackedScene" uid="uid://bpkeoeqeleiwh" path="res://scenes/equipment/weapon/projectiles/rock.tscn" id="6_epr5y"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_rlr80"]
 animations = [{
 "frames": [{
-"duration": 1.0,
+"duration": 0.5,
 "texture": ExtResource("2_pbre6")
 }, {
-"duration": 1.0,
+"duration": 0.01,
 "texture": ExtResource("3_21843")
 }],
 "loop": false,
 "name": &"attack",
-"speed": 6.0
+"speed": 1.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -37,6 +37,7 @@ radius = 21.0
 height = 64.0
 
 [node name="Hurler" instance=ExtResource("1_u20ol")]
+position = Vector2(136.765, 153.222)
 safe_margin = 3.0
 max_health = 30
 protection = 2
@@ -47,31 +48,39 @@ mana_cost = 200
 [node name="sprite" parent="." index="0"]
 position = Vector2(0, -23)
 sprite_frames = SubResource("SpriteFrames_rlr80")
+animation = &"attack"
+frame = 1
+frame_progress = 1.0
+
+[node name="attack_origin" parent="sprite" index="0"]
+position = Vector2(-24.765, -4.222)
 
 [node name="team_marker" parent="." index="1"]
 scale = Vector2(1.4, 1.4)
 
-[node name="health_bar" parent="." index="3"]
+[node name="health_bar" parent="." index="2"]
 offset_left = -20.0
 offset_top = -62.0
 offset_right = 20.0
 offset_bottom = -58.0
 
-[node name="nav" parent="." index="4"]
+[node name="nav" parent="." index="3"]
+target_desired_distance = 20.0
 avoidance_enabled = true
-radius = 30.0
-max_speed = 200.0
+radius = 20.0
+neighbor_distance = 250.0
+max_speed = 50.0
 
-[node name="collision_shape" parent="." index="5"]
+[node name="collision_shape" parent="." index="4"]
 shape = SubResource("CircleShape2D_kcysi")
-debug_color = Color(0.776471, 0.443137, 0, 0.419608)
 
 [node name="hitbox_shape" parent="hitbox" index="0"]
 position = Vector2(0, -22)
 shape = SubResource("CapsuleShape2D_ljtsb")
+debug_color = Color(0, 0.6, 0.701961, 0.419608)
 
-[node name="Throw" parent="equipment/weapons" index="0" instance=ExtResource("5_n620t")]
-projectile_scene = ExtResource("6_epr5y")
-
-[node name="LaneNavigatorComponent" type="Node" parent="." index="8"]
+[node name="LaneNavigatorComponent" type="Node" parent="." index="6"]
 script = ExtResource("6_7jl7u")
+
+[node name="WeaponThrow" parent="." index="7" instance=ExtResource("5_n620t")]
+projectile_scene = ExtResource("6_epr5y")

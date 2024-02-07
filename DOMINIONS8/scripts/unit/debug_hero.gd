@@ -18,7 +18,7 @@ func _ready() -> void:
 		set_team(t)
 
 func _physics_process(delta: float) -> void:
-	var next_path := nav.get_next_path_position()
+	var _next_path := nav.get_next_path_position()
 
 	#velocity = Utils.apply_thrust(velocity, thrust.normalized(), force, delta).limit_length(max_speed)
 	if thrust.is_equal_approx(Vector2.ZERO):
@@ -33,7 +33,7 @@ func _physics_process(delta: float) -> void:
 	#move_and_collide(velocity * delta)
 	position = position.clamp(Vector2.ZERO, screen_size)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if Engine.get_physics_frames() % 3 == 0:
 		$label.text = "Velocity: %s\nSpeed:     %0.2f"  % [velocity, velocity.length()]
 

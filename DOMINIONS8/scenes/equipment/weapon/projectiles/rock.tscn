@@ -1,14 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://cumbjlxj36vcc"]
+[gd_scene load_steps=3 format=3 uid="uid://bpkeoeqeleiwh"]
 
 [ext_resource type="PackedScene" uid="uid://chb2rturd6ehr" path="res://scenes/equipment/weapon/base_projectile.tscn" id="1_7mas8"]
-[ext_resource type="Script" path="res://scripts/equipment/weapon/projectiles/rock.gd" id="2_cvnxi"]
-[ext_resource type="Texture2D" uid="uid://b25ajqewkps6r" path="res://art/unit/tower.png" id="3_i7i6d"]
+[ext_resource type="Texture2D" uid="uid://bskx1uf567283" path="res://art/tower.png" id="2_nab0k"]
 
 [node name="Rock" instance=ExtResource("1_7mas8")]
-script = ExtResource("2_cvnxi")
 damage = 8
 
 [node name="sprite" parent="." index="0"]
-position = Vector2(0, -1.5)
-scale = Vector2(0.141667, 0.0703704)
-texture = ExtResource("3_i7i6d")
+position = Vector2(0, -1.06619)
+scale = Vector2(0.125, 0.0722391)
+texture = ExtResource("2_nab0k")
+
+[node name="visibility_notifier" parent="." index="2"]
+scale = Vector2(1.1, 1.1)

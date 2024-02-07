@@ -1,5 +1,13 @@
 [gd_scene load_steps=2 format=3 uid="uid://b7d5uguhugc6"]
 
-[ext_resource type="PackedScene" uid="uid://ddpm1aptswij" path="res://scenes/equipment/weapon/base_weapon_ranged.tscn" id="1_u4isp"]
+[ext_resource type="Script" path="res://scripts/equipment/weapon/base_weapon_ranged.gd" id="1_3pwse"]
 
-[node name="Throw" instance=ExtResource("1_u4isp")]
+[node name="Throw" type="Node2D"]
+script = ExtResource("1_3pwse")
+projectile_speed = 200
+attack_range = 200
+aquisition_range = 250
+
+[node name="sprite" type="Sprite2D" parent="."]
+
+[node name="projectile_origin" type="Marker2D" parent="sprite"]

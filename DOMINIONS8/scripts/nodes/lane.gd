@@ -13,7 +13,7 @@ const endpoint = Vector2.INF
 ## The radius of the waypoint trigger range.  A unit who's collision
 ## shape touches this radius will be considered to have reached this
 ## waypoint, and proceed
-@export_range(0, 100, 1, "or_greater") var waypoint_radius: int = 30:
+@export_range(0, 100, 1, "or_greater") var waypoint_radius: int = 40:
 	set(r):
 		waypoint_radius = r
 		waypoint_shape.radius = r
@@ -40,8 +40,8 @@ func _init() -> void:
 	waypoint_shape.radius = waypoint_radius
 	# waypoint_area.connect("body_shape_entered", _on_body_shape_entered)
 	waypoint_area.input_pickable = false
-	waypoint_area.collision_mask = 2
-	waypoint_area.collision_layer = 2
+	waypoint_area.collision_layer = 1 << 6
+	waypoint_area.collision_mask = 1
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -89,9 +89,9 @@ func get_next_waypoint(current: int, reversed: bool) -> Vector2:
 		return _get_point(current + 1)
 		#return points[current + 1]
 	else:
-		if current == 0:
+		if current == points.size():
 			return endpoint
-		return _get_point(current - 1)
+		return _get_point(-1 - current)
 		#return points[current - 1]
 
 ## Adds shapes to the waypoint

@@ -26,10 +26,8 @@ var reversed: bool:
 	get:
 		return unit.spawn_point.reversed if unit.spawn_point else false
 
-var unit_velocity: Vector2 = Vector2.ZERO:
-	set(v):
-		unit_velocity = v
-		#unit.velocity = v
+var unit_velocity: Vector2 = Vector2.ZERO
+
 
 func _init() -> void:
 	set_physics_process(false)
@@ -52,6 +50,7 @@ func _setup_nav() -> void:
 
 	await get_tree().physics_frame
 	nav.avoidance_enabled = true
+	nav.max_speed = unit.move_speed
 	nav.connect("velocity_computed", _on_avoidance_velocity_computed)
 	set_destination(lane.get_waypoint(current_waypoint, reversed))
 	enabled = true
@@ -63,20 +62,20 @@ func update_waypoint(new_waypoint: int, position: Vector2) -> void:
 
 ## Sets the target position of the nav agent.
 func set_destination(position: Vector2) -> void:
-	print("Setting destination for ", unit, " to ", position)
+	#print("Setting destination for ", unit, " to ", position)
 	if position as Vector2:
 		nav.target_position = position as Vector2
 	else:
 		nav.target_position = lane.get_waypoint(current_waypoint, reversed)
 
 func get_next_waypoint() -> void:
-	print(unit, ": target reached")
+	#print(unit, ": target reached")
 	nav.target_position = lane.get_next_waypoint(current_waypoint, reversed)
-	print(unit, ": got next position: ", nav.target_position)
+	#print(unit, ": got next position: ", nav.target_position)
 	current_waypoint += 1
 
 	if nav.target_position == Vector2.INF:
-		print(unit, ": Lane traversed")
+		#print(unit, ": Lane traversed")
 		enabled = false
 
 func move(delta: float) -> void:
@@ -125,7 +124,7 @@ func _on_collision_area_entered(_area_rid: RID, node: Node2D, _area_shape_index:
 		return
 
 	unit.current_waypoint = local_shape_index
-	print("Set ", self, " waypoint to ", local_shape_index)
+	#print("Set ", self, " waypoint to ", local_shape_index)
 
 
 # Tool code

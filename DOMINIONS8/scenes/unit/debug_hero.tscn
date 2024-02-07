@@ -43,13 +43,9 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="LabelSettings" id="LabelSettings_nmbje"]
+[sub_resource type="LabelSettings" id="LabelSettings_tb6bb"]
 font = ExtResource("7_1380d")
-font_size = 23
-outline_size = 5
-outline_color = Color(0, 0, 0, 1)
-shadow_size = 2
-shadow_color = Color(0, 0, 0, 0.164706)
+font_size = 24
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lc75s"]
 radius = 15.0
@@ -60,6 +56,8 @@ height = 66.0
 
 [node name="DebugHero" instance=ExtResource("1_xiyk4")]
 script = ExtResource("2_fycje")
+max_health = 100
+protection = 5
 
 [node name="sprite" parent="." index="0"]
 position = Vector2(0, -36)
@@ -70,25 +68,25 @@ animation = &"down"
 [node name="team_marker" parent="." index="1"]
 scale = Vector2(1.25, 1.25)
 
-[node name="health_bar" parent="." index="3"]
+[node name="health_bar" parent="." index="2"]
 offset_top = -72.0
 offset_bottom = -68.0
 
-[node name="label" type="Label" parent="." index="4"]
-top_level = true
-offset_left = -74.0
-offset_top = -122.0
-offset_right = 28.0
-offset_bottom = -98.0
-text = "Velocity"
-label_settings = SubResource("LabelSettings_nmbje")
-
-[node name="nav" parent="." index="5"]
+[node name="nav" parent="." index="3"]
 avoidance_enabled = true
 avoidance_layers = 9
 avoidance_mask = 9
 
-[node name="collision_shape" parent="." index="6"]
+[node name="label" type="Label" parent="." index="4"]
+z_index = 200
+offset_left = -113.0
+offset_top = -108.0
+offset_right = 11.0
+offset_bottom = -79.0
+text = "Velocity"
+label_settings = SubResource("LabelSettings_tb6bb")
+
+[node name="collision_shape" parent="." index="5"]
 shape = SubResource("CircleShape2D_lc75s")
 
 [node name="hitbox_shape" parent="hitbox" index="0"]

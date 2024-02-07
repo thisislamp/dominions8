@@ -31,7 +31,7 @@ func _ready() -> void:
 		set_team.call_deferred(player_team)
 
 
-func spawn_unit(unit_type: PackedScene):
+func spawn_unit(unit_type: PackedScene, point: SpawnPoint):
 	if not unit_type.can_instantiate():
 		push_error("What the heck is this shit I can't spawn this: %s" % unit_type)
 		return
@@ -44,12 +44,12 @@ func spawn_unit(unit_type: PackedScene):
 	#var pos = get_viewport().get_mouse_position()
 	#pos = pos.clamp(Vector2.ZERO, get_viewport_rect().size)
 
-	var pos = get_node("spawn_top").global_position
-	print("Spawning at ", pos)
+	var pos = point.global_position
+	#print("Spawning at ", pos)
 
 	new_unit.position = pos + Vector2(randf_range(-5, 5), randf_range(-5, 5))
 	new_unit.team = team
-	new_unit.spawn_point = get_node("spawn_top")
+	new_unit.spawn_point = point
 	#new_unit.velocity = Vector2(1,-1)
 
 	get_map().get_node("units").add_child(new_unit)
@@ -74,6 +74,13 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if not event.pressed:
 		return
 
+	return
 	match event.keycode:
 		KEY_1:
-			spawn_unit(preload("res://scenes/unit/hurler.tscn"))
+			spawn_unit(preload("res://scenes/unit/hurler.tscn"), $spawn_top)
+
+		KEY_2:
+			spawn_unit(preload("res://scenes/unit/hurler.tscn"), $spawn_mid)
+
+		KEY_3:
+			spawn_unit(preload("res://scenes/unit/hurler.tscn"), $spawn_bot)
