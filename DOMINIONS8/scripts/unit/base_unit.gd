@@ -28,6 +28,9 @@ class_name BaseUnit extends CharacterBody2D
 ## How much mana it costs to spawn this unit.
 @export_range(0, 1000, 1) var mana_cost: int = 100
 
+## Debug setting
+@export var default_team_id: int
+
 @onready var current_health: int = max_health
 
 var current_target: BaseUnit
@@ -42,21 +45,30 @@ static var _debug_show_hitbox: bool = false
 static var _debug_show_collision: bool = false
 
 # Node aliases
-@onready var sprite: AnimatedSprite2D = $sprite as AnimatedSprite2D
-@onready var attack_origin: Marker2D = $attack_origin as Marker2D
-@onready var health_bar: ProgressBar = $health_bar as ProgressBar
-@onready var nav: NavigationAgent2D = $nav as NavigationAgent2D
-@onready var weapons: Array:
-	get: return $equipment/weapons.get_children() as Array[BaseWeapon]
+@onready var sprite: AnimatedSprite2D = %sprite as AnimatedSprite2D
+@onready var attack_origin: Marker2D = %attack_origin as Marker2D
+@onready var health_bar: ProgressBar = %health_bar as ProgressBar
+@onready var nav: NavigationAgent2D = %nav as NavigationAgent2D
+@onready var equipment: Array[Node]:
+	get: return $equipment.get_children()
 
 ## Emitted when a unit dies
 signal unit_died(unit: BaseUnit)
 
 
 func _ready():
-	health_bar.value = current_health
 	health_bar.max_value = max_health
+	health_bar.value = current_health
 	health_bar.visible = false
+
+	if default_team_id:
+		var temp_team = get_map().get_team(default_team_id)
+		if team == GameMap.Team.UNAFFILIATED:
+			team = get_map().register_team(
+				"Debug Team %s" % default_team_id,
+				default_team_id,
+				Color.from_hsv(randf(), .9, .9)
+			)
 
 	# TODO: switch to use signals
 	if OS.is_debug_build():
@@ -81,10 +93,9 @@ func set_team(value: GameMap.Team) -> void:
 		$team_marker.color = team.color
 	add_to_group("team_%s" % team.id)
 
-
 ## Returns the unit's current target, or chooses and returns a new target.
 func get_target():
-	if is_instance_valid(current_target) and not current_target.is_queued_for_deletion():
+	if Utils.is_alive(current_target):
 		return current_target
 	return choose_target()
 
@@ -95,20 +106,22 @@ func choose_target():
 ## Attacks a target with its first available weapon, if any.  Returns a bool
 ## value for if attack was made.
 func attack(target: BaseUnit) -> bool:
-	for weapon: BaseWeapon in weapons:
-		if weapon.ready_to_use:
-			weapon.attack(target)
+	for item in equipment:
+		if not item is BaseWeapon:
+			continue
+		if item.ready_to_use:
+			item.attack(target)
 			return true
 	return false
 
 ## Attacks a target with a specific weapon
 func attack_with(target: BaseUnit, weapon: BaseWeapon) -> void:
-	assert(weapon in weapons, "weapon %s not in %s weapons?" % [weapon, self])
+	assert(weapon in equipment, "weapon %s not owned by %s?" % [weapon, self])
 	weapon.attack(target)
 
 ## Uses the weapon without a unit target in a specific direction or ground target
 func use_weapon(weapon: BaseWeapon, target: Vector2) -> void:
-	assert(weapon in weapons, "weapon %s not in %s weapons?" % [weapon, self])
+	assert(weapon in equipment, "weapon %s not owned by %s?" % [weapon, self])
 	weapon.use(target)
 
 ## Deal damage to the unit, calculating damage taken
@@ -123,12 +136,12 @@ func take_damage(damage: int) -> void:
 			return
 
 		# Use float devision
-		flash_damage(Color.RED, 1 - current_health * 1.0 /max_health)
+		flash_damage(Color.RED, 1 - current_health * 1.0 / max_health)
 	else:
 		flash_damage(Color.GRAY, 0.5)
 
 ## Flashes the unit a given color and strength for a duration.
-func flash_damage(color: Color, intensity: float = 1, duration: float = 1) -> void:
+func flash_damage(color: Color, intensity: float = 1, duration: float = 0.25) -> void:
 	# TODO: this seems wrong, maybe I should scale saturation based on intensity
 	sprite.self_modulate = Color(color, intensity)
 	await get_tree().create_timer(duration, false).timeout
@@ -159,10 +172,12 @@ func move(_delta: float):
 	move_and_slide()
 
 #func _process(delta: float) -> void:
+	#sprite.scale.x = -1 if velocity.x > 0 else 1
 	#$sprite.flip_h = velocity.x < 0
 
 func _physics_process(delta: float) -> void:
 	if check_oob():
 		return
 
-	$sprite.flip_h = velocity.x < 0
+	if velocity != Vector2.ZERO:
+		sprite.scale.x = -1 if velocity.x > 0 else 1

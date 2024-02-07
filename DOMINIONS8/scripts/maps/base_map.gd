@@ -24,14 +24,14 @@ func _ready() -> void:
 ## Creates and registers a new Team in the map's team registry and returns it.
 func register_team(_name: String, id: int, color: Color) -> Team:
 	if teams.any(func(t): return t.id == id):
-		push_warning("Team with id %s already exists: %s" % [id])
+		push_warning("Team with id %s already exists: %s" % [id, get_team(id)])
 
 	var team = Team.new(_name, id, color)
 	teams.append(team)
 	return team
 
 ## Returns a registered Team by it's id, if it exists.
-func get_team(id: int) -> Variant:
+func get_team(id: int):
 	var matches = teams.filter(func(t): return t.id == id)
 	match matches.size():
 		0: return null
@@ -41,7 +41,7 @@ func get_team(id: int) -> Variant:
 			return null
 
 ## Returns a registered Team by it's name, if it exists.
-func get_team_by_name(_name: String) -> Variant:
+func get_team_by_name(_name: String):
 	var matches = teams.filter(func(t): return t.name == _name)
 	match matches.size():
 		0: return null

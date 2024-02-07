@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/equipment/weapon/base_weapon_ranged.gd" id="1_r00u0"]
 
-[node name="BaseWeaponRanged" type="Node"]
+[node name="BaseWeaponRanged" type="Node2D"]
 script = ExtResource("1_r00u0")
 
 [node name="sprite" type="Sprite2D" parent="."]
 
-[node name="projectile_origin" type="Marker2D" parent="sprite"]
+[node name="projectile_origin" type="Marker2D" parent="."]

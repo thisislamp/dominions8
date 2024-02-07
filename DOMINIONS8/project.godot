@@ -138,6 +138,8 @@ toggle_console={
 2d_navigation/layer_2="Water"
 2d_physics/layer_3="Unit attack"
 2d_navigation/layer_3="Air"
+2d_physics/layer_4="Attack range"
+2d_physics/layer_7="Lane waypoint"
 avoidance/layer_1="Unit"
 
 [navigation]

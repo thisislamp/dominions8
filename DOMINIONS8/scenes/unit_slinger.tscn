@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/unit_slinger.gd" id="1_oc4fx"]
 [ext_resource type="Shader" path="res://scripts/teamcolor.gdshader" id="2_7jhqf"]
-[ext_resource type="Texture2D" uid="uid://xe7vwd0ku25f" path="res://art/magespritesheet.png" id="2_dtgnf"]
+[ext_resource type="Texture2D" uid="uid://dpaolnx2e5tj2" path="res://art/magespritesheet.png" id="2_dtgnf"]
 [ext_resource type="PackedScene" uid="uid://bthsr3u3p0tqt" path="res://scenes/health_bar.tscn" id="5_ajsmr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_47vel"]

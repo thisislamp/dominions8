@@ -23,7 +23,6 @@ radius = 59.0085
 radius = 59.0
 
 [node name="Nexus" node_paths=PackedStringArray("spawn_points") instance=ExtResource("1_cqyry")]
-top_level = true
 safe_margin = 0.001
 script = ExtResource("2_020se")
 max_mana = 1000
@@ -44,7 +43,7 @@ sprite_frames = SubResource("SpriteFrames_xa7ae")
 scale = Vector2(1.15, 1.15)
 polygon = PackedVector2Array(-60, -32, -32, -60, 32, -60, 60, -32, 60, 32, 32, 60, -32, 60, -60, 32)
 
-[node name="health_bar" parent="." index="3"]
+[node name="health_bar" parent="." index="2"]
 offset_left = -48.0
 offset_top = -89.0
 offset_right = 48.0
@@ -56,7 +55,7 @@ offset_top = -81.0
 offset_right = 48.0
 offset_bottom = -73.0
 
-[node name="collision_shape" parent="." index="6"]
+[node name="collision_shape" parent="." index="5"]
 shape = SubResource("CircleShape2D_vu1qn")
 
 [node name="hitbox_shape" parent="hitbox" index="0"]

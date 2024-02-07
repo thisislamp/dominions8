@@ -11,6 +11,12 @@ static func try_get_node(name: String, from: Node):
 		_:
 			name = "/root/" + name.lstrip("/")
 
+## Returns true if the node is valid and not about to die (be freed)
+static func is_alive(node) -> bool:
+	if node == null:
+		return false
+	return is_instance_valid(node) and not node.is_queued_for_deletion()
+
 ## current_v: current velocity, aka self.velocity
 ## target_v: target velocity, ...?
 ## max_speed:
