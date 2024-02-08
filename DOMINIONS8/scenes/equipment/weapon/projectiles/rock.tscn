@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bskx1uf567283" path="res://art/tower.png" id="2_nab0k"]
 
 [node name="Rock" instance=ExtResource("1_7mas8")]
+object_name = "Rock"
 damage = 8
 
 [node name="sprite" parent="." index="0"]

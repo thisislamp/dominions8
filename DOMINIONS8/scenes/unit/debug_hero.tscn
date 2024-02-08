@@ -56,6 +56,7 @@ height = 66.0
 
 [node name="DebugHero" instance=ExtResource("1_xiyk4")]
 script = ExtResource("2_fycje")
+object_name = "Debug Hero"
 max_health = 100
 protection = 5
 

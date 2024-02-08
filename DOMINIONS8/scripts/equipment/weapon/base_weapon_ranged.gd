@@ -26,10 +26,10 @@ func get_projectile_origin() -> Vector2:
 		return custom_projectile_origin.global_position
 	return unit.get_node("%attack_origin").global_position
 
-
 ## Shoots at a unit and starts the weapon cooldown.
 func attack(target: BaseUnit) -> void:
-	unit.sprite.play(&"attack")
+	if unit.sprite.sprite_frames.has_animation("attack"):
+		unit.sprite.play("attack")
 	fire_at(target)
 	start_cooldown()
 

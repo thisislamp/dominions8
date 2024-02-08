@@ -1,5 +1,8 @@
 class_name BaseProjectile extends Area2D
 
+## The name of this projectile
+@export var object_name: String
+
 ## The base damage this projectile does
 @export var damage: int = 1
 
@@ -9,11 +12,23 @@ class_name BaseProjectile extends Area2D
 @export var pierce: int = 0
 
 ## The weapon that shot this projectile
-var weapon: BaseWeaponRanged
+var weapon: BaseWeaponRanged:
+	set(v):
+		weapon = v
+		_cached_unit = str(weapon.unit)
+
+var unit: BaseUnit:
+	get:
+		if Utils.is_alive(weapon) and Utils.is_alive(weapon.unit):
+			return weapon.unit
+		else:
+			return null
 
 var team: GameMap.Team = GameMap.Team.UNAFFILIATED
 
 var velocity: Vector2 = Vector2.ZERO
+
+var _cached_unit: String
 
 
 ## The color used to modulate the sprite of this projectile.
@@ -32,13 +47,18 @@ func hit(target: Node2D) -> void:
 
 ## Rolls for damage and deals it to the unit.
 func hit_unit(target: BaseUnit) -> void:
-	var damage_taken := DRN.roll_vs(damage, target.protection)
-	target.take_damage(damage_taken)
+	var drn_challenge := DRN.challenge(damage, target.protection)
+	CombatLog.log_attack(unit if unit else _cached_unit, target, self, drn_challenge)
+	target.take_damage(drn_challenge.result)
 
 ## Called after the target hits and deals damage to the target.
 func after_hit(target: Node2D) -> void:
 	destroy()
 
+## Returns if the target is a valid target for this projectile.  Specifically:
+## If the target is a BaseUnit, if the target is "alive" (the node is valid and
+## not queued for deletion), and if the teams of the target and the unit that
+## shot this projectile are different.
 func is_valid_target(target: Node2D) -> bool:
 	if not target is BaseUnit:
 		return false

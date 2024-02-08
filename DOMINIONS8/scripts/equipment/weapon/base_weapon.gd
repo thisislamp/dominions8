@@ -1,5 +1,8 @@
 class_name BaseWeapon extends Node2D
 
+## The name of the weapon
+@export var object_name: String
+
 ## Base damage of the weapon.
 @export var damage: int
 
@@ -52,9 +55,13 @@ func get_map() -> GameMap:
 
 ## Attacks the target, rolling for damage, dealing it, then going on cooldown.
 func attack(target: BaseUnit) -> void:
-	unit.sprite.play(&"attack")
-	var damage_taken := DRN.roll_vs(damage, target.protection)
-	target.take_damage(damage_taken)
+	# TODO: un-hack this
+	if unit.sprite.sprite_frames.has_animation("attack"):
+		unit.sprite.play("attack")
+
+	var drn_challenge := DRN.challenge(damage, target.protection)
+	CombatLog.log_attack(unit, target, self, drn_challenge)
+	target.take_damage(drn_challenge.result)
 	start_cooldown()
 
 func use(target: Vector2) -> void:
