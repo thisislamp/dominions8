@@ -18,6 +18,7 @@ config/icon="res://art/icon.svg"
 [autoload]
 
 Console="*res://ui/console/console.tscn"
+CombatLog="*res://ui/combat_log/combat_log.tscn"
 
 [display]
 

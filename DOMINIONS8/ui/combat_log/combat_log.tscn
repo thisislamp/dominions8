@@ -1,0 +1,48 @@
+[gd_scene load_steps=3 format=3 uid="uid://frspa5yu0t4b"]
+
+[ext_resource type="Script" path="res://scripts/ui/combat_log.gd" id="1_nyhq4"]
+[ext_resource type="Theme" uid="uid://clohdun6bfyrb" path="res://ui/console/console_theme.tres" id="2_psany"]
+
+[node name="CombatLog" type="Control"]
+top_level = true
+z_index = 4010
+z_as_relative = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 199.0
+offset_top = 112.0
+offset_right = -199.0
+offset_bottom = -112.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nyhq4")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_psany")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="log_label" type="RichTextLabel" parent="PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 2
+bbcode_enabled = true
+text = "The battle begins..."
+scroll_following = true
+shortcut_keys_enabled = false
+threaded = true
+selection_enabled = true
+drag_and_drop_selection_enabled = false
