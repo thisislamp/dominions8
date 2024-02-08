@@ -1,9 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://b6n7hgkkj1oe3"]
+[gd_scene load_steps=10 format=3 uid="uid://b6n7hgkkj1oe3"]
 
 [ext_resource type="PackedScene" uid="uid://difx82dpli7o5" path="res://scenes/unit/base_unit.tscn" id="1_cqyry"]
 [ext_resource type="Script" path="res://scripts/unit/nexus.gd" id="2_020se"]
 [ext_resource type="Texture2D" uid="uid://ce4ow253bn715" path="res://art/citadel.png" id="2_nichs"]
 [ext_resource type="PackedScene" uid="uid://c3l2lnb8nbuhb" path="res://scenes/mana_bar.tscn" id="3_jbigd"]
+[ext_resource type="PackedScene" uid="uid://b7d5uguhugc6" path="res://scenes/equipment/weapon/ranged/throw.tscn" id="5_0flil"]
+[ext_resource type="PackedScene" uid="uid://bpkeoeqeleiwh" path="res://scenes/equipment/weapon/projectiles/rock.tscn" id="6_4gweo"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_xa7ae"]
 animations = [{
@@ -30,6 +32,7 @@ initial_mana = 10
 mana_regen = 50
 ai_controlled = false
 spawn_points = []
+object_name = "Nexus"
 max_health = 1000
 protection = 15
 move_speed = 0
@@ -60,3 +63,9 @@ shape = SubResource("CircleShape2D_vu1qn")
 
 [node name="hitbox_shape" parent="hitbox" index="0"]
 shape = SubResource("CircleShape2D_3cpni")
+
+[node name="Throw" parent="." index="7" instance=ExtResource("5_0flil")]
+projectile_scene = ExtResource("6_4gweo")
+damage = 10
+attack_range = 300
+aquisition_range = 300

@@ -39,6 +39,7 @@ height = 64.0
 [node name="Hurler" instance=ExtResource("1_u20ol")]
 position = Vector2(136.765, 153.222)
 safe_margin = 3.0
+object_name = "Hurler"
 max_health = 30
 protection = 2
 move_speed = 50

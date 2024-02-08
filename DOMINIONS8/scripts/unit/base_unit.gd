@@ -1,5 +1,8 @@
 class_name BaseUnit extends CharacterBody2D
 
+## The name of the unit
+@export var object_name: String
+
 ## The base maximum health of the unit.
 @export var max_health: int = 10
 
