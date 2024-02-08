@@ -11,6 +11,9 @@
 [node name="Battlefield2" type="Node2D" groups=["map"]]
 script = ExtResource("1_8nrvd")
 
+[node name="camera" type="Camera2D" parent="."]
+anchor_mode = 0
+
 [node name="TileMap" type="TileMap" parent="."]
 y_sort_enabled = true
 tile_set = ExtResource("2_1m5gb")
