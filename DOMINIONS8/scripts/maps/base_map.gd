@@ -65,14 +65,15 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		match event.button_index:
 			MOUSE_BUTTON_MIDDLE when event.double_click:
-				position = Vector2.ZERO
-				vp.global_canvas_transform = Transform2D(0.0, Vector2.ZERO)
+				$camera.position = Vector2.ZERO
 				vp.set_input_as_handled()
 
 	elif event is InputEventMouseMotion:
 		match event.button_mask:
 			MOUSE_BUTTON_MASK_MIDDLE:
-				vp.global_canvas_transform.origin += event.relative
+				var pos = $camera.position - event.relative
+				var offset = 40 * 4 # tile_size * tile_count
+				$camera.position = pos.clamp(Vector2(-offset, -offset), Vector2(offset, offset))
 				vp.set_input_as_handled()
 
 
