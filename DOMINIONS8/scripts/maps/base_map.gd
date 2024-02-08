@@ -70,6 +70,14 @@ func _unhandled_key_input(event: InputEvent):
 			KEY_SLASH when event.shift_pressed and event.pressed and not event.echo:
 				$controls_panel.visible = not $controls_panel.visible
 
+			# F11 - Toggle combat log
+			KEY_F11 when event.pressed and not event.echo:
+				CombatLog.visible = not CombatLog.visible
+
+			#
+			# Debug controls
+			#
+
 			# F9 - Reload scene
 			KEY_F9 when event.pressed and not event.echo:
 				get_tree().reload_current_scene()
