@@ -59,20 +59,38 @@ func delete_team(id: int) -> void:
 	teams.erase(team)
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	var vp := get_viewport()
+
+	if event is InputEventMouseButton:
+		match event.button_index:
+			MOUSE_BUTTON_MIDDLE when event.double_click:
+				position = Vector2.ZERO
+				vp.global_canvas_transform = Transform2D(0.0, Vector2.ZERO)
+				vp.set_input_as_handled()
+
+	elif event is InputEventMouseMotion:
+		match event.button_mask:
+			MOUSE_BUTTON_MASK_MIDDLE:
+				vp.global_canvas_transform.origin += event.relative
+				vp.set_input_as_handled()
 
 
 # TODO: move to some Debug singleton
 func _unhandled_key_input(event: InputEvent):
-	#print_debug("Got input event ", event)
+	var vp := get_viewport()
+
 	if event is InputEventKey:
 		match event.keycode:
 			# ? - Toggle control panel visibility
 			KEY_SLASH when event.shift_pressed and event.pressed and not event.echo:
 				$controls_panel.visible = not $controls_panel.visible
+				vp.set_input_as_handled()
 
 			# F11 - Toggle combat log
 			KEY_F11 when event.pressed and not event.echo:
 				CombatLog.visible = not CombatLog.visible
+				vp.set_input_as_handled()
 
 			#
 			# Debug controls
@@ -81,6 +99,7 @@ func _unhandled_key_input(event: InputEvent):
 			# F9 - Reload scene
 			KEY_F9 when event.pressed and not event.echo:
 				get_tree().reload_current_scene()
+				vp.set_input_as_handled()
 
 			# F2 - Show tilemap navmap
 			KEY_F2 when event.pressed and not event.echo:
@@ -92,6 +111,7 @@ func _unhandled_key_input(event: InputEvent):
 					_debug_navmap = true
 
 				Console.print_console("Debug: show tilemap navmap = %s" % _debug_navmap)
+				vp.set_input_as_handled()
 
 			# F3 - Show unit shapes
 			KEY_F3 when event.pressed and not event.echo:
@@ -100,8 +120,7 @@ func _unhandled_key_input(event: InputEvent):
 
 				toggle_collision_shape_visibility()
 				Console.print_console("Debug: show unit hitboxes = %s" % _debug_hitbox)
-				#for unit in get_tree().get_nodes_in_group("unit"):
-
+				vp.set_input_as_handled()
 
 			# F4 - Show unit pathing
 			KEY_F4 when event.pressed and not event.echo:
@@ -115,6 +134,7 @@ func _unhandled_key_input(event: InputEvent):
 						nav.debug_path_custom_color = unit.team.color if unit.get('team') else Color.YELLOW
 
 				Console.print_console("Debug: show unit paths = %s" % _debug_pathing)
+				vp.set_input_as_handled()
 
 			# F5 - Freespawn
 			KEY_F5 when event.pressed and not event.echo:
