@@ -54,6 +54,7 @@ func _setup_nav() -> void:
 	nav.connect("velocity_computed", _on_avoidance_velocity_computed)
 	set_destination(lane.get_waypoint(current_waypoint, reversed))
 	enabled = true
+	unit.movement_state = unit.MovementState.MOVING
 
 ## Called when the unit has reached its current waypoint and gets a new one.
 func update_waypoint(new_waypoint: int, position: Vector2) -> void:

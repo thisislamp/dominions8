@@ -34,11 +34,12 @@ class_name BaseUnit extends CharacterBody2D
 ## Debug setting
 @export var default_team_id: int
 
-@onready var current_health: int = max_health
-
 var current_target: BaseUnit
 var spawn_point: SpawnPoint
 var team: GameMap.Team: set=set_team, get=get_team
+var movement_state: MovementState = MovementState.STOPPED:
+	set=set_movement_state,
+	get=get_movement_state
 
 var oob_kill_range: int = 200
 
@@ -47,6 +48,8 @@ static var _debug_show_pathing: bool = false
 static var _debug_show_hitbox: bool = false
 static var _debug_show_collision: bool = false
 
+@onready var current_health: int = max_health
+
 # Node aliases
 @onready var sprite: AnimatedSprite2D = %sprite as AnimatedSprite2D
 @onready var attack_origin: Marker2D = %attack_origin as Marker2D
@@ -54,6 +57,8 @@ static var _debug_show_collision: bool = false
 @onready var nav: NavigationAgent2D = %nav as NavigationAgent2D
 @onready var equipment: Array[Node]:
 	get: return $equipment.get_children()
+
+enum MovementState {MOVING, STANDING, STOPPED}
 
 ## Emitted when a unit dies
 signal unit_died(unit: BaseUnit)
@@ -96,15 +101,23 @@ func set_team(value: GameMap.Team) -> void:
 		$team_marker.color = team.color
 	add_to_group("team_%s" % team.id)
 
-## Returns the unit's current target, or chooses and returns a new target.
-func get_target():
-	if Utils.is_alive(current_target):
-		return current_target
-	return choose_target()
+func set_movement_state(state: MovementState) -> void:
+	movement_state = state
+	if state == MovementState.STANDING:
+		velocity = Vector2.ZERO
 
-## Picks and returns a target within the attack range of the unit, or null if none found
-func choose_target():
-	pass
+func get_movement_state() -> MovementState:
+	return movement_state
+
+### Returns the unit's current target, or chooses and returns a new target.
+#func get_target():
+	#if Utils.is_alive(current_target):
+		#return current_target
+	#return choose_target()
+#
+### Picks and returns a target within the attack range of the unit, or null if none found
+#func choose_target():
+	#pass
 
 ## Attacks a target with its first available weapon, if any.  Returns a bool
 ## value for if attack was made.
@@ -146,7 +159,7 @@ func take_damage(damage: int) -> void:
 ## Flashes the unit a given color and strength for a duration.
 func flash_damage(color: Color, intensity: float = 1, duration: float = 0.25) -> void:
 	# TODO: this seems wrong, maybe I should scale saturation based on intensity
-	sprite.self_modulate = Color(color, intensity)
+	sprite.self_modulate = Color.from_hsv(color.h, color.s * intensity, color.v)
 	await get_tree().create_timer(duration, false).timeout
 	sprite.self_modulate = Color.WHITE
 
@@ -172,7 +185,15 @@ func check_oob() -> bool:
 
 ## Moves the unit.  Defaults to simply calling move_and_slide()
 func move(_delta: float):
-	move_and_slide()
+	match movement_state:
+		MovementState.MOVING:
+			move_and_slide()
+		MovementState.STANDING:
+			velocity = Vector2.ZERO
+			move_and_slide()
+		MovementState.STOPPED:
+			return
+
 
 #func _process(delta: float) -> void:
 	#sprite.scale.x = -1 if velocity.x > 0 else 1

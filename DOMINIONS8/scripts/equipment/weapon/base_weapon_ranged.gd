@@ -28,10 +28,11 @@ func get_projectile_origin() -> Vector2:
 
 ## Shoots at a unit and starts the weapon cooldown.
 func attack(target: BaseUnit) -> void:
+	before_attack(target)
 	if unit.sprite.sprite_frames.has_animation("attack"):
 		unit.sprite.play("attack")
 	fire_at(target)
-	start_cooldown()
+	after_attack(target)
 
 ## Fires the weapon at this target, spawning a projectile and sending it at the
 ## coordinates of the target node.
