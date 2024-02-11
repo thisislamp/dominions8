@@ -1,0 +1,98 @@
+[gd_scene load_steps=7 format=3 uid="uid://d3awmv7mi7smo"]
+
+[ext_resource type="Theme" uid="uid://clohdun6bfyrb" path="res://ui/console/console_theme.tres" id="1_dgnxy"]
+[ext_resource type="Texture2D" uid="uid://d18mmm6hd4dv6" path="res://art/icons/minimize_window.png" id="2_1e4br"]
+[ext_resource type="Script" path="res://ui/internal_window.gd" id="2_1yk61"]
+[ext_resource type="Texture2D" uid="uid://dupqtxpkoh01x" path="res://art/icons/maximize_window.png" id="3_35s8f"]
+[ext_resource type="Texture2D" uid="uid://itqdkiv31rrs" path="res://art/icons/reduce_window.png" id="4_f5t84"]
+[ext_resource type="Texture2D" uid="uid://be6syo4ra6ftc" path="res://art/icons/close_window.png" id="4_uvg1d"]
+
+[node name="InternalWindow" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme = ExtResource("1_dgnxy")
+script = ExtResource("2_1yk61")
+keep_in_viewport = true
+
+[node name="WindowContainer" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 1
+offset_right = 737.0
+offset_bottom = 102.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="WindowContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="TitleBarPanel" type="PanelContainer" parent="WindowContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="WindowContainer/VBoxContainer/TitleBarPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="HBoxContainer" type="HBoxContainer" parent="WindowContainer/VBoxContainer/TitleBarPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="TitleContainer" type="MarginContainer" parent="WindowContainer/VBoxContainer/TitleBarPanel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="window_title" type="Label" parent="WindowContainer/VBoxContainer/TitleBarPanel/MarginContainer/HBoxContainer/TitleContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Window"
+text_overrun_behavior = 3
+
+[node name="button_minimize" type="Button" parent="WindowContainer/VBoxContainer/TitleBarPanel/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+icon = ExtResource("2_1e4br")
+
+[node name="button_reduce" type="Button" parent="WindowContainer/VBoxContainer/TitleBarPanel/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("4_f5t84")
+
+[node name="button_maximize" type="Button" parent="WindowContainer/VBoxContainer/TitleBarPanel/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+icon = ExtResource("3_35s8f")
+
+[node name="button_close" type="Button" parent="WindowContainer/VBoxContainer/TitleBarPanel/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+icon = ExtResource("4_uvg1d")
+
+[node name="WindowContent" type="MarginContainer" parent="WindowContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[connection signal="gui_input" from="WindowContainer" to="." method="_on_window_container_gui_input"]
+[connection signal="mouse_exited" from="WindowContainer" to="." method="_on_window_container_mouse_exited"]
+[connection signal="gui_input" from="WindowContainer/VBoxContainer/TitleBarPanel" to="." method="_on_title_bar_panel_gui_input"]
+[connection signal="pressed" from="WindowContainer/VBoxContainer/TitleBarPanel/MarginContainer/HBoxContainer/button_minimize" to="." method="_on_button_minimize_pressed"]
+[connection signal="pressed" from="WindowContainer/VBoxContainer/TitleBarPanel/MarginContainer/HBoxContainer/button_reduce" to="." method="_on_button_reduce_pressed"]
+[connection signal="pressed" from="WindowContainer/VBoxContainer/TitleBarPanel/MarginContainer/HBoxContainer/button_maximize" to="." method="_on_button_maximize_pressed"]
+[connection signal="pressed" from="WindowContainer/VBoxContainer/TitleBarPanel/MarginContainer/HBoxContainer/button_close" to="." method="_on_button_close_pressed"]
