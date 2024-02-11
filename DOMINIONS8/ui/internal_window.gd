@@ -1,6 +1,9 @@
 class_name InternalWindow extends Control
 
 
+## The window title.  Will be set in _ready().
+@export var title: String = "Window"
+
 ## If true, keeps the window within the bounds of the viewport.
 @export var keep_in_viewport: bool = false
 
@@ -59,14 +62,16 @@ enum ResizeFlags {NONE = 0, TOP = 1, BOTTOM = 2, LEFT = 4, RIGHT = 8}
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	set_title(title)
 	%button_reduce.visible = false
 	if window_content_node:
 		window_content_node.reparent(%WindowContent, false)
 
 
-## Closes the window.  By default, simply sets visible to false.
+## Closes the window.  By default, sets it to not visible and calls queue_free().
 func close_window() -> void:
 	visible = false
+	queue_free()
 
 ## Maximizes the window.  Sets the window to expand to the entire screen.
 func maximize_window() -> void:
@@ -109,6 +114,14 @@ func set_window_content(content: Control) -> void:
 func detach() -> InternalWindow:
 	get_parent().remove_child(self)
 	return self
+
+## Removes the window content control node and returns it, or null if there is none.
+func detach_content() -> Control:
+	if window_content.get_children().is_empty():
+		return null
+	var content = window_content.get_child(0)
+	window_content.remove_child(content)
+	return content
 
 
 func _on_title_bar_panel_gui_input(event: InputEvent) -> void:
