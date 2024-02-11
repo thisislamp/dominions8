@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://itqdkiv31rrs" path="res://art/icons/reduce_window.png" id="4_f5t84"]
 [ext_resource type="Texture2D" uid="uid://be6syo4ra6ftc" path="res://art/icons/close_window.png" id="4_uvg1d"]
 
-[node name="InternalWindow" type="Control"]
+[node name="InternalWindow" type="Control" groups=["internal_window"]]
 layout_mode = 3
 anchors_preset = 0
 size_flags_horizontal = 0
