@@ -1,6 +1,10 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://clohdun6bfyrb"]
+[gd_resource type="Theme" load_steps=7 format=3 uid="uid://clohdun6bfyrb"]
 
 [ext_resource type="SystemFont" uid="uid://c0bx553l47t1j" path="res://ui/console/console_font.tres" id="1_pxix2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kd74w"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bj422"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eubr3"]
 content_margin_left = 4.0
@@ -54,6 +58,10 @@ corner_detail = 5
 [resource]
 default_font = ExtResource("1_pxix2")
 default_font_size = 24
+Button/styles/focus = SubResource("StyleBoxEmpty_kd74w")
+CheckBox/constants/check_v_offset = -2
+CheckBox/constants/h_separation = 8
+CheckBox/styles/focus = SubResource("StyleBoxEmpty_bj422")
 LineEdit/colors/caret_color = Color(0.95, 0.95, 0.95, 1)
 LineEdit/colors/clear_button_color = Color(0.875, 0.875, 0.875, 1)
 LineEdit/colors/clear_button_color_pressed = Color(1, 1, 1, 1)
