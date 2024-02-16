@@ -20,6 +20,7 @@ config/icon="res://art/icon.svg"
 
 Console="*res://ui/console/console.tscn"
 CombatLog="*res://ui/combat_log/combat_log.tscn"
+Log="*res://addons/logger/logger.gd"
 
 [display]
 
@@ -31,6 +32,10 @@ window/stretch/mode="canvas_items"
 [dotnet]
 
 project/assembly_name="DOMINIONS8"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/logger/plugin.cfg")
 
 [input]
 
