@@ -27,10 +27,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			player_nexus.spawn_unit(preload("res://scenes/unit/hurler.tscn"), $PlayerNexus/spawn_bot)
 
 		KEY_4:
-			enemy_nexus.spawn_unit(preload("res://scenes/unit/hurler.tscn"), $EnemyNexus/spawn_top)
+			enemy_nexus.spawn_unit(preload("res://scenes/unit/test_mage.tscn"), $EnemyNexus/spawn_top)
 
 		KEY_5:
-			enemy_nexus.spawn_unit(preload("res://scenes/unit/hurler.tscn"), $EnemyNexus/spawn_mid)
+			enemy_nexus.spawn_unit(preload("res://scenes/unit/test_mage.tscn"), $EnemyNexus/spawn_mid)
 
 		KEY_6:
-			enemy_nexus.spawn_unit(preload("res://scenes/unit/hurler.tscn"), $EnemyNexus/spawn_bot)
+			enemy_nexus.spawn_unit(preload("res://scenes/unit/test_mage.tscn"), $EnemyNexus/spawn_bot)
