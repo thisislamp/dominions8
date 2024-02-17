@@ -1,10 +1,77 @@
-[gd_resource type="Theme" load_steps=7 format=3 uid="uid://clohdun6bfyrb"]
+[gd_resource type="Theme" load_steps=14 format=3 uid="uid://clohdun6bfyrb"]
 
 [ext_resource type="SystemFont" uid="uid://c0bx553l47t1j" path="res://ui/console/console_font.tres" id="1_pxix2"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kd74w"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rujeu"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1, 0.1, 0.1, 0.3)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0o30d"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4yxcj"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.225, 0.225, 0.225, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rjyj3"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c4pit"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bj422"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v0646"]
+content_margin_left = 6.0
+content_margin_top = 4.0
+content_margin_right = 6.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lfi1v"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_qwufo"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+color = Color(0.5, 0.5, 0.5, 1)
+thickness = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eubr3"]
 content_margin_left = 4.0
@@ -58,10 +125,21 @@ corner_detail = 5
 [resource]
 default_font = ExtResource("1_pxix2")
 default_font_size = 24
-Button/styles/focus = SubResource("StyleBoxEmpty_kd74w")
+Button/styles/disabled = SubResource("StyleBoxFlat_rujeu")
+Button/styles/focus = SubResource("StyleBoxEmpty_0o30d")
+Button/styles/hover = SubResource("StyleBoxFlat_4yxcj")
+Button/styles/normal = SubResource("StyleBoxFlat_rjyj3")
+Button/styles/pressed = SubResource("StyleBoxFlat_c4pit")
 CheckBox/constants/check_v_offset = -2
 CheckBox/constants/h_separation = 8
 CheckBox/styles/focus = SubResource("StyleBoxEmpty_bj422")
+CheckButton/styles/disabled = SubResource("StyleBoxEmpty_v0646")
+CheckButton/styles/focus = SubResource("StyleBoxEmpty_lfi1v")
+CheckButton/styles/hover = SubResource("StyleBoxEmpty_v0646")
+CheckButton/styles/hover_pressed = SubResource("StyleBoxEmpty_v0646")
+CheckButton/styles/normal = SubResource("StyleBoxEmpty_v0646")
+CheckButton/styles/pressed = SubResource("StyleBoxEmpty_v0646")
+HSeparator/styles/separator = SubResource("StyleBoxLine_qwufo")
 LineEdit/colors/caret_color = Color(0.95, 0.95, 0.95, 1)
 LineEdit/colors/clear_button_color = Color(0.875, 0.875, 0.875, 1)
 LineEdit/colors/clear_button_color_pressed = Color(1, 1, 1, 1)

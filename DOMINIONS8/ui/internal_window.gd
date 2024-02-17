@@ -27,6 +27,7 @@ var maximized: bool:
 ## The size of the window.
 var window_size: Vector2:
 	get: return %WindowContainer.size
+	set(v): %WindowContainer.size = v
 
 ## The title bar text.
 var window_title: String:
@@ -55,18 +56,57 @@ var _left_bound: float
 #var _right_bound: float
 #var _bottom_bound: float
 
+static var _window_scene = load("res://ui/internal_window.tscn")
+
 enum ResizeFlags {NONE = 0, TOP = 1, BOTTOM = 2, LEFT = 4, RIGHT = 8}
 
 @onready var window_container = %WindowContainer as PanelContainer
 
 
+## Creates and returns a window from a PackedScene.  The returned window must
+## then be added to the scene tree.
+static func from_scene(scene: PackedScene) -> InternalWindow:
+	var scn = scene.instantiate()
+	if not scn is Control:
+		push_error("Could not make window from scene: not a Control: ", scene)
+		return null
+
+	print("pos: ", scn.get_node(".").position, ", gpos: ", scn.get_node(".").global_position, ", size: ", scn.get_node(".").size)
+
+	var _window: InternalWindow = _window_scene.instantiate()
+	_window.name = "%sWindow" % scn.get_node(".")
+	if "set_internal_window" in scn:
+		scn.set_internal_window(_window)
+	_window.set_window_content(scn)
+	return _window
+
+## Transfers a Control into an InternalWindow.  The returned InternalWindow
+## must then be added to the scene tree.
+static func embed_into_window(control: Control) -> InternalWindow:
+	var _window = _window_scene.instantiate()
+	control.get_parent().remove_child(control)
+	if "set_internal_window" in control:
+		control.set_internal_window(_window)
+	_window.set_window_content(control)
+	return _window
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	global_position = global_position.clamp(Vector2.ZERO, get_viewport_rect().size - window_size)
 	set_title(title)
 	%button_reduce.visible = false
 	if window_content_node:
-		window_content_node.reparent(%WindowContent, false)
+		window_content_node.top_level = false
+		window_content_node.reparent.call_deferred(%WindowContent, false)
 
+
+## Adds this winndow to the root node of a given node.
+func add_to_root(node: Node) -> void:
+	if not node.is_inside_tree():
+		push_error("Cannot add window to root: node not in tree: ", node)
+		return
+	node.get_node("/root").add_child(self, true)
 
 ## Closes the window.  By default, sets it to not visible and calls queue_free().
 func close_window() -> void:
@@ -108,7 +148,7 @@ func set_title(text: String) -> void:
 
 ## Sets the contents of the window content area.
 func set_window_content(content: Control) -> void:
-	%WindowConent.add_child(content, true)
+	%WindowContent.add_child(content, true)
 
 ## Removes the internal window node from its parent in the tree and returns it.
 func detach() -> InternalWindow:
@@ -169,12 +209,20 @@ func _on_window_container_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		_handle_window_container_click(event)
 	elif event is InputEventMouseMotion:
-		if _is_resizing_window:
+		if _is_dragging_window:
+			_handle_window_container_move(event)
+		elif _is_resizing_window:
 			_handle_window_container_resize(event)
 		else:
 			_handle_window_container_mouseover(event)
 
 func _handle_window_container_click(event: InputEventMouseButton) -> void:
+	if event.button_index == MOUSE_BUTTON_LEFT and event.alt_pressed:
+		_is_dragging_window = event.is_pressed()
+		_drag_point = get_local_mouse_position()
+		get_viewport().set_input_as_handled()
+		return
+
 	if not _resizing_flags:
 		return
 	_is_resizing_window = event.pressed
@@ -184,6 +232,9 @@ func _handle_window_container_click(event: InputEventMouseButton) -> void:
 	_top_bound = global_position.y + window_container.size.y - min_size.y
 	#_right_bound = global_position.x + min_size.x
 	#_bottom_bound = global_position.y + min_size.y
+
+func _handle_window_container_move(event: InputEventMouseMotion) -> void:
+	_handle_titlebar_move(event)
 
 func _handle_window_container_resize(event: InputEventMouseMotion) -> void:
 	var min_size := window_container.get_combined_minimum_size()
@@ -314,4 +365,3 @@ func _on_button_reduce_pressed() -> void:
 
 func _on_button_minimize_pressed() -> void:
 	minimize_window()
-

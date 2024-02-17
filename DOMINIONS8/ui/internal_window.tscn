@@ -10,8 +10,8 @@
 [node name="InternalWindow" type="Control" groups=["internal_window"]]
 layout_mode = 3
 anchors_preset = 0
-size_flags_horizontal = 0
-size_flags_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
 theme = ExtResource("1_dgnxy")
 script = ExtResource("2_1yk61")
 keep_in_viewport = true
