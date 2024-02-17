@@ -17,30 +17,32 @@ static func is_alive(node) -> bool:
 		return false
 	return is_instance_valid(node) and not node.is_queued_for_deletion()
 
-## current_v: current velocity, aka self.velocity
-## target_v: target velocity, ...?
-## max_speed:
-## accel: acceleration in px/sec
-## delta: physics delta
-## returns: new velocity
-static func smooth_move(current_v: Vector2, target_v: Vector2, max_speed: float, accel: float, delta: float):
-	var speed = current_v.length()
-	var new_speed = min(speed + accel * delta, max_speed)
-	# velocity = velocity.normalized() * speed
+
+class Motion extends RefCounted:
+	## current_v: current velocity, aka self.velocity
+	## target_v: target velocity, ...?
+	## max_speed:
+	## accel: acceleration in px/sec
+	## delta: physics delta
+	## returns: new velocity
+	static func smooth_move(current_v: Vector2, target_v: Vector2, max_speed: float, accel: float, delta: float):
+		var speed = current_v.length()
+		var new_speed = min(speed + accel * delta, max_speed)
+		# velocity = velocity.normalized() * speed
 
 
-static func accelerate(velocity: Vector2, accel: float, delta: float) -> Vector2:
-	return velocity.normalized() * (velocity.length() + accel * delta)
+	static func accelerate(velocity: Vector2, accel: float, delta: float) -> Vector2:
+		return velocity.normalized() * (velocity.length() + accel * delta)
 
-static func accelerate_to(velocity: Vector2, accel: float, delta: float, target_speed: float = INF) -> Vector2:
-	var speed = velocity.length()
-	if target_speed < speed:
-		accel = -accel
-	return velocity.normalized() * clampf(velocity.length() + accel * delta, 0, target_speed)
+	static func accelerate_to(velocity: Vector2, accel: float, delta: float, target_speed: float = INF) -> Vector2:
+		var speed = velocity.length()
+		if target_speed < speed:
+			accel = -accel
+		return velocity.normalized() * clampf(velocity.length() + accel * delta, 0, target_speed)
 
-static func apply_thrust(velocity: Vector2, direction: Vector2, force: float, delta: float) -> Vector2:
-	var thrust = direction.normalized() * force * delta
-	return velocity + thrust
+	static func apply_thrust(velocity: Vector2, direction: Vector2, force: float, delta: float) -> Vector2:
+		var thrust = direction.normalized() * force * delta
+		return velocity + thrust
 
 
 class StringHistory extends RefCounted:
