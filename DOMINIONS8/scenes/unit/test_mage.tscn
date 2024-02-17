@@ -1,0 +1,171 @@
+[gd_scene load_steps=18 format=3 uid="uid://dhmbmkmplhyul"]
+
+[ext_resource type="PackedScene" uid="uid://difx82dpli7o5" path="res://scenes/unit/base_unit.tscn" id="1_8c4ir"]
+[ext_resource type="Texture2D" uid="uid://gpg2yelu5rh4" path="res://art/test/mage.png" id="2_u510n"]
+[ext_resource type="Texture2D" uid="uid://bhjcge6qp6fmk" path="res://art/test/staff_attack.png" id="3_8ikm0"]
+[ext_resource type="Texture2D" uid="uid://4u4ujyelwbtv" path="res://art/test/staff.png" id="3_gv3s3"]
+[ext_resource type="PackedScene" uid="uid://b7d5uguhugc6" path="res://scenes/equipment/weapon/ranged/throw.tscn" id="4_ofhsq"]
+[ext_resource type="PackedScene" uid="uid://bpkeoeqeleiwh" path="res://scenes/equipment/weapon/projectiles/rock.tscn" id="5_exo7r"]
+[ext_resource type="Script" path="res://scripts/components/lane_navigator.gd" id="6_ybwcg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qgmr7"]
+atlas = ExtResource("2_u510n")
+region = Rect2(72, 0, 36, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jbtgk"]
+atlas = ExtResource("2_u510n")
+region = Rect2(36, 0, 36, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rokrh"]
+atlas = ExtResource("2_u510n")
+region = Rect2(0, 0, 36, 36)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2eod6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qgmr7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jbtgk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rokrh")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_itqnl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_8ikm0")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_gv3s3")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Animation" id="Animation_le3ao"]
+resource_name = "new_animation"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("weapon_hardpoint/weapon_sprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [&"attack", &"default"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("weapon_hardpoint/weapon_sprite:offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Vector2(0, -7), Vector2(1, -7)]
+}
+
+[sub_resource type="Animation" id="Animation_h7tce"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("weapon_hardpoint/weapon_sprite:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, -7)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_aixsr"]
+_data = {
+"RESET": SubResource("Animation_h7tce"),
+"attack": SubResource("Animation_le3ao")
+}
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_beps3"]
+radius = 8.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qsel2"]
+radius = 9.0
+height = 28.0
+
+[node name="BaseUnit" instance=ExtResource("1_8c4ir")]
+position = Vector2(28, 49)
+object_name = "Mage"
+
+[node name="sprite" parent="." index="0"]
+position = Vector2(0, -16)
+sprite_frames = SubResource("SpriteFrames_2eod6")
+animation = &"walk"
+autoplay = "walk"
+frame_progress = 0.682141
+
+[node name="attack_origin" parent="sprite" index="0"]
+unique_name_in_owner = false
+visible = false
+
+[node name="weapon_hardpoint" type="Marker2D" parent="sprite" index="1"]
+position = Vector2(-8, 7)
+gizmo_extents = 1.0
+
+[node name="weapon_sprite" type="AnimatedSprite2D" parent="sprite/weapon_hardpoint" index="0"]
+position = Vector2(-4, 0)
+sprite_frames = SubResource("SpriteFrames_itqnl")
+offset = Vector2(0, -7)
+
+[node name="attack_origin" type="Marker2D" parent="sprite/weapon_hardpoint/weapon_sprite" index="0"]
+unique_name_in_owner = true
+position = Vector2(0, -21)
+gizmo_extents = 4.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="1"]
+root_node = NodePath("../sprite")
+libraries = {
+"": SubResource("AnimationLibrary_aixsr")
+}
+
+[node name="team_marker" parent="." index="2"]
+scale = Vector2(0.666667, 0.666667)
+
+[node name="health_bar" parent="." index="3"]
+offset_left = -13.0
+offset_top = -41.0
+offset_right = 13.0
+offset_bottom = -37.0
+
+[node name="collision_shape" parent="." index="5"]
+shape = SubResource("CircleShape2D_beps3")
+
+[node name="hitbox_shape" parent="hitbox" index="0"]
+position = Vector2(0, -12)
+shape = SubResource("CapsuleShape2D_qsel2")
+
+[node name="Throw" parent="." index="7" node_paths=PackedStringArray("custom_projectile_origin") instance=ExtResource("4_ofhsq")]
+projectile_scene = ExtResource("5_exo7r")
+custom_projectile_origin = NodePath("../sprite/weapon_hardpoint/weapon_sprite/attack_origin")
+
+[node name="LaneNavigatorComponent" type="Node" parent="." index="8"]
+script = ExtResource("6_ybwcg")
