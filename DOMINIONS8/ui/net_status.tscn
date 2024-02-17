@@ -1,0 +1,71 @@
+[gd_scene load_steps=4 format=3 uid="uid://81i2gsvoc31d"]
+
+[ext_resource type="Theme" uid="uid://clohdun6bfyrb" path="res://ui/console/console_theme.tres" id="1_1y4t8"]
+[ext_resource type="Script" path="res://scripts/ui/net_status.gd" id="2_2uy15"]
+[ext_resource type="PackedScene" uid="uid://c63fnlfhbse78" path="res://ui/net_graph.tscn" id="3_mk4o3"]
+
+[node name="NetStatus" type="Panel"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -368.0
+offset_bottom = 182.0
+grow_horizontal = 0
+theme = ExtResource("1_1y4t8")
+script = ExtResource("2_2uy15")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Net status: "
+
+[node name="StatusLabel" type="Label" parent="MarginContainer/VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Disconnected"
+
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Ping:"
+
+[node name="PingLabel" type="Label" parent="MarginContainer/VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0ms"
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="MarginContainer/VBoxContainer/SubViewportContainer"]
+disable_3d = true
+transparent_bg = true
+handle_input_locally = false
+msaa_2d = 1
+size = Vector2i(2, 2)
+render_target_update_mode = 4
+
+[node name="NetGraph" parent="MarginContainer/VBoxContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_mk4o3")]
+metadata/_edit_horizontal_guides_ = [80.0]
