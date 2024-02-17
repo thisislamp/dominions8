@@ -20,6 +20,7 @@ config/icon="res://art/icon.svg"
 
 Console="*res://ui/console/console.tscn"
 CombatLog="*res://ui/combat_log/combat_log.tscn"
+MultiplayerManager="*res://scripts/multiplayer/mp_manager.gd"
 Log="*res://addons/logger/logger.gd"
 
 [display]

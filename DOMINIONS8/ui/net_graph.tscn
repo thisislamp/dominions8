@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3 uid="uid://c63fnlfhbse78"]
+
+[ext_resource type="Theme" uid="uid://clohdun6bfyrb" path="res://ui/console/console_theme.tres" id="1_c8gp2"]
+[ext_resource type="Script" path="res://ui/net_graph.gd" id="1_emtmt"]
+
+[node name="NetGraph" type="Node2D"]
+script = ExtResource("1_emtmt")
+metadata/_edit_vertical_guides_ = [345.0]
+metadata/_edit_horizontal_guides_ = [100.0]
+
+[node name="PingLine" type="Line2D" parent="."]
+unique_name_in_owner = true
+points = PackedVector2Array(31, 27, 71, 62, 131, 20, 236, 59, 318, 41)
+width = 4.0
+round_precision = 5
+antialiased = true
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_right = 24.0
+offset_bottom = 30.0
+theme = ExtResource("1_c8gp2")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_bottom = 0
+
+[node name="MaxPing" type="Label" parent="PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0"

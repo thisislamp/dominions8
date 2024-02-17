@@ -1,0 +1,201 @@
+[gd_scene load_steps=5 format=3 uid="uid://qax603hpydsa"]
+
+[ext_resource type="Theme" uid="uid://clohdun6bfyrb" path="res://ui/console/console_theme.tres" id="1_lk8cc"]
+[ext_resource type="Script" path="res://scripts/ui/mp_menu.gd" id="2_i2pdv"]
+[ext_resource type="Texture2D" uid="uid://7wyqbiwdxqgx" path="res://art/icons/arrow_left.png" id="3_k8gfa"]
+[ext_resource type="Texture2D" uid="uid://vbjc3x0sbktu" path="res://art/icons/warning_trangle.png" id="4_eu5yy"]
+
+[node name="MultiplayerMenu" type="PanelContainer"]
+offset_left = 429.0
+offset_top = 235.0
+offset_right = 1491.0
+offset_bottom = 845.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_lk8cc")
+script = ExtResource("2_i2pdv")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="BackButton" type="Button" parent="MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+text = "Back (ESC)"
+icon = ExtResource("3_k8gfa")
+
+[node name="MpModeVBox" type="VBoxContainer" parent="MarginContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="HostButton" type="Button" parent="MarginContainer/MpModeVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Host lobby"
+
+[node name="JoinButton" type="Button" parent="MarginContainer/MpModeVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Join lobby"
+
+[node name="MpHostVBox" type="VBoxContainer" parent="MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="MarginContainer/MpHostVBox"]
+layout_mode = 2
+text = "Host game"
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/MpHostVBox"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="GameNameLineEdit" type="LineEdit" parent="MarginContainer/MpHostVBox"]
+layout_mode = 2
+placeholder_text = "Game name"
+expand_to_text_length = true
+
+[node name="PasswordLineEdit" type="LineEdit" parent="MarginContainer/MpHostVBox"]
+layout_mode = 2
+placeholder_text = "Password (optional)"
+secret = true
+
+[node name="PortHBox" type="HBoxContainer" parent="MarginContainer/MpHostVBox"]
+layout_mode = 2
+theme_override_constants/separation = 13
+
+[node name="Label" type="Label" parent="MarginContainer/MpHostVBox/PortHBox"]
+layout_mode = 2
+text = "Port"
+
+[node name="PortSpinBox" type="SpinBox" parent="MarginContainer/MpHostVBox/PortHBox"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 65535.0
+value = 54321.0
+rounded = true
+update_on_text_changed = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/MpHostVBox"]
+layout_mode = 2
+
+[node name="UPNPButton" type="CheckButton" parent="MarginContainer/MpHostVBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Use this if you don't feel like port forwarding, 
+if your network/router allows for it."
+text = "Use UPNP"
+
+[node name="UPNPWarningIcon" type="TextureRect" parent="MarginContainer/MpHostVBox/HBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 8
+tooltip_text = "Could not find a usable
+UPNP Gateway device."
+texture = ExtResource("4_eu5yy")
+expand_mode = 3
+
+[node name="OpenServerButton" type="Button" parent="MarginContainer/MpHostVBox"]
+layout_mode = 2
+text = "Open server"
+
+[node name="MpHostStatusVBox" type="VBoxContainer" parent="MarginContainer/MpHostVBox"]
+layout_mode = 2
+size_flags_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/MpHostVBox/MpHostStatusVBox"]
+layout_mode = 2
+
+[node name="CopyIPButton" type="Button" parent="MarginContainer/MpHostVBox/MpHostStatusVBox"]
+layout_mode = 2
+text = "Copy IP Address"
+
+[node name="NetStatusLabel" type="Label" parent="MarginContainer/MpHostVBox/MpHostStatusVBox"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+text = "Waiting for player..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="MpJoinVBox" type="VBoxContainer" parent="MarginContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="MarginContainer/MpJoinVBox"]
+layout_mode = 2
+text = "Join Game"
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/MpJoinVBox"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="HostIPLineEdit" type="LineEdit" parent="MarginContainer/MpJoinVBox"]
+layout_mode = 2
+placeholder_text = "Host"
+
+[node name="PortHBox" type="HBoxContainer" parent="MarginContainer/MpJoinVBox"]
+layout_mode = 2
+theme_override_constants/separation = 13
+
+[node name="Label" type="Label" parent="MarginContainer/MpJoinVBox/PortHBox"]
+layout_mode = 2
+text = "Port"
+
+[node name="PortSpinBox" type="SpinBox" parent="MarginContainer/MpJoinVBox/PortHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 65535.0
+value = 54321.0
+rounded = true
+update_on_text_changed = true
+
+[node name="PasswordLineEdit" type="LineEdit" parent="MarginContainer/MpJoinVBox"]
+layout_mode = 2
+placeholder_text = "Password"
+
+[node name="JoinButton" type="Button" parent="MarginContainer/MpJoinVBox"]
+layout_mode = 2
+text = "Join"
+
+[node name="MpJoinStatusVbox" type="VBoxContainer" parent="MarginContainer/MpJoinVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/MpJoinVBox/MpJoinStatusVbox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="NetStatusLabel" type="Label" parent="MarginContainer/MpJoinVBox/MpJoinStatusVbox"]
+layout_mode = 2
+text = "Connecting..."
+horizontal_alignment = 1
+
+[connection signal="pressed" from="MarginContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MarginContainer/MpModeVBox/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="MarginContainer/MpModeVBox/JoinButton" to="." method="_on_join_button_pressed"]
+[connection signal="toggled" from="MarginContainer/MpHostVBox/HBoxContainer/UPNPButton" to="." method="_on_upnp_button_toggled"]
+[connection signal="pressed" from="MarginContainer/MpHostVBox/OpenServerButton" to="." method="_on_open_server_button_pressed"]
+[connection signal="pressed" from="MarginContainer/MpHostVBox/MpHostStatusVBox/CopyIPButton" to="." method="_on_copy_ip_button_pressed"]
+[connection signal="pressed" from="MarginContainer/MpJoinVBox/JoinButton" to="." method="_on_join_game_button_pressed"]
