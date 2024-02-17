@@ -20,13 +20,18 @@ func _ready() -> void:
 func toggle_console() -> void:
 	visible = not visible
 
-func print_console(text: String, time: bool = true, prefix: String = "") -> void:
+func log(text: String, time: bool = true, prefix: String = "", stdout: bool = true) -> void:
+	call_thread_safe("print_console", text, time, prefix, stdout)
+
+func print_console(text: String, time: bool = true, prefix: String = "", stdout: bool = true) -> void:
 	if not is_node_ready():
 		return
 
-	var output = prefix
+	var output = ""
 	if time:
 		output += format_time() + " "
+
+	output += prefix
 
 	if "\n" in text:
 		var lines := text.split("\n", true)
@@ -38,7 +43,8 @@ func print_console(text: String, time: bool = true, prefix: String = "") -> void
 	else:
 		output += text
 		output_area.append_text("\n" + output)
-		print(output)
+		if stdout:
+			print(output)
 
 func format_time() -> String:
 	var ticktime = "%0.3f" % (Time.get_ticks_msec()/1_000.0)
@@ -97,7 +103,7 @@ func _input(event: InputEvent) -> void:
 
 func _on_visibility_changed() -> void:
 	if visible and is_node_ready():
-		print("Grabbing input bar focus")
+		#print("Grabbing input bar focus")
 		input_bar.grab_focus.call_deferred()
 
 func set_history_item(text: String) -> void:

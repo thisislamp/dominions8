@@ -70,7 +70,8 @@ func err(message:String,values={}):
 ##Throws an error if err_code is not of value "OK" and appends the error code string.
 func err_cond_not_ok(err_code:Error, message:String, fatal:=true, other_values_to_be_printed={}):
 	if err_code != OK:
-		call_thread_safe("_internal_log", message + "" if message.ends_with(".") else "." + " Error string: " + error_string(err_code), other_values_to_be_printed, LogLevel.FATAL if fatal else LogLevel.ERROR)
+		#call_thread_safe("_internal_log", message + "" if message.ends_with(".") else "." + " Error string: " + error_string(err_code), other_values_to_be_printed, LogLevel.FATAL if fatal else LogLevel.ERROR)
+		call_thread_safe("_internal_log", message + ("" if message.ends_with(".") else ".") + " Error string: " + error_string(err_code), other_values_to_be_printed, LogLevel.FATAL if fatal else LogLevel.ERROR)
 
 ##Throws an error if the "statement" passed is false. Handy for making code "free" from if statements.
 func err_cond_false(statement:bool, message:String, fatal:=true, other_values_to_be_printed={}):
