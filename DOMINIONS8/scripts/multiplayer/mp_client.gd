@@ -48,16 +48,13 @@ func _create_client(_address: String, _port: int) -> int:
 func get_peer_wrapper():
 	peer.get_peer(multiplayer.get_unique_id())
 
+
 # # # #
 # Multiplayer events
 
 # client only
 func _on_connected_to_server():
 	_log.info("Connected to server")
-	var pid = multiplayer.get_unique_id()
-	var data := MultiplayerManager.get_player_data()
-	players[pid] = data
-	_register_player.rpc_id(1, data.to_dict())
 	connected.emit()
 
 
@@ -71,7 +68,7 @@ func _on_connection_failed():
 func _on_peer_connected(id: int):
 	_log.info("Peer connected: %s" % id)
 	# send our data to the newly connected peer
-	_register_player.rpc_id(id, MultiplayerManager.get_player_data().to_dict())
+	rpc_register_player.rpc_id(id, MultiplayerManager.get_player_data().to_dict())
 	player_connected.emit(id)
 
 # client and server
@@ -86,3 +83,4 @@ func _on_server_disconnected():
 	stop()
 	players.clear()
 	server_disconnected.emit()
+

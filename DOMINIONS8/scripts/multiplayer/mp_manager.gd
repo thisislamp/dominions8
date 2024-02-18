@@ -27,6 +27,7 @@ signal client_server_disconnected()
 signal client_player_connected(id: int)
 signal client_player_disconnected(id: int)
 
+signal rpc_request_response(request_type: int, request_id: int, ruid: int, response_data)
 
 # ready
 func _ready() -> void:
@@ -93,12 +94,6 @@ func host_game(port: int, max_players: int = 2) -> int:
 	client_node.is_host = true
 	server_node.host_client_id = client_node.peer.get_unique_id()
 
-	print("Current mp: ", multiplayer)
-	print("Server mp:  ", server_node.multiplayer)
-	print("Client mp:  ", client_node.multiplayer)
-	print("Client mp peer: ", client_node.peer)
-	print("Server mp peer: ", server_node.peer)
-
 	return err
 
 ## Connects to a multiplayer game.
@@ -113,6 +108,17 @@ func join_game(address: String, port: int) -> int:
 		return err
 	_connect_client_signals()
 	return err
+
+## Request that the game start.  Will only work if the game is ready to be started.
+func request_start_game() -> void:
+	_log.info("requesting the server start the game")
+	mp_client.rpc_request_start_game.rpc_id(1)
+
+## Starts the game for all connected players.
+func start_game() -> void:
+	_log.info("Having server start game")
+	mp_server.start_game()
+
 
 
 func get_player_data() -> MpPlayerData:

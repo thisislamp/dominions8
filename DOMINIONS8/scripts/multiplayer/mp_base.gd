@@ -73,16 +73,44 @@ func stop() -> void:
 		peer.close()
 		multiplayer.multiplayer_peer = null
 
-
-
-@rpc("any_peer", "reliable")
-func _register_player(player_info: Dictionary) -> void:
-	var pid = multiplayer.get_remote_sender_id()
-	players[pid] = MpPlayerData.from_dict(player_info)
-	# emit signal
-
 func _delete_player(id: int) -> void:
 	players.erase(id)
 
 func _exit_tree() -> void:
 	multiplayer.multiplayer_peer = null
+
+
+# RPCs
+# Because of how rpcs work with this godforsaken multiplayer setup i've decided
+# to roll with, they have to be defined here, but overidden in their respective
+# subclass for specific functionality.
+
+## Generic request/response rpcs
+@rpc("any_peer", "reliable")
+func rpc_request(request_id: int, request_type: int, request_data = null) -> void:
+	pass
+
+@rpc("any_peer", "reliable")
+func rpc_response(request_id: int, request_type: int, response_data) -> void:
+	MultiplayerManager.rpc_request_response.emit(
+		request_id, request_type, multiplayer.get_remote_sender_id(), response_data
+	)
+
+
+## Called to exchange player info on new connection
+@rpc("any_peer", "reliable")
+func rpc_register_player(player_info: Dictionary) -> void:
+	var pid = multiplayer.get_remote_sender_id()
+	_log.info("%s: got player info from %s" % [uid, pid])
+	players[pid] = MpPlayerData.from_dict(player_info)
+	# TODO: emit player_info_update or something
+
+@rpc("any_peer", "reliable")
+func rpc_request_start_game():
+	pass
+
+@rpc("authority", "reliable")
+func rpc_start_game():
+	# NYI
+	pass
+

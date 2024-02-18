@@ -24,11 +24,11 @@ func _ready() -> void:
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
 
-#func setup_mp_api() -> void:
-	#var mpapi = MultiplayerAPI.create_default_interface()
-	#_log.info("Made new mpapi: %s" % mpapi)
-	#_log.info("Setting server mpapi path to %s" % get_path())
-	#get_tree().set_multiplayer(mpapi, get_path())
+
+func get_peer_count() -> int:
+	if not peer:
+		return 0
+	return peer.host.get_peers().size()
 
 func start() -> int:
 	var err = _create_server(get_port(), max_clients)
@@ -48,10 +48,11 @@ func _create_server(port: int, max_clients: int) -> int:
 	peer = _peer
 	return err
 
-func get_peer_count() -> int:
-	if not peer:
-		return 0
-	return peer.host.get_peers().size()
+## Called by MultiplayerManager to start the game
+func start_game():
+	_log.info("Starting game for clients")
+	rpc_start_game.rpc()
+
 
 # # # #
 # Multiplayer events
@@ -66,3 +67,14 @@ func _on_peer_disconnected(id: int):
 	_log.info("Peer disconnected: %s" % id)
 	_delete_player(id)
 	player_disconnected.emit(id)
+
+
+# RPCs
+
+@rpc("any_peer", "reliable")
+func rpc_request_start_game():
+	var ruid = multiplayer.get_remote_sender_id()
+	if ruid != host_client_id:
+		_log.info("Denied request to start game by client ", ruid)
+	else:
+		_log.info("Accepted request to start game by client ", ruid)
