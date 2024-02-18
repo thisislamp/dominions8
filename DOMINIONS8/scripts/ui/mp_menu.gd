@@ -7,6 +7,7 @@ var internal_window: InternalWindow: set=set_internal_window
 var upnp := EzUPNP.new()
 
 var use_upnp: bool = false
+var players_ready: bool = false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -16,6 +17,7 @@ func _ready() -> void:
 	%MpHostVBox.visible = false
 	%MpHostVBox/MpHostStatusVBox.visible = false
 	%MpJoinVBox/MpJoinStatusVbox.visible = false
+	%MpHostVBox/MpHostStatusVBox/StartGameButton.visible = false
 	%MpJoinVBox.visible = false
 	%BackButton.visible = false
 	#if not internal_window:
@@ -163,7 +165,8 @@ func _on_join_game_button_pressed() -> void:
 
 # TODO: remove this or change it to check if we're ready to start the game
 func _exit_tree() -> void:
-	MultiplayerManager.shutdown()
+	if not players_ready:
+		MultiplayerManager.shutdown()
 
 # Multiplayer events
 # TODO: rewrite these with the split type signals, no if server checking needed
@@ -176,9 +179,13 @@ func _on_player_connected(id: int):
 		if MultiplayerManager.is_server_host(id):
 			return
 		%MpHostVBox/MpHostStatusVBox/NetStatusLabel.text = "Player connected"
+		players_ready = true
+		%MpHostVBox/MpHostStatusVBox/StartGameButton.visible = true
+		%MpHostVBox/MpHostStatusVBox/StartGameButton.disabled = false
 
 func _on_player_disconnected(id: int):
 	%MpHostVBox/MpHostStatusVBox/NetStatusLabel.text = "Waiting for player..."
+	players_ready = false
 	#Console.log("player disconnected: %s" % id)
 
 func _on_connected_ok():
@@ -196,3 +203,8 @@ func _on_connected_fail():
 func _on_server_disconnected():
 	%MpJoinVBox/MpJoinStatusVbox/NetStatusLabel.text = "Server disconnected"
 	#Console.log("server disconnected")
+
+func _on_start_game_button_pressed() -> void:
+	Console.log("Requesting game start")
+	MultiplayerManager.request_start_game()
+
