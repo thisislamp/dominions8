@@ -1,170 +1,189 @@
 extends Node
 
 
-## If multiplayer is active or not.
-var active: bool = false:
-	get=is_active
+var connector: MpConnector
 
-var mp_client: MpClient
+var address: String:
+	get: return connector.address if connector else ""
 
-var mp_server: MpServer
+var port: int:
+	get: return connector.port if connector else 0
 
-var multiplayer_client: MultiplayerAPI:
-	get: return mp_client.multiplayer
-
-var multiplayer_server: MultiplayerAPI:
-	get: return mp_server.multiplayer
+# For dedicated server game instances
+var _server_instances: Dictionary = {}
 
 var _log := LogStream.new("MpManager")
 
 
+# mp signals
+signal connected()
+signal connection_failed()
+signal server_disconnected()
+signal player_connected(id: int)
+signal player_disconnected(id: int)
+
+# type specific signals
+signal client_player_connected(id: int)
+signal client_player_disconnected(id: int)
 signal server_player_connected(id: int)
 signal server_player_disconnected(id: int)
 
-signal client_connected()
-signal client_connection_failed()
-signal client_server_disconnected()
-signal client_player_connected(id: int)
-signal client_player_disconnected(id: int)
-
+signal connection_update()
+signal connection_shutdown(port: int)
 signal rpc_request_response(request_type: int, request_id: int, ruid: int, response_data)
 
-# ready
+
 func _ready() -> void:
 	pass
 
 
 func is_active() -> bool:
-	if mp_client:
-		return mp_client.is_active()
-	elif mp_server:
-		return mp_server.is_active()
+	return Utils.is_alive(connector) and connector is MpConnector
+
+func is_server() -> bool:
+	return connector is MpServer
+
+func is_client() -> bool:
+	return connector is MpClient
+
+func is_host() -> bool:
+	if not connector:
+		return false
+	if connector is MpLocalServer:
+		return true
+	#if connector is MpClient:
+		#return connector.is_host
 	return false
 
-func is_server(uid: int = 0) -> bool:
-	if uid == 0:
-		return mp_server != null
-	else:
-		return uid == 1
+func is_dedicated() -> bool:
+	# TODO: add a argv flag check or whatever it is
+	return connector == null and _server_instances.size() > 0
 
-func is_server_host(uid: int = 0) -> bool:
-	if uid == 0:
-		return mp_client.is_host
-	else:
-		return mp_client.peer.get_unique_id() == uid
 
-## Shuts down all multiplayer connections.
-func shutdown() -> void:
-	if mp_client:
-		_log.info("Shutting down mp client")
-		mp_client.stop()
-		mp_client.queue_free()
-		mp_client = null
+func join_game(_address: String, _port: int) -> int:
+	connector = MpClient.new(_address, _port)
+	var session = start_session()
+	get_tree().root.add_child(connector)
+	_connect_client_signals()
 
-	if mp_server:
-		_log.info("Shutting down mp server")
-		mp_server.stop()
-		mp_server.queue_free()
-		mp_server = null
+	var err = connector.start()
+	if err != OK:
+		_log.warn("Failed to start client connector")
+		shutdown()
+		session.queue_free()
 
-## Hosts a new game locally.
-func host_game(port: int, max_players: int = 2) -> int:
-	var server_node := MpServer.new(port, max_players)
-	#server_node.name = "MpServer"
-	mp_server = server_node
-	get_node("/root").add_child(server_node)
-	var err = server_node.start()
-	#Log.err_cond_not_ok(err, "Error starting server", false)
-	if err:
-		push_error("Could not start server, ", error_string(err))
-		return err
+	connection_update.emit()
+	return err
+
+func host_game(max_players: int, _port: int) -> int:
+	connector = MpLocalServer.new(max_players, _port)
+	var session = start_session()
+	get_tree().root.add_child(connector)
 	_connect_server_signals()
 
-	var client_node := MpClient.new(MpClient.LOCALHOST, port)
-	#client_node.name = "InternalMpClient"
-	mp_client = client_node
-	get_node("/root").add_child(client_node)
-	err = client_node.start()
-	#Log.err_cond_not_ok(err, "Error joining local server", false)
-	if err:
-		push_error("Could not join local server, ", error_string(err))
-		return err
-	_connect_client_signals()
+	var err = connector.start()
+	if err != OK:
+		_log.warn("Failed to start server connector")
+		shutdown()
+		session.queue_free()
 
-	client_node.is_host = true
-	server_node.host_client_id = client_node.peer.get_unique_id()
-
+	connection_update.emit()
 	return err
 
-## Connects to a multiplayer game.
-func join_game(address: String, port: int) -> int:
-	var client_node := MpClient.new(address, port)
-	mp_client = client_node
-	get_node("/root").add_child(client_node)
-	var err = client_node.start()
-	#Log.err_cond_not_ok(err, "Error joining server: ", true)
-	if err:
-		push_error("Could not join game")
-		return err
-	_connect_client_signals()
+## Creates and returns a new MpServer node, or an int error code on failure.
+func spawn_server(max_players: int, _port: int = 0):
+	# TODO: move under MpServer and add root path
+	var session = start_session()
+	# TODO: check port usage in dict
+	var server = MpServer.new(max_players, _port)
+	var err = server.start()
+	if err == OK:
+		_server_instances[_port] = server
+		return server
 	return err
 
-## Request that the game start.  Will only work if the game is ready to be started.
-func request_start_game() -> void:
-	_log.info("requesting the server start the game")
-	mp_client.rpc_request_start_game.rpc_id(1)
+func shutdown(spawned: bool = false):
+	if connector:
+		connector.stop()
+		connection_shutdown.emit(connector.port)
+		connector.queue_free()
+		connector = null
+		connection_update.emit()
+	if spawned:
+		# TODO: kill servers in dict
+		pass
 
-## Starts the game for all connected players.
-func start_game() -> void:
-	_log.info("Having server start game")
-	mp_server.start_game()
+func start_session(root: Node = null) -> GameSession:
+	var session = GameSession.new()
+	session.name = "GameSession"
+	if not root:
+		root = get_tree().root
+	root.add_child(session, true)
+	return session
+
+# TODO: https://www.somethinglikegames.de/en/blog/2023/network-tutorial-4-login-2/
+func auth_cb() -> void:
+	pass
+
+func get_player_data(uid: int = 0) -> MpPlayerData:
+	if uid == 0:
+		pass
+	return null
 
 
+# signal connectors
+func _connect_client_signals():
+	connector.connected.connect(_on_connected)
+	connector.connection_failed.connect(_on_connection_failed)
+	connector.server_disconnected.connect(_on_server_disconnected)
+	connector.player_connected.connect(_on_player_connected)
+	connector.player_disconnected.connect(_on_player_disconnected)
+	# client specific variants
+	connector.player_connected.connect(_on_client_player_connected)
+	connector.player_disconnected.connect(_on_client_player_disconnected)
 
-func get_player_data() -> MpPlayerData:
-	# TODO: do this properly
-	var data = MpPlayerData.new()
-	data.name = "Host" if mp_client.is_host else ("Player%s" % mp_client.uid)
-	data.id = mp_client.uid
-	data.is_host = mp_client.is_host if mp_client else false
-	return data
+func _connect_server_signals():
+	connector.player_connected.connect(_on_player_connected)
+	connector.player_disconnected.connect(_on_player_disconnected)
+	# server specific variants
+	connector.player_connected.connect(_on_server_player_connected)
+	connector.player_disconnected.connect(_on_server_player_disconnected)
 
-func get_player(uid: int) -> MpPlayerData:
-	if mp_client:
-		return mp_client.players.get(uid)
-	else:
-		return mp_server.players.get(uid)
+# signal emitters
+func _on_connected() -> void:
+	connected.emit()
+	connection_update.emit()
 
-# server signals
-func _connect_server_signals() -> void:
-	mp_server.player_connected.connect(_on_server_player_connected)
-	mp_server.player_disconnected.connect(_on_server_player_disconnected)
+func _on_connection_failed() -> void:
+	connection_failed.emit()
+	connection_update.emit()
 
-func _on_server_player_connected(id: int) -> void:
-	server_player_connected.emit(id)
+func _on_server_disconnected() -> void:
+	server_disconnected.emit()
+	connection_update.emit()
 
-func _on_server_player_disconnected(id: int) -> void:
-	server_player_disconnected.emit(id)
+func _on_player_connected(id: int) -> void:
+	player_connected.emit(id)
+	connection_update.emit()
 
-# client signals
-func _connect_client_signals() -> void:
-	mp_client.connected.connect(_on_client_connected)
-	mp_client.connection_failed.connect(_on_client_connection_failed)
-	mp_client.server_disconnected.connect(_on_client_server_disconnected)
-	mp_client.player_connected.connect(_on_client_player_connected)
-	mp_client.player_disconnected.connect(_on_client_player_disconnected)
+func _on_player_disconnected(id: int) -> void:
+	player_disconnected.emit(id)
+	connection_update.emit()
 
-func _on_client_connected() -> void:
-	client_connected.emit()
-
-func _on_client_connection_failed() -> void:
-	client_connection_failed.emit()
-
-func _on_client_server_disconnected() -> void:
-	client_server_disconnected.emit()
-
+# client specific signals
 func _on_client_player_connected(id: int) -> void:
 	client_player_connected.emit(id)
+	connection_update.emit()
 
 func _on_client_player_disconnected(id: int) -> void:
 	client_player_disconnected.emit(id)
+	connection_update.emit()
+
+# server only signals
+func _on_server_player_connected(id: int) -> void:
+	server_player_connected.emit(id)
+	connection_update.emit()
+
+func _on_server_player_disconnected(id: int) -> void:
+	server_player_disconnected.emit(id)
+	connection_update.emit()

@@ -23,17 +23,17 @@ func _ready() -> void:
 	#if not internal_window:
 		#into_window.call_deferred()
 
-	MultiplayerManager.client_player_connected.connect(_on_player_connected)
-	MultiplayerManager.client_player_disconnected.connect(_on_player_disconnected)
-	MultiplayerManager.client_connected.connect(_on_connected_ok)
-	MultiplayerManager.client_connection_failed.connect(_on_connected_fail)
-	MultiplayerManager.client_server_disconnected.connect(_on_server_disconnected)
-
+	_connect_signals()
 	#test_upnp()
 	#%MpHostVBox/UPNPButton.disabled = true
 	#use_upnp = await test_upnp()
 	#%MpHostVBox/UPNPButton.button_pressed = use_upnp
 	#%MpHostVBox/UPNPButton.disabled = not use_upnp
+
+# TODO: remove this or change it to check if we're ready to start the game
+func _exit_tree() -> void:
+	if not players_ready:
+		MultiplayerManager.shutdown()
 
 
 func into_window() -> void:
@@ -67,10 +67,18 @@ func get_address() -> String:
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEventKey:
-		if event.keycode == KEY_ESCAPE and not event.echo:
+		if event.keycode == KEY_ESCAPE and not event.echo and event.pressed:
 			_on_back_button_pressed()
 			# close server if needed, or confirm with user if active
 			get_viewport().set_input_as_handled()
+
+		if event.keycode == KEY_F1 and not event.echo and event.pressed:
+			MultiplayerManager.mp_server.add_test_node()
+
+		if event.keycode == KEY_F2 and not event.echo and event.pressed:
+			var rpctestnode = MultiplayerManager.mp_client.get_node("rpctestnode")
+			if rpctestnode:
+				rpctestnode.rpc_test_console_print.rpc("f1 test")
 
 func _on_back_button_pressed() -> void:
 	%MpModeVBox.visible = true
@@ -135,7 +143,7 @@ func _on_open_server_button_pressed() -> void:
 	open_server_btn.disabled = false
 	%MpHostVBox/MpHostStatusVBox.visible = true
 
-	err = MultiplayerManager.host_game(port)
+	err = MultiplayerManager.host_game(1, port)
 	if err:
 		push_error("Could not create server: ", err)
 
@@ -154,6 +162,8 @@ func _on_copy_ip_button_pressed() -> void:
 		pass
 
 
+# Join menu callbacks
+
 func _on_join_game_button_pressed() -> void:
 	%MpJoinVBox/MpJoinStatusVbox.visible = true
 	%MpJoinVBox/JoinButton.disabled = true
@@ -163,38 +173,41 @@ func _on_join_game_button_pressed() -> void:
 		push_error("Could not create server: ", err)
 
 
-# TODO: remove this or change it to check if we're ready to start the game
-func _exit_tree() -> void:
-	if not players_ready:
-		MultiplayerManager.shutdown()
-
 # Multiplayer events
-# TODO: rewrite these with the split type signals, no if server checking needed
 
-func _on_player_connected(id: int):
-	#Console.log("player joined: %s" % id)
-	if MultiplayerManager.is_server(id):
-		%MpJoinVBox/MpJoinStatusVbox/NetStatusLabel.text = "Connected to server"
-	else:
-		if MultiplayerManager.is_server_host(id):
-			return
-		%MpHostVBox/MpHostStatusVBox/NetStatusLabel.text = "Player connected"
-		players_ready = true
-		%MpHostVBox/MpHostStatusVBox/StartGameButton.visible = true
-		%MpHostVBox/MpHostStatusVBox/StartGameButton.disabled = false
+func _connect_signals():
+	MultiplayerManager.connected.connect(_on_connected_ok)
+	MultiplayerManager.connection_failed.connect(_on_connected_fail)
+	MultiplayerManager.server_disconnected.connect(_on_server_disconnected)
+	MultiplayerManager.client_player_connected.connect(_on_client_player_connected)
+	MultiplayerManager.client_player_disconnected.connect(_on_client_player_disconnected)
 
-func _on_player_disconnected(id: int):
-	%MpHostVBox/MpHostStatusVBox/NetStatusLabel.text = "Waiting for player..."
+	MultiplayerManager.server_player_connected.connect(_on_server_player_connected)
+	MultiplayerManager.server_player_disconnected.connect(_on_server_player_disconnected)
+
+func _on_client_player_connected(id: int):
+	%MpJoinVBox/MpJoinStatusVbox/NetStatusLabel.text = "Connected to server"
+
+func _on_server_player_connected(id: int):
+	%MpHostVBox/MpHostStatusVBox/NetStatusLabel.text = "Player connected"
+	# TODO: change this to count total number of players or get player ready status
+	players_ready = true
+	%MpHostVBox/MpHostStatusVBox/StartGameButton.visible = true
+	%MpHostVBox/MpHostStatusVBox/StartGameButton.disabled = false
+
+func _on_client_player_disconnected(id: int):
+	#%MpHostVBox/MpHostStatusVBox/NetStatusLabel.text = "Disconnected"
 	players_ready = false
-	#Console.log("player disconnected: %s" % id)
+
+func _on_server_player_disconnected(id: int):
+	%MpHostVBox/MpHostStatusVBox/NetStatusLabel.text = "Waiting for player..."
+	pass
 
 func _on_connected_ok():
-	#Console.log("connected ok")
 	if not MultiplayerManager.is_server():
 		%MpJoinVBox/JoinButton.disabled = false
 
 func _on_connected_fail():
-	#Console.log("connected fail")
 	if not MultiplayerManager.is_server():
 		%MpJoinVBox/JoinButton.disabled = false
 
@@ -202,7 +215,8 @@ func _on_connected_fail():
 
 func _on_server_disconnected():
 	%MpJoinVBox/MpJoinStatusVbox/NetStatusLabel.text = "Server disconnected"
-	#Console.log("server disconnected")
+
+
 
 func _on_start_game_button_pressed() -> void:
 	Console.log("Requesting game start")

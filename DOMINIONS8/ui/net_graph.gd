@@ -13,7 +13,7 @@ func _ready() -> void:
 	print("NG: ", get_viewport_rect())
 
 func check_ping() -> void:
-	if not MultiplayerManager.active:
+	if not MultiplayerManager.is_active():
 		return
 
 	# TODO

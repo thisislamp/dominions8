@@ -69,6 +69,7 @@ placeholder_text = "Game name"
 expand_to_text_length = true
 
 [node name="PasswordLineEdit" type="LineEdit" parent="MarginContainer/MpHostVBox"]
+visible = false
 layout_mode = 2
 placeholder_text = "Password (optional)"
 secret = true
@@ -177,6 +178,7 @@ rounded = true
 update_on_text_changed = true
 
 [node name="PasswordLineEdit" type="LineEdit" parent="MarginContainer/MpJoinVBox"]
+visible = false
 layout_mode = 2
 placeholder_text = "Password"
 
