@@ -1,6 +1,7 @@
 extends Panel
 
-var delta_mod: int = 60
+var update_rate: float = 1
+var _timer: float = 0
 
 var status_name := {
 	0: "Disconnected",
@@ -8,10 +9,12 @@ var status_name := {
 	2: "Connected"
 }
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	update_labels()
-	pass # Replace with function body.
+
+	MultiplayerManager.server_disconnected.connect(_on_server_disconnected)
+	MultiplayerManager.player_connected.connect(_on_player_connected)
+	MultiplayerManager.connection_update.connect(update_labels)
 
 
 func set_status(status: String) -> void:
@@ -34,19 +37,24 @@ func update_labels() -> void:
 		set_ping(0)
 		return
 
-	if MultiplayerManager.mp_server:
-		var mps := MultiplayerManager.mp_server as MpServer
-		set_status("Server (%s/%s)" % [mps.get_peer_count(), mps.max_clients])
-		set_ping_str("local")
+	if MultiplayerManager.is_server():
+		var con := MultiplayerManager.connector as MpLocalServer
+		set_status("Server (%s/%s)" % [con.peer.host.get_peers().size(), con.max_clients])
+		if con.peer.host.get_peers().size() == con.max_clients:
+			var peers = con.peer.host.get_peers()
+			var rtt = peers[0].get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME)
+			set_ping(rtt)
+		else:
+			set_ping(0)
 
-	elif MultiplayerManager.mp_client:
-		var mpc := MultiplayerManager.mp_client as MpClient
-		var status = mpc.peer.get_connection_status()
+	elif MultiplayerManager.is_client():
+		var con := MultiplayerManager.connector as MpClient
+		var status = con.peer.get_connection_status()
 		set_status(status_name[status])
 
-		var serverpeer = mpc.peer.get_peer(1)
+		var serverpeer = con.get_packetpeer(1)
 		var rtt = serverpeer.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME)
-		set_ping(int(rtt))
+		set_ping(rtt)
 
 
 	#if mpp.host.get_peers():
@@ -64,7 +72,17 @@ func draw_ping():
 
 
 func _process(delta: float) -> void:
-	if Engine.get_physics_frames() % delta_mod != 0:
+	_timer += delta
+	if Engine.get_process_frames() % 2 != 0:
 		return
+	if _timer > update_rate:
+		_timer -= update_rate
+		update_labels()
 
+
+func _on_server_disconnected():
 	update_labels()
+	set_process(false)
+
+func _on_player_connected(id: int):
+	set_process(true)
