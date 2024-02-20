@@ -1,26 +1,58 @@
 # TODO list
 
 ## Features to add
-- ???
+- Proper design doc/plan (needs vc)
+- Basic game features
+  - proper main menu
+  - settings menu
+  - keybinds?
+- Multiplayer support
+- Dedicated server mode (build?)
+
 
 ## Things to change/refactor
 
+### Misc
+- Eventually change window mode settings
+  - mode -> viewport
+  - aspect -> expand
+- Error code translation helper
+
+### UI
+- Figure out how to have a background in a not-dumb way
+- Work on Console
+  - Rework into window
+  - Finish command handler system
+- Work on DebugMenu
+  - rework into window
+- Work on CombatLog
+  - rework into window
+  - Make the checkboxes work
+  - Add detail mode
+  - Maybe not run as an autoload but added by GameMap
+- Flesh out main menu when we actually have things to add to it
+- Settings menu
+- Fix dumb things in InternalWindow
+  - remove name field
+  - maybe remove content node field
+
 ### Code
-- De-duplicate unit related code
-  - Rework weapons into equipment
-  - Refactor old units into new types
+- Finish reworking units into BaseUnit
+  - Fix (implement) pathing into waypoint checkpoint zones
+  - Figure out some way to deal with movement state
+- Change debug key stuff to use a Debug something singleton and signals
+- Write Logger
 
 
 ## Bugs
 
 ### Gameplay
 - Tower projectiles can clip a unit to the side but don't disappear
+  - Probably only happens in the old version
 
 
 ## Design bikeshed
-- Waypoint system
-  - Jump to towers vs line on map
-    - Conclusion: change it to line waypoints
+### TODO
 
 - Spawn controller
   - Should the nexus handle spawns like it does currently?
@@ -30,13 +62,19 @@
     - Or is there a selection state, e.g. SC2
       - Conclusion: Unlikely, but not impossible.
 
+### Done
+
+- Waypoint system
+  - Jump to towers vs line on map
+    - Conclusion: change it to line waypoints
 - Lanes
   - Are there always going to be three (3) lanes?
     - Conclusion: No
   - Where the Lane enum, if any, lives. (map?)
     - Conclusion: Remove enum
   - How to represent arbitrary lanes
-    - Conclusion: TBD
+    - Conclusion: Lane node
+
 
 
 # Notes
@@ -105,3 +143,7 @@ Input events, however, always process. If you press jump three times between fra
 I hope this has been useful to some poor bastard browsing through google trying to figure out when his code is going to actually run. If anybody has questions, I'll try and answer them, even if you're reading this 6 months from now, I'll probably be able to give you an answer.
 
 Now if you'll excuse me, I have a player character sprite to avoid working on.
+
+
+--------------------------------------------------------------------
+
