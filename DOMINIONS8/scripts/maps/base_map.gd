@@ -1,7 +1,5 @@
 class_name GameMap extends Node2D
 
-# TODO: dont be an idiot and just store the teams in a fucking dict
-var teams: Array[Team] = [Team.UNAFFILIATED]
 
 # Debug options
 var _debug_mps: int = 0
@@ -12,51 +10,20 @@ var _debug_collisions := false
 
 @onready var tilemap: TileMap = $TileMap
 
+
 func _init() -> void:
 	add_to_group("map")
-	register_team("AI", 0, Color.RED)
 
-func _ready() -> void:
-	var unit_node = Node2D.new()
-	unit_node.name = 'units'
-	add_child(unit_node)
+#func _ready() -> void:
+	#pass
 
-## Creates and registers a new Team in the map's team registry and returns it.
-func register_team(_name: String, id: int, color: Color) -> Team:
-	if teams.any(func(t): return t.id == id):
-		push_warning("Team with id %s already exists: %s" % [id, get_team(id)])
 
-	var team = Team.new(_name, id, color)
-	teams.append(team)
-	return team
+func get_game() -> GameSession:
+	# TODO: dedicated server changes
+	return get_tree().get_first_node_in_group("game")
 
-## Returns a registered Team by it's id, if it exists.
-func get_team(id: int):
-	var matches = teams.filter(func(t): return t.id == id)
-	match matches.size():
-		0: return null
-		1: return matches.front()
-		var n:
-			push_warning("%s.teams has %s teams with id %s" % [self, n, id])
-			return null
-
-## Returns a registered Team by it's name, if it exists.
-func get_team_by_name(_name: String):
-	var matches = teams.filter(func(t): return t.name == _name)
-	match matches.size():
-		0: return null
-		1: return matches.front()
-		var n:
-			push_warning("%s.teams has %s teams with name '%s'" % [self, n, _name])
-			return null
-
-## Removes a team by id from the team registry, if there is one.  Please don't
-## call this on a team that still has units on it I don't want to think of the consequences.
-func delete_team(id: int) -> void:
-	var team = get_team(id)
-	if team == Team.UNAFFILIATED:
-		push_warning("Not deleting fallback team %s" % team)
-	teams.erase(team)
+func setup() -> void:
+	get_game().create_team("AI", Color.RED)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -167,25 +134,4 @@ func toggle_collision_shape_visibility() -> void:
 			if node is CollisionShape2D or node is CollisionPolygon2D:
 				node.queue_redraw()
 			node_stack.append_array(node.get_children())
-
-class Team extends RefCounted:
-	var name: String
-	var id: int
-	var color: Color
-
-	static var UNAFFILIATED: Team = Team.new()
-
-	static func _static_init() -> void:
-		UNAFFILIATED.name = "[Unaffiliated]"
-		UNAFFILIATED.id = -1
-		UNAFFILIATED.color = Color.GRAY
-
-	func _init(_name="null", _id=0, _color=Color.WHITE) -> void:
-		name = _name
-		id = _id
-		color = _color
-
-	func _to_string() -> String:
-		return "<Team id=%s name=%s color=%s>" % [id, name, color]
-
 

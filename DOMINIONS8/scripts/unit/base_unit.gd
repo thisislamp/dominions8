@@ -36,7 +36,7 @@ class_name BaseUnit extends CharacterBody2D
 
 var current_target: BaseUnit
 var spawn_point: SpawnPoint
-var team: GameMap.Team: set=set_team, get=get_team
+var team: GameTeam: set=set_team, get=get_team
 var movement_state: MovementState = MovementState.STOPPED:
 	set=set_movement_state,
 	get=get_movement_state
@@ -70,12 +70,12 @@ func _ready():
 	health_bar.visible = false
 
 	if default_team_id:
-		var temp_team = get_map().get_team(default_team_id)
-		if team == GameMap.Team.UNAFFILIATED:
-			team = get_map().register_team(
+		var temp_team = get_map().get_game().get_team(default_team_id)
+		if team == GameTeam.UNAFFILIATED:
+			team = get_map().get_game().create_team(
 				"Debug Team %s" % default_team_id,
+				Color.from_hsv(randf(), .9, .9),
 				default_team_id,
-				Color.from_hsv(randf(), .9, .9)
 			)
 
 	# TODO: switch to use signals
@@ -86,14 +86,18 @@ func _ready():
 
 ## Returns the GameMap node for this scene.
 func get_map() -> GameMap:
+	# TODO: fix for dedicated server
 	return get_tree().get_first_node_in_group("map")
 
-## Returns the GameMap.Team the unit is on, or Team.UNAFFILIATED if unassigned.
-func get_team() -> GameMap.Team:
-	return team if team else GameMap.Team.UNAFFILIATED
+func get_game() -> GameSession:
+	return get_map().get_game()
+
+## Returns the GameTeam the unit is on, or GameTeam.UNAFFILIATED if unassigned.
+func get_team() -> GameTeam:
+	return team if team else GameTeam.UNAFFILIATED
 
 ## Sets the team for this unit.
-func set_team(value: GameMap.Team) -> void:
+func set_team(value: GameTeam) -> void:
 	if team:
 		remove_from_group("team_%s" % team.id)
 	team = value

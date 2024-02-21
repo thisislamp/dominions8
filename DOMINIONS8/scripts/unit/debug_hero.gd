@@ -12,9 +12,9 @@ var team_color = ""
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	screen_size = get_viewport_rect().size
-	var m = get_map()
-	if m:
-		var t = m.register_team("Debug", 9000, Color.MAGENTA)
+	var g := get_map().get_game()
+	if g:
+		var t = g.create_team("Debug", Color.MAGENTA, 9000)
 		set_team(t)
 
 func _physics_process(delta: float) -> void:

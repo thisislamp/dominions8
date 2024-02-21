@@ -11,7 +11,7 @@ var name: String = "Player"
 var is_host: bool = false
 
 ## The team id of the player.
-var team_id: int = GameMap.Team.UNAFFILIATED.id
+var team_id: int = GameTeam.UNAFFILIATED.id
 
 ## Misc data
 var extra_data: Dictionary = {}
@@ -19,9 +19,9 @@ var extra_data: Dictionary = {}
 
 static var _log := LogStream.new("MpPlayerData")
 
-## Gets the Team of the player.  Since teams are map specific you need the map
+## Gets the GameTeam of the player.  Since teams are map specific you need the map
 ## to get the proper team.
-func get_team(map: GameMap) -> GameMap.Team:
+func get_team(map: GameMap) -> GameTeam:
 	return map.get_team(team_id)
 
 ## Updates the object with new info.  Extra fields will be stored in the
