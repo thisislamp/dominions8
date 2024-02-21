@@ -24,10 +24,10 @@ func _ready() -> void:
 	if ai_controlled:
 		#set_team(-1, Color.from_hsv(randf(), 1, 1))
 		print("Setting team to AI: ", self)
-		set_team.call_deferred(get_map().get_team_by_name("AI"))
+		set_team.call_deferred(get_map().get_game().get_team_by_name("AI"))
 	else:
 		print("Setting team to Player: ", self)
-		var player_team := get_map().register_team("Player", 1, Color.DARK_CYAN)
+		var player_team := get_map().get_game().create_team("Player", Color.DARK_CYAN)
 		set_team.call_deferred(player_team)
 
 

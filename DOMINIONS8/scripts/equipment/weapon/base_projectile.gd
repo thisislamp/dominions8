@@ -24,7 +24,7 @@ var unit: BaseUnit:
 		else:
 			return null
 
-var team: GameMap.Team = GameMap.Team.UNAFFILIATED
+var team: GameTeam = GameTeam.UNAFFILIATED
 
 var velocity: Vector2 = Vector2.ZERO
 

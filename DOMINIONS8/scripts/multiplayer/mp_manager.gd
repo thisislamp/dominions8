@@ -131,6 +131,19 @@ func get_player_data(uid: int = 0) -> MpPlayerData:
 	return null
 
 
+func request_start_game() -> void:
+	# TODO: fix for dedicated servers
+	var session := get_tree().get_first_node_in_group("game") as GameSession
+	if not session:
+		_log.warn("No game session, cannot start game")
+		return
+
+	session.rpc_load_map.rpc("res://scenes/maps/mp_test_map.tscn")
+	await get_tree().create_timer(.1).timeout
+	session.rpc_start_game.rpc()
+
+
+
 # signal connectors
 func _connect_client_signals():
 	connector.connected.connect(_on_connected)

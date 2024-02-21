@@ -32,7 +32,7 @@ func start() -> int:
 	var _peer = ENetMultiplayerPeer.new()
 	var err := _peer.create_server(port, max_clients)
 
-	_log.err_cond_not_ok(err, "Could not create server on port ", false, port)
+	_log.err_cond_not_ok(err, "Could not create server on port %s" % port, false)
 	if err == OK:
 		peer = _peer
 	#else:
