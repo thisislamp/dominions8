@@ -115,7 +115,7 @@ func shutdown(spawned: bool = false):
 
 func start_session(root: Node = null) -> GameSession:
 	var session = GameSession.new()
-	session.name = "GameSession"
+	#session.name = "GameSession"
 	if not root:
 		root = get_tree().root
 	root.add_child(session, true)

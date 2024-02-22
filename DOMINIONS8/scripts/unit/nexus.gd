@@ -4,7 +4,7 @@ class_name UnitNexus extends BaseUnit
 @export_range(0, 1000, 1, "or_greater") var initial_mana: int = 10
 
 ## The amount of mana this unit gains per second.
-@export var mana_regen: int = 50
+@export var mana_regen: int = 10
 
 @export var ai_controlled: bool = false
 
@@ -17,10 +17,11 @@ var player_controlled: bool:
 	get: return not ai_controlled
 
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	super()
+#func _ready() -> void:
+	#super()
 
+
+func _set_default_team() -> void:
 	if ai_controlled:
 		#set_team(-1, Color.from_hsv(randf(), 1, 1))
 		print("Setting team to AI: ", self)
@@ -57,13 +58,17 @@ func spawn_unit(unit_type: PackedScene, point: SpawnPoint):
 func move(_delta: float):
 	return
 
+func process_ai(_delta: float) -> void:
+	pass
+
+
 func _physics_process(delta: float) -> void:
-	current_mana += delta
+	current_mana = min(current_mana + mana_regen * delta, max_mana)
+	mana_bar.value = current_mana
+
 	if ai_controlled:
 		process_ai(delta)
 
-func process_ai(_delta: float) -> void:
-	pass
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if ai_controlled:

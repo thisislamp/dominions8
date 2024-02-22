@@ -52,3 +52,5 @@ collision_mask = 4
 [node name="hitbox_shape" type="CollisionShape2D" parent="hitbox"]
 unique_name_in_owner = true
 shape = SubResource("CapsuleShape2D_spyc1")
+
+[node name="equipment" type="Node2D" parent="."]

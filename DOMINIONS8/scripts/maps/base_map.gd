@@ -17,10 +17,16 @@ func _init() -> void:
 #func _ready() -> void:
 	#pass
 
+func _enter_tree() -> void:
+	if not get_game():
+		var session = GameSession.new()
+		get_parent().add_child.call_deferred(session, true)
+		reparent.call_deferred(session)
 
 func get_game() -> GameSession:
 	# TODO: dedicated server changes
-	return get_tree().get_first_node_in_group("game")
+	var session = get_tree().get_first_node_in_group("game")
+	return session
 
 func setup() -> void:
 	get_game().create_team("AI", Color.RED)
