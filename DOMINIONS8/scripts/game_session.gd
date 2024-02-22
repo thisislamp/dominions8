@@ -18,8 +18,12 @@ signal player_data_update(uid: int, data: MpPlayerData)
 signal team_update(tid: int, team: GameTeam)
 
 
-func _ready() -> void:
+func _init() -> void:
+	name = "GameSession"
 	add_to_group("game")
+
+
+func _ready() -> void:
 	_connect_signals()
 	players[multiplayer.get_unique_id()] = get_own_player_data()
 	create_team("Team 1", Color.RED)

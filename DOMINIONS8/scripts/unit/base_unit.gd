@@ -70,19 +70,23 @@ func _ready():
 	health_bar.visible = false
 
 	if default_team_id:
-		var temp_team = get_map().get_game().get_team(default_team_id)
-		if team == GameTeam.UNAFFILIATED:
-			team = get_map().get_game().create_team(
-				"Debug Team %s" % default_team_id,
-				Color.from_hsv(randf(), .9, .9),
-				default_team_id,
-			)
+		_set_default_team.call_deferred()
 
 	# TODO: switch to use signals
 	if OS.is_debug_build():
 		# sets spawning with pathfinding visible
-		var map = get_tree().get_first_node_in_group("map")
+		var map = get_map()
 		nav.debug_enabled = BaseUnit._debug_show_pathing or map._debug_pathing if map else false
+
+
+func _set_default_team() -> void:
+	var temp_team = get_game().get_team(default_team_id)
+	if temp_team == GameTeam.UNAFFILIATED:
+		team = get_game().create_team(
+			"Debug Team %s" % default_team_id,
+			Color.from_hsv(randf(), .9, .9),
+			default_team_id,
+		)
 
 ## Returns the GameMap node for this scene.
 func get_map() -> GameMap:
