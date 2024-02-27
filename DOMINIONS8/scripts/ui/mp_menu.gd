@@ -86,18 +86,21 @@ func _on_back_button_pressed() -> void:
 	%MpHostVBox.visible = false
 	%BackButton.visible = false
 	MultiplayerManager.shutdown()
+	MultiplayerManager.game_start.disconnect(_on_game_start)
 
 
 func _on_host_button_pressed() -> void:
 	%MpModeVBox.visible = false
 	%MpHostVBox.visible = true
 	%BackButton.visible = true
+	MultiplayerManager.game_start.connect(_on_game_start)
 
 
 func _on_join_button_pressed() -> void:
 	%MpModeVBox.visible = false
 	%MpJoinVBox.visible = true
 	%BackButton.visible = true
+	MultiplayerManager.game_start.connect(_on_game_start)
 
 
 # Host menu callbacks
@@ -172,6 +175,12 @@ func _on_join_game_button_pressed() -> void:
 	if err:
 		push_error("Could not create server: ", err)
 
+
+
+func _on_game_start(game_id: int):
+	Console.log("Closing mp window")
+	internal_window.close_window()
+	queue_free()
 
 # Multiplayer events
 

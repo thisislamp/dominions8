@@ -35,7 +35,6 @@ layer_2/tile_data = PackedInt32Array()
 
 [node name="PlayerNexus" parent="." instance=ExtResource("3_jriju")]
 position = Vector2(260, 540)
-mana_regen = 10
 
 [node name="spawn_top" type="Marker2D" parent="PlayerNexus" node_paths=PackedStringArray("lane")]
 position = Vector2(0, -86)
@@ -54,7 +53,6 @@ lane = NodePath("../../lanes/bot")
 
 [node name="EnemyNexus" parent="." instance=ExtResource("3_jriju")]
 position = Vector2(1661, 540)
-mana_regen = 10
 ai_controlled = true
 
 [node name="spawn_top" type="Marker2D" parent="EnemyNexus" node_paths=PackedStringArray("lane")]

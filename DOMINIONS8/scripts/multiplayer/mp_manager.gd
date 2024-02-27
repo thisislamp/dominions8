@@ -32,6 +32,8 @@ signal connection_update()
 signal connection_shutdown(port: int)
 signal rpc_request_response(request_type: int, request_id: int, ruid: int, response_data)
 
+signal game_start(game_id: int)
+
 
 func _ready() -> void:
 	pass
@@ -94,6 +96,7 @@ func host_game(max_players: int, _port: int) -> int:
 func spawn_server(max_players: int, _port: int = 0):
 	# TODO: move under MpServer and add root path
 	var session = start_session()
+	# TODO: give session a random id, maybe "host" uid?
 	# TODO: check port usage in dict
 	var server = MpServer.new(max_players, _port)
 	var err = server.start()
@@ -141,6 +144,7 @@ func request_start_game() -> void:
 	session.rpc_load_map.rpc("res://scenes/maps/mp_test_map.tscn")
 	await get_tree().create_timer(.1).timeout
 	session.rpc_start_game.rpc()
+	game_start.emit(session.game_id)
 
 
 
