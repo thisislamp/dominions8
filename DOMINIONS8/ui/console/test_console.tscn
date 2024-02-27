@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://cl30vh7tq0ati"]
+
+[ext_resource type="PackedScene" uid="uid://d3awmv7mi7smo" path="res://ui/internal_window.tscn" id="1_yutn4"]
+[ext_resource type="PackedScene" uid="uid://ctw18t66dxevh" path="res://ui/console/console.tscn" id="2_oojtx"]
+
+[node name="InternalWindow" instance=ExtResource("1_yutn4")]
+offset_left = 108.0
+offset_top = 145.0
+offset_right = 108.0
+offset_bottom = 145.0
+
+[node name="WindowContainer" parent="." index="0"]
+offset_right = 758.0
+offset_bottom = 394.0
+
+[node name="Console" parent="WindowContainer/VBoxContainer/WindowContent" index="0" instance=ExtResource("2_oojtx")]
+top_level = false
+layout_mode = 2

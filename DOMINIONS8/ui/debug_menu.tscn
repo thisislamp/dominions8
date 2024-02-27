@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3 uid="uid://wc30l1ehmhyo"]
+
+[ext_resource type="Theme" uid="uid://clohdun6bfyrb" path="res://ui/console/console_theme.tres" id="1_56ta7"]
+
+[node name="DebugMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+grow_horizontal = 0
+theme = ExtResource("1_56ta7")
+
+[node name="PanelContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -316.0
+offset_bottom = 187.0
+grow_horizontal = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Debug Menu"
+
+[node name="btn_nav_grid" type="CheckBox" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Show map nav grid"
+
+[node name="btn_collisions" type="CheckBox" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Show unit collisions"
+
+[node name="btn_pathing" type="CheckBox" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Show unit pathfinding"
+
+[node name="btn_lanes" type="CheckBox" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Show lanes"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+bbcode_enabled = true
