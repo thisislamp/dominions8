@@ -10,6 +10,8 @@ var _debug_collisions := false
 
 @onready var tilemap: TileMap = $TileMap
 
+var _log = LogStream.new("Map")
+
 
 func _init() -> void:
 	add_to_group("map")
@@ -31,6 +33,13 @@ func get_game() -> GameSession:
 func setup() -> void:
 	get_game().create_team("AI", Color.RED)
 
+func send_input(input: InputEventKey) -> void:
+	if not input.pressed:
+		return
+
+	Console.log("%s: Sending input event" % multiplayer.get_unique_id())
+	rpc_send_input.rpc_id(1, input.keycode)
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	var vp := get_viewport()
@@ -48,6 +57,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				var offset = 40 * 4 # tile_size * tile_count
 				$camera.position = pos.clamp(Vector2(-offset, -offset), Vector2(offset, offset))
 				vp.set_input_as_handled()
+
+	elif event is InputEventKey:
+		send_input(event)
 
 
 # TODO: move to some Debug singleton
@@ -141,3 +153,30 @@ func toggle_collision_shape_visibility() -> void:
 				node.queue_redraw()
 			node_stack.append_array(node.get_children())
 
+
+# RPCs
+
+@rpc("any_peer", "call_local", "reliable")
+func rpc_send_input(keycode: int):
+	if not multiplayer.is_server():
+		return
+
+	var nexus: UnitNexus
+	var spawn: SpawnPoint
+	var remote_id: int = multiplayer.get_remote_sender_id()
+
+	if remote_id == 1:
+		nexus = $Nexus1
+	else:
+		nexus = $Nexus2
+
+	match keycode:
+		KEY_1:
+			spawn = nexus.get_node("SpawnPointTop")
+		KEY_2:
+			spawn = nexus.get_node("SpawnPointBot")
+		_:
+			return
+
+	_log.info("Spawning unit for nexus %s at %s" % [nexus, spawn])
+	nexus.spawn_unit(preload("res://scenes/unit/hurler.tscn"), spawn)

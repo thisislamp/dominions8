@@ -9,6 +9,8 @@ var teams: Dictionary = {}
 
 var map: GameMap
 
+var game_id: int = 0
+
 var _map_scene: PackedScene
 var _team_counter: int = 1
 var _log := LogStream.new("GameSession")
@@ -102,6 +104,14 @@ func update_player(uid: int, new_data: Dictionary, emit: bool = true) -> void:
 func delete_player(uid: int) -> void:
 	players.erase(uid)
 
+func get_player_from_team(team: GameTeam) -> MpPlayerData:
+	return get_player_from_team_id(team.id)
+
+func get_player_from_team_id(team_id: int) -> MpPlayerData:
+	for player: MpPlayerData in players.values():
+		if player.team_id == team_id:
+			return player
+	return null
 
 # team functions
 

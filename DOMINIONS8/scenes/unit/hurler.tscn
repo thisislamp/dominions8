@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://c25vni0q3n6n8"]
+[gd_scene load_steps=11 format=3 uid="uid://c25vni0q3n6n8"]
 
 [ext_resource type="PackedScene" uid="uid://difx82dpli7o5" path="res://scenes/unit/base_unit.tscn" id="1_u20ol"]
 [ext_resource type="Texture2D" uid="uid://tn16slkvgu36" path="res://art/hurler2.png" id="2_pbre6"]
@@ -35,6 +35,11 @@ radius = 16.0
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ljtsb"]
 radius = 21.0
 height = 64.0
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_woy3c"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
 
 [node name="Hurler" instance=ExtResource("1_u20ol")]
 position = Vector2(136.765, 153.222)
@@ -85,3 +90,6 @@ script = ExtResource("6_7jl7u")
 
 [node name="WeaponThrow" parent="." index="7" instance=ExtResource("5_n620t")]
 projectile_scene = ExtResource("6_epr5y")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." index="9"]
+replication_config = SubResource("SceneReplicationConfig_woy3c")

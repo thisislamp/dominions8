@@ -42,8 +42,9 @@ func spawn_unit(unit_type: PackedScene, point: SpawnPoint):
 		push_error("Tried to spawn non-BaseUnit type %s" % unit_type)
 		return
 
-	#var pos = get_viewport().get_mouse_position()
-	#pos = pos.clamp(Vector2.ZERO, get_viewport_rect().size)
+	if not point:
+		push_error("Spawn point does not exist")
+		return
 
 	var pos = point.global_position
 	#print("Spawning at ", pos)
@@ -51,10 +52,10 @@ func spawn_unit(unit_type: PackedScene, point: SpawnPoint):
 	new_unit.position = pos + Vector2(randf_range(-5, 5), randf_range(-5, 5))
 	new_unit.team = team
 	new_unit.spawn_point = point
-	#new_unit.velocity = Vector2(1,-1)
 
-	get_map().get_node("units").add_child(new_unit)
+	get_map().get_node("units").add_child(new_unit, true)
 
+# The nexus does not move
 func move(_delta: float):
 	return
 
